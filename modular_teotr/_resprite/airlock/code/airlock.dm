@@ -72,10 +72,10 @@
 			else if (has_active_reta_access())
 				light_state = AIRLOCK_LIGHT_RETA
 				pre_light_color = AIRLOCK_EMERGENCY_LIGHT_COLOR
-			else if(fire_active)
+//			else if(fire_active)
 				light_state = AIRLOCK_LIGHT_FIRE
 				pre_light_color = AIRLOCK_FIRE_LIGHT_COLOR
-			else if(engineering_override)
+//			else if(engineering_override)
 				light_state = AIRLOCK_LIGHT_ENGINEERING
 				pre_light_color = AIRLOCK_ENGINEERING_LIGHT_COLOR
 			else
@@ -99,10 +99,10 @@
 			else if (has_active_reta_access())
 				light_state = AIRLOCK_LIGHT_RETA
 				pre_light_color = AIRLOCK_EMERGENCY_LIGHT_COLOR
-			else if(fire_active)
+//			else if(fire_active)
 				light_state = AIRLOCK_LIGHT_FIRE
 				pre_light_color = AIRLOCK_FIRE_LIGHT_COLOR
-			else if(engineering_override)
+//			else if(engineering_override)
 				light_state = AIRLOCK_LIGHT_ENGINEERING
 				pre_light_color = AIRLOCK_ENGINEERING_LIGHT_COLOR
 			else
@@ -130,8 +130,8 @@
 	else
 		set_light(l_on = FALSE)
 
-	if(greyscale_accent_color)
-		. += get_airlock_overlay("[frame_state]_accent", overlays_file, src, em_block = TRUE, state_color = greyscale_accent_color)
+//	if(greyscale_accent_color)
+//		. += get_airlock_overlay("[frame_state]_accent", overlays_file, src, em_block = TRUE, state_color = greyscale_accent_color)
 
 	if(panel_open)
 		. += get_airlock_overlay("panel_[frame_state][security_level ? "_protected" : null]", overlays_file, src, em_block = TRUE)

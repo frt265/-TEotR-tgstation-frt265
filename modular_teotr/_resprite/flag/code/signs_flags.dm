@@ -177,6 +177,6 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/structure/sign/flag/interdyne, 32)
 	desc = "The folded flag of Interdyne Pharmaceutics."
 	icon_state = "folded_coder"
 	sign_path = /obj/structure/sign/flag/interdyne
-	special_desc_requirement = EXAMINE_CHECK_JOB
-	special_desc_jobs = list(JOB_MIME) // this will probably never happen. but it will amuse someone when it does.
-	special_desc = "The folded flag of Interdyne Pharmaceuticals. For some reason, it reminds you of the home of the mimes."
+//	special_desc_requirement = EXAMINE_CHECK_JOB
+//	special_desc_jobs = list(JOB_MIME) // this will probably never happen. but it will amuse someone when it does.
+//	special_desc = "The folded flag of Interdyne Pharmaceuticals. For some reason, it reminds you of the home of the mimes."
