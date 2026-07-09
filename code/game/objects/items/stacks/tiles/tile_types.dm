@@ -1154,7 +1154,8 @@
 	name = "floor tile"
 	singular_name = "floor tile"
 	desc = "The ground you walk on."
-	throwforce = 10
+	//throwforce = 10 //ORIGINAL
+	throwforce = 6 //NOVA EDIT CHANGE
 	icon_state = "material_tile"
 	inhand_icon_state = "tile"
 	turf_type = /turf/open/floor/material
@@ -1162,9 +1163,11 @@
 	merge_type = /obj/item/stack/tile/material
 
 /obj/item/stack/tile/material/place_tile(turf/open/target_plating, mob/user)
+	// Save refernce to the materials for the case when we place last tile in the stack
+	var/list/saved_mats_per_unit = mats_per_unit
 	. = ..()
 	var/turf/open/floor/material/floor = .
-	floor?.set_custom_materials(mats_per_unit)
+	floor?.set_custom_materials(saved_mats_per_unit)
 
 /obj/item/stack/tile/eighties
 	name = "retro tile"

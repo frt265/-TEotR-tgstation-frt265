@@ -7,6 +7,8 @@
 	message = "is strumming the air and headbanging like a safari chimp."
 	hands_use_check = TRUE
 
+//NOVA EDIT REMOVAL BEGIN - EMOTES - (Moved to modular_nova/modules/emotes/code/emotes.dm as /datum/emote/living/clap)
+/*
 /datum/emote/living/carbon/clap
 	key = "clap"
 	key_third_person = "claps"
@@ -25,6 +27,8 @@
 		'sound/mobs/humanoids/human/clap/clap3.ogg',
 		'sound/mobs/humanoids/human/clap/clap4.ogg',
 	)
+*/
+//NOVA EDIT REMOVAL END
 
 /datum/emote/living/carbon/crack
 	key = "crack"
@@ -109,10 +113,12 @@
 	sound = 'sound/mobs/humanoids/moth/moth_chitter.ogg'
 	emote_type = EMOTE_AUDIBLE | EMOTE_VISIBLE
 
+/* NOVA EDIT: anyone can chitter. theoretically. further edits in modular_nova\modules\emotes\code\emotes.dm
 /datum/emote/living/carbon/mchitter/can_run_emote(mob/living/carbon/user, status_check, intentional, params)
 	if(!ismoth(user))
 		return FALSE
 	return ..()
+*/
 
 /datum/emote/living/carbon/moan
 	key = "moan"
@@ -129,10 +135,12 @@
 	sound = 'sound/mobs/humanoids/moth/moth_squeak.ogg'
 	emote_type = EMOTE_AUDIBLE | EMOTE_VISIBLE
 
+/* NOVA EDIT: anyone can squeak. theoretically. further edits in modular_nova\modules\emotes\code\emotes.dm
 /datum/emote/living/carbon/msqueak/can_run_emote(mob/living/carbon/user, status_check, intentional, params)
 	if(!ismoth(user))
 		return FALSE
 	return ..()
+*/
 
 /datum/emote/living/carbon/noogie
 	key = "noogie"

@@ -14,9 +14,11 @@
 	harmful = TRUE
 	mech_flags = EXOSUIT_MODULE_RIPLEY
 	///Bool for whether we beat the hell out of things we punch (and tear off their arms)
-	var/killer_clamp = FALSE
+	var/killer_clamp = TRUE
 	///How much base damage this clamp does
 	var/clamp_damage = 20
+	///Var for the chassis we are attached to, needed to access ripley contents and such
+	var/obj/vehicle/sealed/mecha/ripley/cargo_holder
 	///Audio for using the hydraulic clamp
 	var/clampsound = 'sound/vehicles/mecha/hydraulic.ogg'
 	///Chassis but typed for the cargo_hold var
@@ -315,7 +317,7 @@
 	internal_rcd.mode = construction_mode
 	return TRUE
 
-/obj/item/mecha_parts/mecha_equipment/rcd/interact_with_atom(obj/item/attacking_item, mob/living/user, list/modifiers)
+/obj/item/mecha_parts/mecha_equipment/rcd/interact_with_atom(obj/item/attacking_item, mob/living/user, list/modifiers, list/attack_modifiers)
 	. = NONE
 	if(istype(attacking_item, /obj/item/rcd_upgrade))
 		internal_rcd.install_upgrade(attacking_item, user)

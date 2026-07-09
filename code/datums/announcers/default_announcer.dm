@@ -1,3 +1,4 @@
+/* NOVA EDIT REMOVAL
 /datum/centcom_announcer/default
 	welcome_sounds = list('sound/announcer/default/welcome.ogg')
 	alert_sounds = list('sound/announcer/default/attention.ogg')
@@ -18,3 +19,4 @@
 		ANNOUNCER_SHUTTLEDOCK = 'sound/announcer/default/shuttledock.ogg',
 		ANNOUNCER_SHUTTLERECALLED = 'sound/announcer/default/shuttlerecalled.ogg',
 		ANNOUNCER_SPANOMALIES = 'sound/announcer/default/spanomalies.ogg')
+	*/

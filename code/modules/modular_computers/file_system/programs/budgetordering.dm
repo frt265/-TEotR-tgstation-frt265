@@ -64,7 +64,7 @@
 
 	var/datum/bank_account/buyer = SSeconomy.get_dep_account(cargo_account)
 	var/obj/item/card/id/id_card = computer.stored_id?.GetID()
-	if(id_card?.registered_account)
+	if(id_card?.registered_account?.account_job?.paycheck_department)
 		buyer = SSeconomy.get_dep_account(id_card?.registered_account.account_job.paycheck_department)
 		if((ACCESS_BUDGET in id_card.access))
 			requestonly = FALSE
@@ -100,6 +100,10 @@
 		if(((P.order_flags & ORDER_EMAG_ONLY) && ((P.order_flags & ORDER_CONTRABAND) && !contraband) || ((P.order_flags & ORDER_SPECIAL) && !(P.order_flags & ORDER_SPECIAL_ENABLED)) || (P.order_flags & ORDER_POD_ONLY)))
 			continue
 
+		// NOVA EDIT ADDITION START
+		if(!(P.console_flag & console_flag))
+			continue
+		// NOVA EDIT ADDITION END
 		var/obj/item/first_item = length(P.contains) > 0 ? P.contains[1] : null
 		data["supplies"][P.group]["packs"] += list(list(
 			"name" = P.name,
@@ -261,6 +265,7 @@
 				if(isnull(reason) || ..())
 					return
 
+			var/uses_cargo_budget = FALSE // NOVA EDIT ADDITION - boolean flag to check if we are using the cargo budget without doing excesive shenanigans.
 			if(id_card_customer?.registered_account?.account_job && !self_paid) //Find a budget to pull from
 				personal_department = SSeconomy.get_dep_account(id_card_customer.registered_account.account_job.paycheck_department)
 				if(!(personal_department.account_holder == "Cargo Budget"))
@@ -269,8 +274,13 @@
 						return
 					if(dept_choice == "Cargo Budget")
 						personal_department = null
+						uses_cargo_budget = TRUE // NOVA EDIT ADDITION
+				// NOVA EDIT ADDITION START
+				else
+					uses_cargo_budget = TRUE // NOVA EDIT ADDITION
+				// NOVA EDIT ADDITION END
 
-			if((pack.order_flags & ORDER_GOODY) && !self_paid)
+			if(((pack.order_flags & ORDER_GOODY) && (!(pack.order_flags & ORDER_DEPARTMENTAL_GOODY) || uses_cargo_budget)) && !self_paid) // NOVA EDIT CHANGE - ORIGINAL: if((pack.order_flags & ORDER_GOODY) && !self_paid)
 				playsound(computer, 'sound/machines/buzz/buzz-sigh.ogg', 50, FALSE)
 				computer.say("ERROR: Small crates may only be purchased by private accounts.")
 				return
@@ -285,7 +295,15 @@
 
 			var/turf/T = get_turf(computer)
 			var/datum/supply_order/SO = new(pack, name, rank, ckey, reason, account)
-			SO.generateRequisition(T)
+			if(computer.stored_paper >= 1)
+				SO.generateRequisition(T)
+				computer.stored_paper -= 1
+				if(computer.stored_paper <= 4)
+					computer.say("Paper's storage has only [computer.stored_paper] papers. Refill please!")
+					if(computer.stored_paper <= 1)
+						computer.say("Only 1 paper has left, refill please!")
+			else
+				computer.say("Requisition cannot be printed, paper storage is empty. Please insert more paper!")
 			if((requestonly && !self_paid) || !(computer.stored_id?.GetID()))
 				SSshuttle.request_list += SO
 			else

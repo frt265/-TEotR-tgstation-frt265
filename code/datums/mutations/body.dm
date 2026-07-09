@@ -126,12 +126,23 @@
 	. = ..()
 	if(!.)
 		return
+	// NOVA EDIT BEGIN
+	if(owner.dna.features["body_size"] < 1 || isteshari(owner))
+		to_chat(owner, "You feel your body try to shrink, but your organs don't! Uh oh!")
+		owner.adjust_brute_loss(25)
+		return
+	// NOVA EDIT END
 	ADD_TRAIT(owner, TRAIT_DWARF, GENETIC_MUTATION)
 	owner.visible_message(span_danger("[owner] suddenly shrinks!"), span_notice("Everything around you seems to grow.."))
 
 /datum/mutation/dwarfism/on_losing(mob/living/carbon/human/owner)
 	if(..())
 		return
+	// NOVA EDIT BEGIN
+	if(owner.dna.features["body_size"] < 1 || isteshari(owner))
+		to_chat(owner, "You feel relief as your organs cease to strain against your insides.")
+		return
+	// NOVA EDIT END
 	REMOVE_TRAIT(owner, TRAIT_DWARF, GENETIC_MUTATION)
 	owner.visible_message(span_danger("[owner] suddenly grows!"), span_notice("Everything around you seems to shrink.."))
 
@@ -185,6 +196,12 @@
 	. = ..()
 	if(!.)
 		return
+	// NOVA EDIT ADDITION BEGIN
+	if(owner.dna.features["body_size"] > 1)
+		to_chat(owner, "You feel your body expanding even further, but it feels like your bones are expanding too much!")
+		owner.adjust_brute_loss(25) // take some DAMAGE
+		return
+	// NOVA EDIT ADDITION END
 	ADD_TRAIT(owner, TRAIT_GIANT, GENETIC_MUTATION)
 	owner.update_transform(1.25)
 	owner.visible_message(span_danger("[owner] suddenly grows!"), span_notice("Everything around you seems to shrink.."))
@@ -192,6 +209,12 @@
 /datum/mutation/gigantism/on_losing(mob/living/carbon/human/owner)
 	if(..())
 		return
+	// NOVA EDIT ADDITION BEGIN
+	if(owner.dna.features["body_size"] > 1)
+		to_chat(owner, "You feel relief as your bones cease their growth spurt.")
+	if(!HAS_TRAIT_FROM(owner, TRAIT_GIANT, GENETIC_MUTATION)) // Don't shrink if we didn't grow in the first place.
+		return
+	// NOVA EDIT ADDITION END
 	REMOVE_TRAIT(owner, TRAIT_GIANT, GENETIC_MUTATION)
 	owner.update_transform(0.8)
 	owner.visible_message(span_danger("[owner] suddenly shrinks!"), span_notice("Everything around you seems to grow.."))
@@ -246,6 +269,7 @@
 	instability = NEGATIVE_STABILITY_MAJOR // mmmonky
 	remove_on_aheal = FALSE
 	locked = TRUE //Species specific, keep out of actual gene pool
+	warn_admins_on_inject = TRUE
 	var/datum/species/original_species = /datum/species/human
 	var/original_name
 
@@ -267,7 +291,10 @@
 		return
 	if(QDELETED(owner))
 		return
-
+	// NOVA EDIT ADDITION START
+	if(isnull(owner.loc)) //fix monkey mutation messing with character previews
+		return
+	// NOVA EDIT ADDITION END
 	owner.fully_replace_character_name(null, original_name)
 	owner.humanize(original_species)
 
@@ -533,6 +560,7 @@
 	difficulty = 12 //pretty good for traitors
 	quality = NEGATIVE //holy shit no eyes or tongue or ears
 	text_gain_indication = span_warning("Something feels off.")
+	warn_admins_on_inject = TRUE
 
 /datum/mutation/headless/on_acquiring()
 	. = ..()

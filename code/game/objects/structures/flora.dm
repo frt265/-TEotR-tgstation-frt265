@@ -308,7 +308,8 @@
 
 /obj/structure/flora/tree/Initialize(mapload)
 	. = ..()
-	AddComponent(/datum/component/seethrough, get_seethrough_map())
+	if(get_seethrough_map())
+		AddComponent(/datum/component/seethrough, get_seethrough_map())
 
 /obj/structure/flora/tree/get_potential_products()
 	return list(/obj/item/grown/log/tree = 1)
@@ -321,7 +322,7 @@
 	. = ..()
 	var/turf/my_turf = get_turf(src)
 	playsound(my_turf, 'sound/effects/meteorimpact.ogg', 100 , FALSE, FALSE)
-	var/obj/structure/flora/tree/stump/new_stump = new(my_turf)
+	var/obj/structure/flora/tree/stump/new_stump = new stump_type(my_turf) // NOVA EDIT CHANGE - Variable tree stumps - ORIGINAL: var/obj/structure/flora/tree/stump/new_stump = new(my_turf)
 	new_stump.name = "[name] stump"
 
 /obj/structure/flora/tree/uproot(mob/living/user)
@@ -344,6 +345,9 @@
 	..()
 	to_chat(user, span_notice("You manage to remove [src]."))
 	qdel(src)
+
+/obj/structure/flora/tree/stump/get_seethrough_map()
+	return FALSE
 
 /obj/structure/flora/tree/dead
 	icon = 'icons/obj/fluff/flora/deadtrees.dmi'
@@ -1122,7 +1126,7 @@
 
 /obj/structure/flora/rock/volcano/Initialize(mapload)
 	. = ..()
-	icon_state = "[base_icon_state]_[rand(1, 5)]"
+	icon_state = "[base_icon_state]_[rand(1, 4)]"
 	update_appearance()
 
 /obj/structure/flora/rock/volcano/update_overlays()

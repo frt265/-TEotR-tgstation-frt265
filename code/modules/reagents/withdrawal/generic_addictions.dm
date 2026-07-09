@@ -294,6 +294,7 @@
 	medium_withdrawal_moodlet = /datum/mood_event/nicotine_withdrawal_moderate
 	severe_withdrawal_moodlet = /datum/mood_event/nicotine_withdrawal_severe
 
+/*  NOVA EDIT REMOVAL START - MOVED TO MODULAR.
 /datum/addiction/nicotine/withdrawal_enters_stage_1(mob/living/carbon/affected_carbon, seconds_per_tick)
 	. = ..()
 	affected_carbon.set_jitter_if_lower(10 SECONDS * seconds_per_tick)
@@ -309,3 +310,4 @@
 	affected_carbon.set_jitter_if_lower(30 SECONDS * seconds_per_tick)
 	if(SPT_PROB(5, seconds_per_tick))
 		affected_carbon.emote("cough")
+*/ //  NOVA EDIT REMOVAL END

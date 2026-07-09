@@ -34,7 +34,7 @@
 /obj/item/clothing/under/blacktango : /obj/item/clothing/under/dress/blacktango
 /obj/item/clothing/under/stripeddress : /obj/item/clothing/under/dress/striped
 /obj/item/clothing/under/sailordress : /obj/item/clothing/under/dress/sailor
-/obj/item/clothing/under/eveninggown : /obj/item/clothing/under/dress/eveninggown
+/obj/item/clothing/under/redeveninggown : /obj/item/clothing/under/dress/eveninggown
 /obj/item/clothing/under/plaid_skirt : /obj/item/clothing/under/dress/skirt/plaid
 /obj/item/clothing/under/plaid_skirt/blue : /obj/item/clothing/under/dress/skirt/plaid/blue
 /obj/item/clothing/under/plaid_skirt/purple : /obj/item/clothing/under/dress/skirt/plaid/purple
@@ -145,8 +145,8 @@
 /obj/item/clothing/under/rank/chief_medical_officer : /obj/item/clothing/under/rank/medical/chief_medical_officer
 /obj/item/clothing/under/rank/chief_medical_officer/skirt : /obj/item/clothing/under/rank/medical/chief_medical_officer/skirt
 /obj/item/clothing/under/rank/medical/doctor/blue : /obj/item/clothing/under/rank/medical/scrubs/blue
-/obj/item/clothing/under/rank/medical/doctor/blue : /obj/item/clothing/under/rank/medical/scrubs/green
-/obj/item/clothing/under/rank/medical/doctor/blue : /obj/item/clothing/under/rank/medical/scrubs/purple
+/obj/item/clothing/under/rank/medical/doctor/green : /obj/item/clothing/under/rank/medical/scrubs/green
+/obj/item/clothing/under/rank/medical/doctor/purple : /obj/item/clothing/under/rank/medical/scrubs/purple
 /obj/item/clothing/under/rank/geneticist : /obj/item/clothing/under/rank/rnd/geneticist
 /obj/item/clothing/under/rank/geneticist/skirt : /obj/item/clothing/under/rank/rnd/geneticist/skirt
 /obj/item/clothing/under/rank/virologist : /obj/item/clothing/under/rank/medical/virologist

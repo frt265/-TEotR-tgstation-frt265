@@ -2,6 +2,7 @@ import { Section, Stack } from 'tgui-core/components';
 
 import { useBackend } from '../backend';
 import { Window } from '../layouts';
+import { Rules } from './AntagInfoRules'; // NOVA EDIT ADDITION
 import { type Objective, ObjectivePrintout } from './common/Objectives';
 
 type Info = {
@@ -9,17 +10,23 @@ type Info = {
   objectives: Objective[];
 };
 
+// NOVA EDIT increase height from 250 to 500
 export const AntagInfoGeneric = (props) => {
   const { data } = useBackend<Info>();
   const { antag_name, objectives } = data;
   return (
-    <Window width={620} height={250}>
+    <Window width={620} height={500}>
       <Window.Content>
         <Section scrollable fill>
           <Stack vertical>
             <Stack.Item textColor="red" fontSize="20px">
               You are the {antag_name}!
             </Stack.Item>
+            {/* NOVA EDIT ADDITION START */}
+            <Stack.Item>
+              <Rules />
+            </Stack.Item>
+            {/* NOVA EDIT ADDITION END */}
             <Stack.Item>
               <ObjectivePrintout objectives={objectives} />
             </Stack.Item>

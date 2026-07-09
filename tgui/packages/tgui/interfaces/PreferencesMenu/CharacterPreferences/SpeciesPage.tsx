@@ -290,10 +290,20 @@ function SpeciesPageInner(props: SpeciesPageInnerProps) {
           <Stack.Item>
             <Box height="calc(100vh - 170px)" overflowY="auto" pr={3}>
               {species.map(([speciesKey, species]) => {
-                return (
+                // NOVA EDIT START - Nova star-only species
+                let speciesPage = (
                   <Button
                     key={speciesKey}
-                    onClick={() => setSpecies(speciesKey)}
+                    onClick={() => {
+                      if (
+                        data.nova_star_restrictions &&
+                        species.nova_stars_only &&
+                        !data.is_nova_star
+                      ) {
+                        return;
+                      }
+                      setSpecies(speciesKey);
+                    }}
                     selected={
                       data.character_preferences.misc.species === speciesKey
                     }
@@ -310,6 +320,20 @@ function SpeciesPageInner(props: SpeciesPageInnerProps) {
                     />
                   </Button>
                 );
+                if (
+                  data.nova_star_restrictions &&
+                  species.nova_stars_only &&
+                  !data.is_nova_star
+                ) {
+                  const tooltipContent =
+                    species.name +
+                    ' - You need to be a Nova star to select this race, apply today!';
+                  speciesPage = (
+                    <Tooltip content={tooltipContent}>{speciesPage}</Tooltip>
+                  );
+                }
+                return speciesPage;
+                // NOVA EDIT END
               })}
             </Box>
           </Stack.Item>
@@ -329,7 +353,9 @@ function SpeciesPageInner(props: SpeciesPageInnerProps) {
                         )
                       }
                     >
-                      <Section title="Description">
+                      {/* NOVA EDIT CHANGE START - Adds maxHeight, scrollable*/}
+                      <Section title="Description" maxHeight="14vh" scrollable>
+                        {/* NOVA EDIT CHANGE END */}
                         {currentSpecies.desc}
                       </Section>
 
@@ -350,7 +376,11 @@ function SpeciesPageInner(props: SpeciesPageInnerProps) {
 
               <Box mt={1}>
                 <Section title="Lore">
-                  <BlockQuote>
+                  <BlockQuote /* NOVA EDIT START - scrollable lore */
+                    overflowY="auto"
+                    maxHeight="45vh"
+                    mr={-1} /* NOVA EDIT END */
+                  >
                     {currentSpecies.lore.map((text, index) => (
                       <Box key={index} maxWidth="100%">
                         {text}

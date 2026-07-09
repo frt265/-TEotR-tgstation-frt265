@@ -13,8 +13,10 @@
 		the camouflage system has to recalibrate to its surroundings. However, once calibrated, it is invisible to the naked eye."
 
 /obj/item/implanter/stealth
-	name = "implanter (stealth)"
+	name = "implanter" // NOVA EDIT , was originaly implanter (stealth)
 	imp_type = /obj/item/implant/stealth
+	special_desc_requirement = EXAMINE_CHECK_SYNDICATE // NOVA EDIT
+	special_desc = "A Syndicate implanter used for a stealth implant" // NOVA EDIT
 
 //Box Object
 
@@ -23,7 +25,7 @@
 	desc = "It's so normal that you didn't notice it before."
 	icon_state = "agentbox"
 	max_integrity = 1 // "This dumb box shouldn't take more than one hit to make it vanish."
-	move_speed_multiplier = 0.5
+	move_speed_multiplier = parent_type::move_speed_multiplier // NOVA EDIT CHANGE - nerfs agent box granting you movement speed when hurt or wounded - ORIGINAL: move_speed_multiplier = 0.5
 	enable_door_overlay = FALSE
 
 /obj/structure/closet/cardboard/agent/Initialize(mapload)

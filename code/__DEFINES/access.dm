@@ -349,7 +349,8 @@
 	ACCESS_VIROLOGY, \
 	ACCESS_WEAPONS, \
 	ACCESS_XENOBIOLOGY, \
-)
+	ACCESS_BARBER, \
+) // NOVA EDIT ADDITION
 
 /// Command staff/secure accesses, think bridge/armoury, ai_upload, notably access to modify ID cards themselves. Do not use direct, access via SSid_access.get_flag_access_list(ACCESS_FLAG_COMMAND)
 #define COMMAND_ACCESS list( \
@@ -376,7 +377,7 @@
 	ACCESS_HOP, \
 	ACCESS_QM, \
 	ACCESS_RD, \
-)
+) // NOVA EDIT - Added ACCESS_CE and ACCESS_CMO to PRIVATE_COMMAND_ACCESS
 
 /// Captains private rooms. Do not use direct, access via SSid_access.get_flag_access_list(ACCESS_FLAG_CAPTAIN)
 #define CAPTAIN_ACCESS list( \
@@ -446,6 +447,7 @@
 	ACCESS_LIBRARY, \
 	ACCESS_SERVICE, \
 	ACCESS_THEATRE, \
+	ACCESS_BARBER,  /* NOVA EDIT ADDITION - Barber */ \
 )
 /// Name for the Security region.
 #define REGION_SECURITY "Security"
@@ -591,6 +593,7 @@
 	/obj/item/modular_computer/pda/atmos = list(REGION_ENGINEERING), \
 	/obj/item/modular_computer/pda/chemist = list(REGION_MEDBAY), \
 	/obj/item/modular_computer/pda/geneticist = list(REGION_RESEARCH), \
+	/obj/item/modular_computer/pda/viro = list(REGION_MEDBAY), \
 )
 
 /// All regions that make up the station area. Helper define to quickly designate a region as part of the station or not. Access via SSid_access.station_regions.

@@ -17,6 +17,7 @@
 	var/color_source = ORGAN_COLOR_INHERIT
 	///Take on the dna/preference from whoever we're gonna be inserted in
 	var/imprint_on_next_insertion = TRUE
+	draw_on_husks = TRUE
 
 /datum/bodypart_overlay/mutant/New(obj/item/organ/attached_organ)
 	. = ..()
@@ -35,9 +36,18 @@
 	if(imprint_on_next_insertion) //We only want this set *once*
 		var/feature_name = receiver.dna.features[feature_key] || receiver.dna.species.mutant_organs[parent.type]
 		if (isnull(feature_name))
+		/* // NOVA EDIT REMOVAL START - Customization
 			stack_trace("[type] has no default feature name for organ [parent.type]!")
 			feature_name = get_consistent_feature_entry(get_global_feature_list()) //fallback to something
-		set_appearance_from_name(feature_name)
+		*/ // NOVA EDIT REMOVAL END
+		// NOVA EDIT ADDITION START
+			if(!set_appearance_from_dna(receiver.dna, limb = parent.bodypart_owner))
+				set_appearance_from_name(receiver.dna.species.mutant_organs[parent.type] || pick(get_global_feature_list()))
+		// NOVA EDIT ADDITION END
+		// NOVA EDIT CHANGE START - Puts the following line in an else block
+		else
+			set_appearance_from_name(feature_name)
+		// NOVA EDIT CHANGE END
 		imprint_on_next_insertion = FALSE
 
 /datum/bodypart_overlay/mutant/get_overlay(layer, obj/item/bodypart/limb)
@@ -124,11 +134,13 @@
 /datum/bodypart_overlay/mutant/proc/inherit_color(obj/item/bodypart/bodypart_owner, force)
 	if(isnull(bodypart_owner))
 		draw_color = null
+		alpha = 255 // NOVA EDIT ADDITION - Mutant bodyparts transparency are based on limb transparency
 		return TRUE
 
 	if(draw_color && !force)
 		return FALSE
 
+	alpha = bodypart_owner.alpha // NOVA EDIT ADDITION - Mutant bodyparts transparency are based on limb transparency
 	switch(color_source)
 		if(ORGAN_COLOR_OVERRIDE)
 			draw_color = override_color(bodypart_owner)

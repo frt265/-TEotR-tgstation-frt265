@@ -30,14 +30,17 @@
 		return FALSE
 	. = ..()
 	if(.)
+		do_tts_message(message, language, message_mods, list(), list())
 		return .
 	if(message_mods[MODE_HEADSET])
 		if(radio)
 			radio.talk_into(src, message, , spans, language, message_mods)
+			do_tts_message(message, language, message_mods, list(), list())
 		return NOPASS
 	else if(message_mods[RADIO_EXTENSION] in GLOB.default_radio_channels)
 		if(radio)
 			radio.talk_into(src, message, message_mods[RADIO_EXTENSION], spans, language, message_mods)
+			do_tts_message(message, language, message_mods, list(), list())
 			return NOPASS
 	return FALSE
 
@@ -61,10 +64,9 @@
 	log_sayverb_talk(message, message_mods, tag = "HOLOPAD in [pad_loc]")
 	ai_holo.say(message, spans = spans, sanitize = FALSE, language = language, message_mods = message_mods)
 
-
 // Make sure that the code compiles with AI_VOX undefined
 #ifdef AI_VOX
-#define VOX_DELAY 600
+#define VOX_DELAY 300 // NOVA EDIT CHANGE - ORIGINAL: 600
 /mob/living/silicon/ai/verb/announcement_help()
 
 	set name = "Announcement Help"
@@ -86,10 +88,10 @@
 	"}
 
 	var/index = 0
-	for(var/word in GLOB.vox_sounds)
+	for(var/word in get_vox_sounds(vox_type)) // NOVA EDIT CHANGE - VOX types - ORIGINAL: for(var/word in GLOB.vox_sounds)
 		index++
 		dat += "<A href='byond://?src=[REF(src)];say_word=[word]'>[capitalize(word)]</A>"
-		if(index != GLOB.vox_sounds.len)
+		if(index != length(get_vox_sounds(vox_type))) // NOVA EDIT CHANGE - VOX types - ORIGINAL: if(index != GLOB.vox_sounds.len)
 			dat += " / "
 
 	var/datum/browser/popup = new(src, "announce_help", "Announcement Help", 500, 400)
@@ -134,7 +136,7 @@
 		if(!word)
 			words -= word
 			continue
-		if(!GLOB.vox_sounds[word])
+		if(!get_vox_sounds(vox_type)[word]) // NOVA EDIT CHANGE - VOX types - ORIGINAL: if(!GLOB.vox_sounds[word])
 			incorrect_words += word
 
 	if(incorrect_words.len)
@@ -162,15 +164,41 @@
 
 	word = LOWER_TEXT(word)
 
+	// NOVA ADDITION BEGIN - Get AI for the vox Type
+	var/turf/ai_turf_as_turf = ai_turf
+	if(!istype(ai_turf_as_turf))
+		return //and prolly throw an error because wtf
+	var/mob/living/silicon/ai/the_AI = null
+	for(var/mob/living/silicon/ai/found_AI in ai_turf_as_turf.contents)
+		if(istype(found_AI))
+			the_AI = found_AI
+	// NOVA ADDITION END
+	// NOVA EDIT CHANGE START
+	/* ORIGINAL:
 	if(GLOB.vox_sounds[word])
 
 		var/sound_file = GLOB.vox_sounds[word]
+	*/
+	var/vox_volume_modifier = 1
+	var/sound_file
+	if(the_AI.get_vox_sounds(the_AI.vox_type)[word])
+		sound_file = the_AI.get_vox_sounds(the_AI.vox_type)[word]
+		// If the vox stuff are disabled, or we failed getting the word from the list, just early return.
+		if(!sound_file)
+			return FALSE
+		switch(the_AI.vox_type)
+			if(VOX_HL)
+				vox_volume_modifier = 0.75
+			if(VOX_MIL)
+				vox_volume_modifier = 0.50 // My poor ears...
+	// NOVA EDIT CHANGE END
 
 	// If there is no single listener, broadcast to everyone in the same z level
 		if(!only_listener)
 			// Play voice for all mobs in the z level
 			for(var/mob/player_mob as anything in GLOB.player_list)
 				var/pref_volume = safe_read_pref(player_mob.client, /datum/preference/numeric/volume/sound_ai_vox)
+				pref_volume *= vox_volume_modifier // NOVA EDIT ADDITION
 				if(HAS_TRAIT(player_mob, TRAIT_DEAF) || !pref_volume)
 					continue
 

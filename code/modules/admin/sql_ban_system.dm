@@ -391,6 +391,7 @@
 				ROLE_MALF,
 				ROLE_NINJA,
 				ROLE_OPERATIVE,
+				ROLE_CLOWN_OPERATIVE,
 				ROLE_OVERTHROW,
 				ROLE_PARADOX_CLONE,
 				ROLE_REV,
@@ -403,7 +404,25 @@
 				ROLE_TRAITOR,
 				ROLE_VOIDWALKER,
 				ROLE_WIZARD,
+				// NOVA EDIT ADDITION START
+				ROLE_BORER,
+				ROLE_ASSAULT_OPERATIVE,
+				// NOVA EDIT ADDITION END
 			),
+			// NOVA EDIT ADDITION START - EXTRA_BANS
+			"Nova Ban Options" = list(
+				BAN_PACIFICATION,
+				BAN_DONOTREVIVE,
+				BAN_RESPAWN,
+				BAN_MOB_CONTROL,
+				BAN_GHOST_ROLE_SPAWNER,
+				BAN_GHOST_TAKEOVER,
+				BAN_EORG,
+				BAN_ANTAGONIST,
+				BAN_OPFOR,
+				BAN_LOOC,
+			),
+			// NOVA EDIT ADDITION END - EXTRA_BANS
 		)
 		for(var/department in long_job_lists)
 			output += "<div class='column'><label class='rolegroup long [ckey(department)]'><input type='checkbox' name='[department]' class='hidden' onClick='header_click_all_checkboxes(this)'>[department]</label><div class='content'>"
@@ -640,8 +659,14 @@
 	var/other_ban_notification = span_boldannounce("Another player sharing your IP or CID has been banned by [usr.client.key] from [is_server_ban ? "the server" : " Roles: [roles_to_ban.Join(", ")]"].\nReason: [reason]</span><br>[span_danger("This ban is [isnull(duration) ? "permanent." : "temporary, it will be removed in [time_message]."] The round ID is [GLOB.round_id].")]")
 
 	notify_all_banned_players(player_ckey, player_ip, player_cid, player_ban_notification, other_ban_notification, is_server_ban, applies_to_admins)
+	// NOVA EDIT ADDITION BEGIN - EXTRA_BANS
+	if(BAN_PACIFICATION in roles_to_ban)
+		var/client/C = GLOB.directory[player_ckey]
+		if(ismob(C.mob))
+			ADD_TRAIT(C.mob, TRAIT_PACIFISM, ROUNDSTART_TRAIT)
+	// NOVA EDIT ADDITION END
 
-	var/datum/admin_help/linked_ahelp_ticket = admin_ticket_log(player_ckey, "[kna] [msg]")
+	var/datum/admin_help/linked_ahelp_ticket = admin_ticket_log(player_ckey, "[kna] [msg]", FALSE) // NOVA EDIT --  Player ticket viewing - original: var/datum/admin_help/linked_ahelp_ticket = admin_ticket_log(player_ckey, "[kna] [msg]")
 
 	if(is_server_ban && linked_ahelp_ticket)
 		linked_ahelp_ticket.Resolve()

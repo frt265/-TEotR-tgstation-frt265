@@ -34,8 +34,14 @@
 	var/obj/item/reagent_containers/beaker = null
 	/// Dispensable_reagents is copypasted in plumbing synthesizers. Please update accordingly. (I didn't make it global because that would limit custom chem dispensers)
 	var/list/dispensable_reagents = list()
-	/// These become available once the manipulator has been upgraded to tier 4 (femto)
+	/// These become available once the manipulator has been upgraded to tier 2 (nano) // NOVA EDIT CHANGE - ORIGINAL: /// These become available once the manipulator has been upgraded to tier 4 (femto)
 	var/list/upgrade_reagents = list()
+	// NOVA EDIT ADDITION BEGIN
+	/// These become available once the manipulator has been upgraded to tier 3 (pico)
+	var/list/upgrade2_reagents = list()
+	/// These become available once the manipulator has been upgraded to tier 4 (femto)
+	var/list/upgrade3_reagents = list()
+	// NOVA EDIT ADDITION END
 	/// These become available once the machine has been emaged
 	var/list/emagged_reagents = list()
 	/// Starting purity of the created reagents
@@ -76,8 +82,16 @@
 		/datum/reagent/sulfur,
 		/datum/reagent/toxin/acid,
 		/datum/reagent/water,
-		/datum/reagent/fuel
+		/datum/reagent/fuel,
 	)
+	// NOVA EDIT ADDITION START - Unusual biochemistry quirk
+	var/static/list/default_dispensable_reagents_nova = list(
+		/datum/reagent/manganese,
+	)
+	// NOVA EDIT ADDITION END
+
+	//NOVA EDIT CHANGE BEGIN - ORIGINAL
+	/*
 	/// The default list of reagents upgrade_reagents
 	var/static/list/default_upgrade_reagents = list(
 		/datum/reagent/acetone,
@@ -95,6 +109,34 @@
 		/datum/reagent/drug/space_drugs,
 		/datum/reagent/toxin
 	)
+	*/
+	var/static/list/default_upgrade_reagents = list(
+		/datum/reagent/fuel/oil,
+		/datum/reagent/ammonia,
+		/datum/reagent/ash,
+	)
+
+	var/static/list/default_upgrade2_reagents = list(
+		/datum/reagent/acetone,
+		/datum/reagent/phenol,
+		/datum/reagent/diethylamine,
+		/datum/reagent/saltpetre,
+	)
+
+	var/static/list/default_upgrade3_reagents = list(
+		/datum/reagent/medicine/mine_salve,
+		/datum/reagent/toxin,
+	)
+
+	var/static/list/default_emagged_reagents = list(
+		/datum/reagent/drug/space_drugs,
+		/datum/reagent/toxin/plasma,
+		/datum/reagent/consumable/frostoil,
+		/datum/reagent/toxin/carpotoxin,
+		/datum/reagent/toxin/histamine,
+		/datum/reagent/medicine/morphine,
+	)
+	//NOVA EDIT CHANGE END
 
 /obj/machinery/chem_dispenser/Initialize(mapload)
 	if(dispensable_reagents != null && !dispensable_reagents.len)
@@ -106,6 +148,18 @@
 		upgrade_reagents = default_upgrade_reagents
 	if(upgrade_reagents)
 		upgrade_reagents = sort_list(upgrade_reagents, GLOBAL_PROC_REF(cmp_reagents_asc))
+	//NOVA EDIT ADDITION BEGIN
+	if(upgrade2_reagents != null && !upgrade2_reagents.len)
+		upgrade2_reagents = default_upgrade2_reagents
+	if(upgrade2_reagents)
+		upgrade2_reagents = sort_list(upgrade2_reagents, GLOBAL_PROC_REF(cmp_reagents_asc))
+	if(upgrade3_reagents != null && !upgrade3_reagents.len)
+		upgrade3_reagents = default_upgrade3_reagents
+	if(upgrade3_reagents)
+		upgrade3_reagents = sort_list(upgrade3_reagents, GLOBAL_PROC_REF(cmp_reagents_asc))
+	if(dispensable_reagents)
+		dispensable_reagents += default_dispensable_reagents_nova
+	//NOVA EDIT ADDITION END
 
 	if(emagged_reagents != null && !emagged_reagents.len)
 		emagged_reagents = default_emagged_reagents
@@ -395,6 +449,17 @@
 			if(is_operational)
 				recording_recipe = null
 				return TRUE
+		//NOVA EDIT ADDITION BEGIN - CHEMISTRY QOL
+		if("custom_amount")
+			if(!beaker)
+				to_chat(usr, span_warning("Insert a container first!"))
+				return
+			if(customTransferAmount)
+				transferAmounts -= customTransferAmount
+			customTransferAmount = clamp(input(usr, "Please enter your desired transfer amount.", "Transfer amount", 0) as num|null, 0, beaker.volume)
+			transferAmounts += customTransferAmount
+			return TRUE
+		//NOVA EDIT ADDITION END
 
 		if("reaction_lookup")
 			if(beaker)
@@ -423,6 +488,12 @@
 /obj/machinery/chem_dispenser/item_interaction(mob/living/user, obj/item/tool, list/modifiers)
 	if(!tool.can_insert_container(user, src))
 		return NONE
+	//NOVA EDIT ADDITION START - CHEMISTRY QOL
+	var/obj/item/reagent_containers/container = tool
+	if(customTransferAmount)
+		transferAmounts -= customTransferAmount
+	transferAmounts = container.possible_transfer_amounts
+	//NOVA EDIT ADDITION END
 	if(!replace_beaker(user, tool))
 		return ITEM_INTERACT_BLOCKING
 
@@ -466,10 +537,28 @@
 		recharge_amount *= capacitor.tier
 		parts_rating += capacitor.tier
 	for(var/datum/stock_part/servo/servo in component_parts)
+		/* NOVA EDIT - ORIGINAL
 		if (servo.tier > 3)
 			dispensable_reagents |= upgrade_reagents
 		else
 			dispensable_reagents -= upgrade_reagents
+		*/
+		//NOVA EDIT START
+		if (servo.tier > 1)
+			dispensable_reagents |= upgrade_reagents
+		else
+			dispensable_reagents -= upgrade_reagents
+
+		if (servo.tier > 2)
+			dispensable_reagents |= upgrade2_reagents
+		else
+			dispensable_reagents -= upgrade2_reagents
+
+		if (servo.tier > 3)
+			dispensable_reagents |= upgrade3_reagents
+		else
+			dispensable_reagents -= upgrade3_reagents
+		//NOVA EDIT END
 		parts_rating += servo.tier
 	power_cost = max(new_power_cost, 0.1 KILO WATTS)
 
@@ -617,6 +706,23 @@
 		/datum/reagent/consumable/tonic,
 		/datum/reagent/water,
 	)
+	//NOVA EDIT ADDITION BEGIN
+	var/static/list/drink_upgrade_reagents = list(
+		/datum/reagent/consumable/applejuice,
+		/datum/reagent/consumable/pumpkinjuice,
+		/datum/reagent/consumable/vanilla
+	)
+	var/static/list/drink_upgrade2_reagents = list(
+		/datum/reagent/consumable/banana,
+		/datum/reagent/consumable/berryjuice,
+		/datum/reagent/consumable/blumpkinjuice
+	)
+	var/static/list/drink_upgrade3_reagents = list(
+		/datum/reagent/consumable/watermelonjuice,
+		/datum/reagent/consumable/peachjuice,
+		/datum/reagent/consumable/sol_dry
+	)
+	//NOVA EDIT ADDITION END
 	upgrade_reagents = null
 	/// The default list of emagged reagents dispensable by the soda dispenser
 	var/static/list/drink_emagged_reagents = list(
@@ -628,10 +734,24 @@
 	base_reagent_purity = 0.5
 
 /obj/machinery/chem_dispenser/drinks/Initialize(mapload)
-	if(dispensable_reagents != null && !dispensable_reagents.len)
+	if(type == /obj/machinery/chem_dispenser/drinks || type == /obj/machinery/chem_dispenser/drinks/fullupgrade || upgrade_reagents != null && !upgrade_reagents.len) //NOVA EDIT CHANGE - if(dispensable_reagents != null && !dispensable_reagents.len)
 		dispensable_reagents = drinks_dispensable_reagents
 	if(emagged_reagents != null && !emagged_reagents.len)
 		emagged_reagents = drink_emagged_reagents
+	//NOVA EDIT ADDITION BEGIN
+	if(upgrade_reagents != null && !upgrade_reagents.len)
+		upgrade_reagents = drink_upgrade_reagents
+	if(upgrade_reagents)
+		upgrade_reagents = sort_list(upgrade_reagents, GLOBAL_PROC_REF(cmp_reagents_asc))
+	if(upgrade2_reagents != null && !upgrade2_reagents.len)
+		upgrade2_reagents = drink_upgrade2_reagents
+	if(upgrade2_reagents)
+		upgrade2_reagents = sort_list(upgrade2_reagents, GLOBAL_PROC_REF(cmp_reagents_asc))
+	if(upgrade3_reagents != null && !upgrade3_reagents.len)
+		upgrade3_reagents = drink_upgrade3_reagents
+	if(upgrade3_reagents)
+		upgrade3_reagents = sort_list(upgrade3_reagents, GLOBAL_PROC_REF(cmp_reagents_asc))
+	//NOVA EDIT ADDITION END
 	. = ..()
 	AddElement(/datum/element/simple_rotation)
 
@@ -695,6 +815,7 @@
 		/datum/reagent/consumable/ethanol/rice_beer,
 		/datum/reagent/consumable/ethanol/rum,
 		/datum/reagent/consumable/ethanol/sake,
+		/datum/reagent/consumable/ethanol/synthanol, // NOVA EDIT
 		/datum/reagent/consumable/ethanol/tequila,
 		/datum/reagent/consumable/ethanol/triple_sec,
 		/datum/reagent/consumable/ethanol/vermouth,
@@ -704,6 +825,8 @@
 		/datum/reagent/consumable/ethanol/yuyake,
 	)
 	upgrade_reagents = null
+	upgrade2_reagents = null //NOVA EDIT
+	upgrade3_reagents = null //NOVA EDIT
 	/// The default list of emagged reagents dispensable by the beer dispenser
 	var/static/list/beer_emagged_reagents = list(
 		/datum/reagent/consumable/ethanol,
@@ -833,7 +956,13 @@
 		/datum/reagent/consumable/liquidelectricity/enriched,
 		/datum/reagent/medicine/c2/synthflesh,
 	)
+	// NOVA EDIT ADDITION START
+	var/static/list/abductor_dispensable_reagents_nova = list(
+		/datum/reagent/manganese,
+	)
+	// NOVA EDIT ADDITION END
 
 /obj/machinery/chem_dispenser/abductor/Initialize(mapload)
 	dispensable_reagents = abductor_dispensable_reagents
 	. = ..()
+	dispensable_reagents += abductor_dispensable_reagents_nova // NOVA EDIT ADDITION - After the parent call so it does not get sorted

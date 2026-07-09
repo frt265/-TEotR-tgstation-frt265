@@ -270,6 +270,8 @@ GLOBAL_LIST_INIT(metal_recipes, list ( \
 	if(get_amount() < cost)
 		user.balloon_alert(user, "need [cost] metal sheets!")
 		return ITEM_INTERACT_BLOCKING
+	var/experience = floor(time * CONSTRUCTION_XP_MULTIPLIER) // NOVA EDIT ADDITION: Construction Skill
+	time *= user.mind?.get_skill_modifier(/datum/skill/construction, SKILL_SPEED_MODIFIER) // NOVA EDIT ADDITION: Construction Skill
 	if(!do_after(user, time, build_on))
 		return ITEM_INTERACT_BLOCKING
 	if(build_on.is_blocked_turf())
@@ -285,6 +287,10 @@ GLOBAL_LIST_INIT(metal_recipes, list ( \
 	else
 		new/obj/structure/girder/displaced(build_on)
 		user.balloon_alert(user, "girder created")
+	// NOVA EDIT ADDITION START: Construction Skill
+	if(experience)
+		user.mind?.adjust_experience(/datum/skill/construction, experience)
+	// NOVA EDIT ADDITION END
 	return ITEM_INTERACT_SUCCESS
 
 /*
@@ -869,6 +875,7 @@ GLOBAL_LIST_INIT(bronze_recipes, list ( \
 		/datum/crafting_recipe/bonespear,
 		/datum/crafting_recipe/bracers,
 		/datum/crafting_recipe/skullhelm,
+		/datum/crafting_recipe/ash_recipe/bone_greaves, // NOVA EDIT ADDITION
 	)
 
 	AddElement(

@@ -17,7 +17,7 @@
 
 /datum/quirk/item_quirk/narcolepsy/add_unique(client/client_source)
 	give_item_to_holder(
-		/obj/item/storage/pill_bottle/prescription_stimulant,
+		stim_medication, // NOVA EDIT CHANGE - Original: /obj/item/storage/pill_bottle/prescription_stimulant,
 		list(
 			LOCATION_BACKPACK,
 			LOCATION_LPOCKET,

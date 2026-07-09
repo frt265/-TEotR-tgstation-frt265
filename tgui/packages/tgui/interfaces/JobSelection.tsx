@@ -38,6 +38,7 @@ type Data = {
   disable_jobs_for_non_observers: BooleanLike;
   priority: BooleanLike;
   round_duration: string;
+  alert_level: { name: string; color: string }; // NOVA EDIT ADDITION - Alert level on jobs menu
 };
 
 type JobEntryProps = {
@@ -185,7 +186,8 @@ export function JobSelection(props) {
   const { shuttle_status, round_duration } = data;
 
   return (
-    <Window width={1012} height={shuttle_status ? 690 : 666 /* Hahahahahaha */}>
+    <Window width={1012} height={shuttle_status ? 916 : 900 /* Hahahahahaha */}>
+      {/* NOVA EDIT CHANGE above - Expand UI for available jobs - ORIGINAL: height={shuttle_status ? 690 : 666 */}
       <Window.Content>
         <Section
           buttons={
@@ -201,6 +203,13 @@ export function JobSelection(props) {
           title={
             <>
               {shuttle_status && <NoticeBox info>{shuttle_status}</NoticeBox>}
+              {
+                /* NOVA EDIT ADDITION START - Alert level on jobs menu */
+                <NoticeBox color={data.alert_level.color}>
+                  The current alert level is: {data.alert_level.name}
+                </NoticeBox>
+                /* NOVA EDIT ADDITION END */
+              }
               <Box as="span" color="label">
                 It is currently {round_duration} into the shift.
               </Box>

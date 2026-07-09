@@ -6,7 +6,8 @@ import { Window } from '../layouts';
 export const KeycardAuth = (props) => {
   const { act, data } = useBackend();
   return (
-    <Window width={375} height={145}>
+    // NOVA EDIT: height 125 -> 190, eng override/firing pin
+    <Window width={375} height={190}>
       <Window.Content>
         <Section>
           <Box>
@@ -39,17 +40,35 @@ export const KeycardAuth = (props) => {
                       content="Red Alert"
                     />
                     <Button
-                      icon="wrench"
+                      icon="id-card-o"
                       fluid
                       onClick={() => act('emergency_maint')}
                       content="Emergency Maintenance Access"
                     />
+                    {/* NOVA EDIT ADDITION START - Engineering Override */}
+                    <Button
+                      icon="wrench"
+                      fluid
+                      onClick={() => act('eng_override')}
+                      content="Engineering Override Access"
+                    />
+                    {/* NOVA EDIT ADDITION END */}
                     <Button
                       icon="meteor"
                       fluid
                       onClick={() => act('bsa_unlock')}
                       content="Bluespace Artillery Unlock"
                     />
+                    {/* NOVA EDIT ADDITION START - Permit Pins */}
+                    {!!data.permit_pins && (
+                      <Button
+                        icon="key"
+                        fluid
+                        onClick={() => act('pin_unrestrict')}
+                        content="Permit-Locked Firing Pin Unrestriction"
+                      />
+                    )}
+                    {/* NOVA EDIT ADDITION END */}
                     <Button
                       icon="key"
                       fluid

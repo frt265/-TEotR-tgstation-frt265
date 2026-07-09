@@ -242,7 +242,7 @@
 			else if(!key)
 				npc_message = "[t_He] [t_is] totally catatonic. The stresses of life in deep-space must have been too much for [t_him]. Any recovery is unlikely."
 			else if(!client)
-				npc_message ="[t_He] [t_has] a blank, absent-minded stare and appears completely unresponsive to anything. [t_He] may snap out of it soon."
+				npc_message = "[t_He] [t_has] a blank, absent-minded stare and [t_has] been completely unresponsive to anything for [round(((world.time - lastclienttime) / (1 MINUTES)),1)] minutes. [t_He] may snap out of it soon." // NOVA EDIT CHANGE - SSD_INDICATOR - ORIGINAL: npc_message ="[t_He] [t_has] a blank, absent-minded stare and appears completely unresponsive to anything. [t_He] may snap out of it soon."
 			if(npc_message)
 				// give some space since this is usually near the end
 				ADD_NEWLINE_IF_NECESSARY(.)
@@ -279,10 +279,58 @@
 	var/hud_info = get_hud_examine_info(user)
 	if(length(hud_info))
 		. += hud_info
-
 	if(isobserver(user))
-		ADD_NEWLINE_IF_NECESSARY(.)
 		. += "<b>Quirks:</b> [get_quirk_string(FALSE, CAT_QUIRK_ALL)]"
+	// NOVA EDIT ADDITION START
+	if(isobserver(user) || user.mind?.can_see_exploitables || user.mind?.has_exploitables_override)
+		var/datum/record/crew/target_records = find_record(get_face_name(get_id_name("")))
+		if(target_records)
+			var/background_text = target_records.background_information
+			var/exploitable_text = target_records.exploitable_information
+			if((length(background_text) > RECORDS_INVISIBLE_THRESHOLD))
+				. += "<a href='byond://?src=[REF(src)];bgrecords=1'>\[View background info\]</a>"
+			if((length(exploitable_text) > RECORDS_INVISIBLE_THRESHOLD) && ((exploitable_text) != EXPLOITABLE_DEFAULT_TEXT))
+				. += "<a href='byond://?src=[REF(src)];exprecords=1'>\[View exploitable info\]</a>"
+
+	if(length(.))
+		. += EXAMINE_SECTION_BREAK // append header to the previous line so it doesn't get a line break added in jointext() later on
+
+	if(gunpointing)
+		. += "<span class='warning'><b>[t_He] [t_is] holding [gunpointing.target.name] at gunpoint with [gunpointing.aimed_gun.name]!</b></span>\n"
+	if(length(gunpointed))
+		for(var/datum/gunpoint/GP in gunpointed)
+			. += "<span class='warning'><b>[GP.source.name] [GP.source.p_are()] holding [t_him] at gunpoint with [GP.aimed_gun.name]!</b></span>\n"
+
+	var/flavor_text_link
+	/// The first 1-FLAVOR_PREVIEW_LIMIT characters in the mob's "flavor_text" DNA feature. FLAVOR_PREVIEW_LIMIT is defined in flavor_defines.dm.
+	var/preview_text = copytext_char((dna.features["flavor_text"]), 1, FLAVOR_PREVIEW_LIMIT)
+	// What examine_tgui.dm uses to determine if flavor text appears as "Obscured".
+	var/face_obscured = (wear_mask && (wear_mask.flags_inv & HIDEFACE)) || (head && (head.flags_inv & HIDEFACE))
+
+	if (!(face_obscured))
+		flavor_text_link = span_notice("[preview_text]... <a href='byond://?src=[REF(src)];lookup_info=open_examine_panel'>\[Look closer?\]</a>")
+	else
+		flavor_text_link = span_notice("<a href='byond://?src=[REF(src)];lookup_info=open_examine_panel'>\[Examine closely...\]</a>")
+	if (flavor_text_link)
+		. += flavor_text_link
+	if (!face_obscured && !HAS_TRAIT(src, TRAIT_UNKNOWN_APPEARANCE) && client?.prefs.read_preference(/datum/preference/text/character_ad))
+		. += span_notice("[t_He] [t_has] an ad in the character directory... <a href='byond://?src=[REF(src)];lookup_info=open_character_ad'>\[Open directory?\]</a>")
+
+	//Temporary flavor text addition:
+	if(temporary_flavor_text)
+		if(length_char(temporary_flavor_text) < TEMPORARY_FLAVOR_PREVIEW_LIMIT)
+			. += span_revennotice("<br>[t_He] look[p_s()] different than usual: [temporary_flavor_text]")
+		else
+			. += span_revennotice("<br>[t_He] look[p_s()] look different than usual: [copytext_char(temporary_flavor_text, 1, TEMPORARY_FLAVOR_PREVIEW_LIMIT)]... <a href='byond://?src=[REF(src)];temporary_flavor=1'>More...</a>")
+
+	. += EXAMINE_SECTION_BREAK
+
+	if (!CONFIG_GET(flag/disable_antag_opt_in_preferences))
+		var/opt_in_status = mind?.get_effective_opt_in_level()
+		if (!isnull(opt_in_status))
+			var/stringified_optin = GLOB.antag_opt_in_strings["[opt_in_status]"]
+			. += span_info("Antag Opt-in Status: <b><font color='[GLOB.antag_opt_in_colors[stringified_optin]]'>[stringified_optin]</font></b>")
+	// NOVA EDIT ADDITION END
 
 	SEND_SIGNAL(src, COMSIG_ATOM_EXAMINE, user, .)
 	if(length(.))
@@ -503,7 +551,6 @@
 
 /mob/living/carbon/human/get_hud_examine_info(mob/living/user)
 	. = list()
-
 	var/perpname = get_face_name(get_id_name(""))
 	var/title = ""
 	if(perpname && (HAS_TRAIT(user, TRAIT_SECURITY_HUD) || HAS_TRAIT(user, TRAIT_MEDICAL_HUD)) && (user.stat == CONSCIOUS || isobserver(user)) && user != src)
@@ -523,6 +570,10 @@
 		else if(HAS_TRAIT(user, TRAIT_SECURITY_HUD))
 			title = separator_hr("Security Analysis")
 			. += get_sechud_examine_info(user, target_record)
+		// NOVA EDIT ADDITION START - EXAMINE RECORDS
+		if(target_record && length(target_record.past_general_records) > RECORDS_INVISIBLE_THRESHOLD)
+			. += "<a href='byond://?src=[REF(src)];hud=[HAS_TRAIT(user, TRAIT_SECURITY_HUD) ? "s" : "m"];genrecords=1;examine_time=[world.time]'>\[View general records\]</a>"
+		// NOVA EDIT ADDITION END - EXAMINE RECORDS
 
 	// applies the separator correctly without an extra line break
 	if(title && length(.))
@@ -548,6 +599,10 @@
 		. += "\[Record Missing\]"
 	. += "<a href='byond://?src=[REF(src)];hud=m;evaluation=1;examine_time=[world.time]'>\[Medical evaluation\]</a>"
 	. += "<a href='byond://?src=[REF(src)];hud=m;quirk=1;examine_time=[world.time]'>\[See quirks\]</a>"
+	//NOVA EDIT ADDITION BEGIN - EXAMINE RECORDS
+	if(target_record && length(target_record.past_medical_records) > RECORDS_INVISIBLE_THRESHOLD)
+		. += "<a href='byond://?src=[REF(src)];hud=m;medrecords=1;examine_time=[world.time]'>\[View medical records\]</a>"
+	//NOVA EDIT ADDITION END - EXAMINE RECORDS
 
 /// Collects information displayed about src when examined by a user with a security HUD.
 /mob/living/carbon/proc/get_sechud_examine_info(mob/living/user, datum/record/crew/target_record)
@@ -570,6 +625,10 @@
 		. += "<a href='byond://?src=[REF(src)];hud=s;add_citation=1;examine_time=[world.time]'>\[Add citation\]</a>\
 			<a href='byond://?src=[REF(src)];hud=s;add_crime=1;examine_time=[world.time]'>\[Add crime\]</a>\
 			<a href='byond://?src=[REF(src)];hud=s;add_note=1;examine_time=[world.time]'>\[Add note\]</a>"
+		// NOVA EDIT ADDITION BEGIN - EXAMINE RECORDS
+		if(target_record && length(target_record.past_security_records) > RECORDS_INVISIBLE_THRESHOLD)
+			. += "<a href='byond://?src=[REF(src)];hud=s;secrecords=1;examine_time=[world.time]'>\[View past security records\]</a>"
+		// NOVA EDIT ADDITION END - EXAMINE RECORDS
 
 /mob/living/carbon/human/examine_more(mob/user)
 	. = ..()
@@ -617,8 +676,16 @@
 
 	var/age_text
 	switch(age)
+		/* NOVA EDIT REMOVAL START
 		if(-INFINITY to 25)
 			age_text = "very young"
+		NOVA EDIT REMOVAL END */
+		// NOVA EDIT ADDITION START - AGE EXAMINE
+		if(-INFINITY to 17)
+			age_text = "too young to be here"
+		if(18 to 25)
+			age_text = "a young adult"
+		// NOVA EDIT ADDITION END - AGE EXAMINE
 		if(26 to 35)
 			age_text = "of adult age"
 		if(36 to 55)

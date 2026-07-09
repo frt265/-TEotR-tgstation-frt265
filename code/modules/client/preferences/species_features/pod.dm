@@ -1,3 +1,4 @@
+/* // NOVA EDIT: REPLACED BY /datum/preference/choiced/mutant_choice/pod_hair IN mutant_parts.dm
 /datum/preference/choiced/species_feature/pod_hair
 	savefile_key = "feature_pod_hair"
 	savefile_identifier = PREFERENCE_CHARACTER
@@ -20,3 +21,4 @@
 	icon_with_hair.blend_color(COLOR_GREEN, ICON_MULTIPLY)
 
 	return icon_with_hair
+*/ // NOVA EDIT REMOVAL END

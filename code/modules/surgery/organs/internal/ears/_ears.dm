@@ -13,6 +13,7 @@
 	now_failing = span_warning("You are unable to hear at all!")
 	now_fixed = span_info("Noise slowly begins filling your ears once more.")
 	low_threshold_cleared = span_info("The ringing in your ears has died down.")
+	visual = FALSE
 
 	/// temporary deafness, measured in seconds. While > 0, the person is unable to hear anything.
 	var/temporary_deafness = 0
@@ -141,7 +142,6 @@
 /obj/item/organ/ears/invincible
 	damage_multiplier = 0
 
-
 /obj/item/organ/ears/cat
 	name = "cat ears"
 	icon = 'icons/obj/clothing/head/costume.dmi'
@@ -152,7 +152,7 @@
 
 	restyle_flags = EXTERNAL_RESTYLE_FLESH
 
-	dna_block = /datum/dna_block/feature/accessory/ears
+	//dna_block = /datum/dna_block/feature/accessory/ears // NOVA EDIT REMOVAL - Customization - We have our own system to handle DNA.
 
 	bodypart_overlay = /datum/bodypart_overlay/mutant/cat_ears
 
@@ -199,6 +199,7 @@
 	sprite_accessory_override = /datum/sprite_accessory/ears/cat/cybernetic
 	organ_flags = ORGAN_ROBOTIC
 	failing_desc = "seems to be broken."
+	restyle_flags = NONE
 
 /obj/item/organ/ears/cat/cybernetic/upgraded
 	name = "cybernetic cat ears"
@@ -247,8 +248,9 @@
 	if (layer != inner_layer)
 		return ..()
 	var/list/all_images = ..()
-	var/mutable_appearance/ear_holder = all_images[1]
-	var/mutable_appearance/inner = ear_holder.overlays[2]
+	//var/mutable_appearance/ear_holder = all_images[1] // NOVA EDIT REMOVAL - Our ear overlays are done differently, see /datum/bodypart_overlay/mutant/get_images()
+	var/mutable_appearance/inner = all_images[2] // NOVA EDIT CHANGE - ORIGINAL: var/mutable_appearance/inner = ear_holder.overlays[2]
+	inner.color = inner_color // NOVA EDIT ADDITION - We do not actually call get_image, instead we call get_singular_image(). This works fine here though.
 	all_images += emissive_appearance(inner.icon, inner.icon_state, limb, layer = inner.layer, alpha = inner.alpha * 0.75)
 	return all_images
 

@@ -17,7 +17,6 @@
 
 		if (get_bodypart(human_user.zone_selected)?.cached_bleed_rate)
 			context[SCREENTIP_CONTEXT_CTRL_LMB] = "Grab limb"
-
 	if (human_user != src)
 		context[SCREENTIP_CONTEXT_RMB] = "Shove"
 

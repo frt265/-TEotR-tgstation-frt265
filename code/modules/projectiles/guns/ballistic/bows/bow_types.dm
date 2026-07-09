@@ -23,7 +23,7 @@
 	slot_flags = ITEM_SLOT_BACK
 	obj_flags = UNIQUE_RENAME
 	accepted_magazine_type = /obj/item/ammo_box/magazine/internal/bow/holy
-	projectile_damage_multiplier = 0.6
+	projectile_damage_multiplier = 1 // NOVA EDIT: ORIGINAL projectile_damage_multiplier = 0.6
 	projectile_speed_multiplier = 1.5
 
 /obj/item/ammo_box/magazine/internal/bow/holy

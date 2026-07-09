@@ -101,6 +101,9 @@
 /// log game events
 /datum/config_entry/flag/log_game
 
+/// log minimap drawing events
+/datum/config_entry/flag/log_minimap_drawing
+
 /// log mech data
 /datum/config_entry/flag/log_mecha
 
@@ -121,6 +124,8 @@
 
 /// log attack messages
 /datum/config_entry/flag/log_attack
+
+/datum/config_entry/flag/log_subtler // log subtler emotes //NOVA EDIT ADDITION
 
 /// log emotes
 /datum/config_entry/flag/log_emote
@@ -321,7 +326,7 @@
 /datum/config_entry/string/banappeals
 
 /datum/config_entry/string/wikiurl
-	default = "https://wiki.tgstation13.org"
+	default = "https://wiki.novasector13.com/index.php" //NOVA EDIT CHANGE - Original: default = "https://wiki.tgstation13.org"
 
 /datum/config_entry/string/forumurl
 	default = "http://tgstation13.org/phpBB/index.php"

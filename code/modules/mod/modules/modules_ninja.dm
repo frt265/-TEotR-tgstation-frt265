@@ -509,7 +509,16 @@
 	UnlinkSelf()
 	ionpulse = TRUE
 	laws = new /datum/ai_laws/ninja_override()
-	model.transform_to(pick(/obj/item/robot_model/syndicate, /obj/item/robot_model/syndicate_medical, /obj/item/robot_model/saboteur))
+	//model.transform_to(pick(/obj/item/robot_model/syndicate, /obj/item/robot_model/syndicate_medical, /obj/item/robot_model/saboteur)) // NOVA EDIT REMOVAL
+	//NOVA EDIT ADDITION START - Role Selection
+	var/list/modelselected = list(
+		"Assault" = "/obj/item/robot_model/ninja",
+		"Medical" = "/obj/item/robot_model/ninja/ninja_medical",
+		"Saboteur" = "/obj/item/robot_model/ninja_saboteur",
+	)
+	var/choice = input(src,"What role do you wish to become?","Select Role") in sort_list(modelselected)
+	model.transform_to(modelselected[choice])
+	//NOVA EDIT ADDITION END
 
 	var/datum/antagonist/ninja/ninja_antag = ninja.mind.has_antag_datum(/datum/antagonist/ninja)
 	if(!ninja_antag)
@@ -547,7 +556,7 @@
 	return COMPONENT_CANCEL_ATTACK_CHAIN
 
 //BOTS, overloads them and causes a explosion
-/mob/living/simple_animal/bot/ninjadrain_act(mob/living/carbon/human/ninja, obj/item/mod/module/hacker/hacking_module)
+/mob/living/basic/bot/ninjadrain_act(mob/living/carbon/human/ninja, obj/item/mod/module/hacker/hacking_module)
 	to_chat(src, span_boldwarning("Your circutry suddenly begins heating up!"))
 	if(!do_after(ninja, 1.5 SECONDS, target = src, hidden = TRUE))
 		return COMPONENT_CANCEL_ATTACK_CHAIN

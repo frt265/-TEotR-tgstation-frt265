@@ -222,6 +222,12 @@ Temporary Items
 /tools/tgs_test/bin/*
 /tools/tgs_test/obj/*
 
+# Autowiki
+/tools/autowiki/node_modules
+
+# TGUI bundles - NOVA EDIT
+/tgui/public/tgui-common.bundle.js
+
 # Built auxtools libraries and intermediate files
 aux*.dll
 libaux*.so

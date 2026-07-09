@@ -173,7 +173,11 @@
 		span_notice("You start fixing some of the dents on [attacked_humanoid == user ? "your" : "[attacked_humanoid]'s"] [affecting.name]."))
 	var/use_delay = repeating ? 1 SECONDS : 0
 	if(user == attacked_humanoid)
-		use_delay = 5 SECONDS
+		use_delay = self_delay // NOVA EDIT CHANGE - ORIGINAL: use_delay = 5 SECONDS
+	// NOVA EDIT ADDITION START
+	else
+		use_delay = other_delay
+	// NOVA EDIT ADDITION END
 
 	if(!use_tool(attacked_humanoid, user, use_delay, volume=50, amount=1))
 		return ITEM_INTERACT_BLOCKING
@@ -261,13 +265,13 @@
 			START_PROCESSING(SSobj, src)
 		else
 			balloon_alert(user, "no fuel!")
-			switched_off(user)
+			switched_off()
 	else
 		playsound(loc, deactivation_sound, 50, TRUE)
-		switched_off(user)
+		switched_off()
 
 /// Switches the welder off
-/obj/item/weldingtool/proc/switched_off(mob/user)
+/obj/item/weldingtool/proc/switched_off()
 	set_welding(FALSE)
 
 	force = 3

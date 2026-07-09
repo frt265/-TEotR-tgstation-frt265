@@ -68,7 +68,7 @@
 	desc = "Pink-haired Quartermaster not doing her job? Replace her with this tireless worker, today! \
 		Contains one MULEbot."
 	cost = CARGO_CRATE_VALUE * 4
-	contains = list(/mob/living/simple_animal/bot/mulebot)
+	contains = list(/mob/living/basic/bot/mulebot)
 	crate_name = "\improper MULEbot Crate"
 	crate_type = /obj/structure/closet/crate/large
 
@@ -299,7 +299,7 @@
 	desc = "A fairly outdated copy of 'Whittle Me This: Fletching for the Modern Spacer', along with some useful materials. \
 		For those looking to get into bow-making, or give their LARPing a little more edge, you can't go wrong. Also has \
 		instructions for making violins."
-	cost = CARGO_CRATE_VALUE * 5
+	cost = CARGO_CRATE_VALUE * 1.5
 	contains = list(
 		/obj/item/book/granter/crafting_recipe/fletching = 1,
 		/obj/item/stack/sheet/mineral/wood = 10,

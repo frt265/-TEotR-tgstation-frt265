@@ -47,6 +47,7 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 
 	if(restyle_flags)
 		RegisterSignal(src, COMSIG_ATOM_RESTYLE, PROC_REF(on_attempt_feature_restyle))
+	color = bodypart_overlay.draw_color // NOVA EDIT ADDITION
 
 /// Some sanity checks, but mostly to check if the person has their preference/dna set to load
 /proc/should_visual_organ_apply_to(obj/item/organ/organpath, mob/living/carbon/target)
@@ -64,6 +65,13 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 
 	if(target.dna.features[feature_key] != SPRITE_ACCESSORY_NONE)
 		return TRUE
+	// NOVA EDIT ADDITION START
+	var/datum/mutant_bodypart/mutant_part = target.dna.mutant_bodyparts[feature_key]
+	if(isnull(mutant_part))
+		return FALSE
+	else if(mutant_part.name != SPRITE_ACCESSORY_NONE)
+		return TRUE
+	// NOVA EDIT ADDITION END
 	return FALSE
 
 ///Update our features after something changed our appearance
@@ -107,7 +115,7 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 	zone = BODY_ZONE_HEAD
 	slot = ORGAN_SLOT_EXTERNAL_HORNS
 
-	dna_block = /datum/dna_block/feature/accessory/horn
+	//dna_block = /datum/dna_block/feature/accessory/horn // NOVA EDIT REMOVAL - Customization - We have our own system to handle DNA.
 	restyle_flags = EXTERNAL_RESTYLE_ENAMEL
 
 	bodypart_overlay = /datum/bodypart_overlay/mutant/horns
@@ -132,7 +140,7 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 	zone = BODY_ZONE_HEAD
 	slot = ORGAN_SLOT_EXTERNAL_FRILLS
 
-	dna_block = /datum/dna_block/feature/accessory/frill
+	//dna_block = /datum/dna_block/feature/accessory/frill // NOVA EDIT REMOVAL - Customization - We have our own system to handle DNA.
 	restyle_flags = EXTERNAL_RESTYLE_FLESH
 
 	bodypart_overlay = /datum/bodypart_overlay/mutant/frills
@@ -173,7 +181,7 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 
 ///Guess what part of the lizard this is?
 /obj/item/organ/snout
-	name = "lizard snout"
+	name = "snout" // NOVA EDIT - ORIGINAL: name = "lizard snout"
 	desc = "Take a closer look at that snout!"
 	icon_state = "snout"
 
@@ -182,7 +190,7 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 
 	external_bodyshapes = BODYSHAPE_SNOUTED
 
-	dna_block = /datum/dna_block/feature/accessory/snout
+	//dna_block = /datum/dna_block/feature/accessory/snout // NOVA EDIT REMOVAL - Customization - We have our own system to handle DNA.
 	restyle_flags = EXTERNAL_RESTYLE_FLESH
 
 	bodypart_overlay = /datum/bodypart_overlay/mutant/snout
@@ -192,6 +200,7 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 	/// Offset to apply to equipment worn on the mouth we give to the head.
 	var/datum/worn_feature_offset/worn_mask_offset
 
+/* // NOVA EDIT REMOVAL START - TODO: This should not be using the global worn offsets, because it will make snouted variations look wrong. For now I'm just commenting this shit out.
 /obj/item/organ/snout/on_bodypart_insert(obj/item/bodypart/head/limb)
 	. = ..()
 	if(isnull(limb.worn_mask_offset))
@@ -206,6 +215,7 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 		QDEL_NULL(worn_mask_offset)
 		limb.worn_mask_offset = null
 	return ..()
+*/ // NOVA EDIT REMOVAL END
 
 /datum/bodypart_overlay/mutant/snout
 	layers = EXTERNAL_ADJACENT
@@ -224,7 +234,7 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 	zone = BODY_ZONE_HEAD
 	slot = ORGAN_SLOT_EXTERNAL_ANTENNAE
 
-	dna_block = /datum/dna_block/feature/accessory/moth_antenna
+	//dna_block = /datum/dna_block/feature/accessory/moth_antenna // NOVA EDIT REMOVAL - Customization - We have our own system to handle DNA.
 	restyle_flags = EXTERNAL_RESTYLE_FLESH
 
 	bodypart_overlay = /datum/bodypart_overlay/mutant/antennae
@@ -306,7 +316,7 @@ Unlike normal organs, we're actually inside a persons limbs at all times
 
 	use_mob_sprite_as_obj_sprite = TRUE
 
-	dna_block = /datum/dna_block/feature/accessory/pod_hair
+	// dna_block = /datum/dna_block/feature/accessory/pod_hair //NOVA CHANGE REMOVAL - Customization
 	restyle_flags = EXTERNAL_RESTYLE_PLANT
 
 	bodypart_overlay = /datum/bodypart_overlay/mutant/pod_hair

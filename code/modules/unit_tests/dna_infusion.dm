@@ -41,6 +41,13 @@
 	for(var/datum/infuser_entry/infuser_entry as anything in assoc_to_values(GLOB.infuser_entries))
 		var/output_organs = infuser_entry.output_organs
 		var/mob/living/carbon/human/lab_rat = allocate(/mob/living/carbon/human/consistent)
+		// NOVA EDIT ADDITION START - Customization
+		lab_rat.dna.mutant_bodyparts[FEATURE_MOTH_ANTENNAE] = build_mutant_part("Plain")
+		lab_rat.dna.mutant_bodyparts[FEATURE_TAIL] = build_mutant_part("Light Tiger")
+		lab_rat.dna.mutant_bodyparts[FEATURE_SNOUT] = build_mutant_part("Sharp + Light")
+		lab_rat.dna.mutant_bodyparts[FEATURE_HORNS] = build_mutant_part("Simple")
+		lab_rat.dna.mutant_bodyparts[FEATURE_FRILLS] = build_mutant_part("Aquatic")
+		// NOVA EDIT END
 		var/list/obj/item/organ/inserted_organs = list()
 
 		// Attempt to insert entire list of mutant organs for the given infusion_entry.

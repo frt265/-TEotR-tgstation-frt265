@@ -121,34 +121,6 @@
 	..()
 	new /obj/item/storage/belt/security/full(src)
 
-/obj/structure/closet/secure_closet/security/cargo
-
-/obj/structure/closet/secure_closet/security/cargo/PopulateContents()
-	..()
-	new /obj/item/clothing/accessory/armband/cargo(src)
-	new /obj/item/encryptionkey/headset_cargo(src)
-
-/obj/structure/closet/secure_closet/security/engine
-
-/obj/structure/closet/secure_closet/security/engine/PopulateContents()
-	..()
-	new /obj/item/clothing/accessory/armband/engine(src)
-	new /obj/item/encryptionkey/headset_eng(src)
-
-/obj/structure/closet/secure_closet/security/science
-
-/obj/structure/closet/secure_closet/security/science/PopulateContents()
-	..()
-	new /obj/item/clothing/accessory/armband/science(src)
-	new /obj/item/encryptionkey/headset_sci(src)
-
-/obj/structure/closet/secure_closet/security/med
-
-/obj/structure/closet/secure_closet/security/med/PopulateContents()
-	..()
-	new /obj/item/clothing/accessory/armband/medblue(src)
-	new /obj/item/encryptionkey/headset_med(src)
-
 /obj/structure/closet/secure_closet/detective
 	name = "\improper detective's cabinet"
 	icon_state = "cabinet"
@@ -163,13 +135,13 @@
 	..()
 	new /obj/item/storage/box/evidence(src)
 	new /obj/item/radio/headset/headset_sec(src)
-	new /obj/item/detective_scanner(src)
+	// new /obj/item/detective_scanner(src) // NOVA EDIT REMOVAL
 	new /obj/item/flashlight/seclite(src)
 	new /obj/item/holosign_creator/security(src)
 	new /obj/item/reagent_containers/spray/pepper(src)
 	new /obj/item/clothing/suit/armor/vest/det_suit(src)
-	new /obj/item/storage/belt/holster/detective/full(src)
-	new /obj/item/pinpointer/crew(src)
+	new /obj/item/toy/crayon/white(src) // NOVA EDIT CHANGE - ORIGINAL: /obj/item/storage/belt/holster/detective/full(src)
+	//new /obj/item/pinpointer/crew(src) // NOVA EDIT REMOVAL - Added to detective outfit backpack instead
 	new /obj/item/binoculars(src)
 	new /obj/item/storage/box/rxglasses/spyglasskit(src)
 	new /obj/item/clothing/head/fedora/inspector_hat(src)
@@ -188,6 +160,9 @@
 	anchored = TRUE
 	req_one_access = list(ACCESS_BRIG)
 	var/id = null
+
+/obj/structure/closet/secure_closet/brig/holodeck
+	req_one_access = COMMON_ACCESS
 
 /obj/structure/closet/secure_closet/brig/genpop
 	name = "genpop storage locker"
@@ -265,7 +240,6 @@
 
 /obj/structure/closet/secure_closet/armory1
 	name = "armory armor locker"
-	icon_state = "armory"
 	req_access = list(ACCESS_ARMORY)
 
 /obj/structure/closet/secure_closet/armory1/PopulateContents()

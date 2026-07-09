@@ -59,6 +59,7 @@
 		/obj/item/reagent_containers/syringe = 1,
 		/obj/effect/spawner/random/entertainment/cigar = 1,
 		/obj/item/stack/ore/gold = 1,
+		/obj/item/disk/neuroware/maintenance = 1, // NOVA EDIT ADDITION - Neuroware
 	)
 /obj/effect/spawner/random/trash/deluxe_garbage/Initialize(mapload)
 	if(mapload)
@@ -152,6 +153,20 @@
 		/obj/item/popsicle_stick = 1,
 		/obj/item/trash/ready_donk = 1,
 		/obj/item/trash/tray = 1,
+		// NOVA EDIT START: modular food trash (canned goods wit no canned goods)
+		/obj/item/trash/can/food/tuna = 1,
+		/obj/item/trash/empty_food_tray = 1,
+		/obj/item/trash/empty_side_pack/moth = 1,
+		/obj/item/trash/empty_side_pack/nt = 1,
+		/obj/item/trash/empty_side_pack/tizira = 1,
+		/obj/item/trash/empty_side_pack/yangyu = 1,
+		/obj/item/trash/vendor_trash/rice_crackers = 1,
+		/obj/item/trash/vendor_trash/mochi_ice_cream = 1,
+		/obj/item/trash/vendor_trash/mothmallow = 1,
+		/obj/item/trash/vendor_trash/moth_bag = 1,
+		/obj/item/trash/vendor_trash/lizard_bag = 1,
+		/obj/item/trash/vendor_trash/lizard_box = 1,
+		// NOVA EDIT END
 	)
 
 /obj/effect/spawner/random/trash/botanical_waste

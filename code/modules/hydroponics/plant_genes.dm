@@ -295,6 +295,14 @@
 /datum/plant_gene/trait/slip/proc/handle_slip(obj/item/food/grown/our_plant, mob/slipped_target)
 	SEND_SIGNAL(our_plant, COMSIG_PLANT_ON_SLIP, slipped_target)
 
+/// Prevents instability from being changed BY cross-pollination.
+/datum/plant_gene/trait/safe_instability
+	name = "Conserved Genetics"
+	description = "With highly conserved genetics, this plant doesn't lose or gain instability in cross-pollination."
+	icon = FA_ICON_SEEDLING
+	rate = 1
+	mutability_flags = PLANT_GENE_REMOVABLE | PLANT_GENE_MUTATABLE | PLANT_GENE_GRAFTABLE
+
 /*
  * Cell recharging trait. Charges all mob's power cells to (potency*rate)% mark when eaten.
  * Generates sparks on squash.
@@ -663,7 +671,7 @@
 	if(living_target.reagents && living_target.can_inject())
 		var/injecting_amount = max(1, our_seed.potency * 0.2) // Minimum of 1, max of 20
 		our_plant.reagents.trans_to(living_target, injecting_amount, methods = INJECT)
-		to_chat(target, span_danger("You are pricked by [our_plant]!"))
+		to_chat(target, "<span class='danger'>You are pricked by [our_plant]!</span>")
 		log_combat(our_plant, living_target, "pricked and attempted to inject reagents from [our_plant] to [living_target]. Last touched by: [our_plant.fingerprintslast].")
 		our_plant.investigate_log("pricked and injected [key_name(living_target)] and injected [injecting_amount] reagents at [AREACOORD(living_target)]. Last touched by: [our_plant.fingerprintslast].", INVESTIGATE_BOTANY)
 

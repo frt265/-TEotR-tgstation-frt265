@@ -49,6 +49,7 @@
 //food/drink crafting defines
 #define CAT_FOOD "Foods"
 	// cuisine categories
+	#define CUISINE_HEMOPHAGE "Hemophage" // NOVA EDIT ADDITION
 	#define CUISINE_ITALIAN "Italian"
 	#define CUISINE_JAPANESE "Japanese"
 	#define CUISINE_LIZARD "Lizard"
@@ -56,6 +57,7 @@
 	#define CUISINE_MEXICAN "Mexican"
 	#define CUISINE_MOTHIC "Mothic"
 	#define CUISINE_TERRAN "Terran" // catch-all for earth food that we don't have a more specific category for
+	#define CUISINE_TESHARI "Teshari" // NOVA EDIT ADDITION
 	// dish categories
 	#define DISH_BREAD "Bread"
 	#define DISH_BURGER "Burger"

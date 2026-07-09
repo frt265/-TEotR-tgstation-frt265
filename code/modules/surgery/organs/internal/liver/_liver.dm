@@ -1,6 +1,6 @@
 #define LIVER_DEFAULT_TOX_TOLERANCE 3 //amount of toxins the liver can filter out
 #define LIVER_DEFAULT_TOX_RESISTANCE 1 //lower values lower how harmful toxins are to the liver
-#define LIVER_FAILURE_STAGE_SECONDS 60 //amount of seconds before liver failure reaches a new stage
+#define LIVER_FAILURE_STAGE_SECONDS 180 //amount of seconds before liver failure reaches a new stage // NOVA EDIT CHANGE - Original: 60
 
 /obj/item/organ/liver
 	name = "liver"
@@ -20,6 +20,8 @@
 	cell_line = CELL_LINE_ORGAN_LIVER
 	cells_minimum = 1
 	cells_maximum = 2
+
+	visual = FALSE
 
 	/// Affects how much damage the liver takes from alcohol
 	var/alcohol_tolerance = ALCOHOL_RATE
@@ -390,5 +392,5 @@
 		owner.reagents.convert_reagent(reagent.type, convert_into, ethanol_conversion)
 
 #undef LIVER_DEFAULT_TOX_TOLERANCE
-#undef LIVER_DEFAULT_TOX_RESISTANCE
+//#undef LIVER_DEFAULT_TOX_RESISTANCE // NOVA EDIT REMOVAL - Needed in modular
 #undef LIVER_FAILURE_STAGE_SECONDS

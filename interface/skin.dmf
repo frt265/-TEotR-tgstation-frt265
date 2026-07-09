@@ -18,7 +18,7 @@ window "mainwindow"
 		is-default = true
 		saved-params = "pos;size;is-minimized;is-maximized"
 		statusbar = false
-		icon = 'icons\\ui\\common\\tg_32.png'
+		icon = 'modular_nova\\master_files\\icons\\ui_icons\\common\\nova_logo_32.png'
 		macro = "default"
 	elem "split"
 		type = CHILD
@@ -76,8 +76,8 @@ window "mapwindow"
 		is-default = true
 		right-click = true
 		saved-params = "zoom;letterbox;zoom-mode"
-		style = ".center { text-align: center; } .maptext { font-family: 'Small Fonts'; font-size: 7px; -dm-text-outline: 1px black; color: white; line-height: 1.1; } .command_headset { font-weight: bold;\tfont-size: 8px; } .context { font-family: 'Small Fonts'; font-size: 8px; -dm-text-outline: 1px black; }  .subcontext { font-family: 'Small Fonts'; font-size: 6px; line-height: 0.75; } .small { font-size: 6px; } .big { font-size: 8px; } .reallybig { font-size: 8px; } .extremelybig { font-size: 8px; } .greentext { color: #00FF00; font-size: 7px; } .redtext { color: #FF0000; font-size: 7px; } .clown { color: #FF69Bf; font-size: 7px;  font-weight: bold; } .his_grace { color: #15D512; } .hypnophrase { color: #0d0d0d; font-weight: bold; } .yell { font-weight: bold; } .italics { font-size: 6px; }"
-	elem "status_bar"
+				style = ".center { text-align: center; } .maptext { font-family: 'Small Fonts'; font-size: 7px; -dm-text-outline: 1px black; color: white; line-height: 1.1; } .command_headset { font-weight: bold;\tfont-size: 8px; } .context { font-family: 'Small Fonts'; font-size: 8px; -dm-text-outline: 1px black; }  .subcontext { font-family: 'Small Fonts'; font-size: 6px; line-height: 0.75; } .small { font-size: 6px; } .big { font-size: 8px; } .reallybig { font-size: 8px; } .extremelybig { font-size: 8px; } .greentext { color: #00FF00; font-size: 7px; } .redtext { color: #FF0000; font-size: 7px; } .clown { color: #FF69Bf; font-size: 7px;  font-weight: bold; } .his_grace { color: #15D512; } .hypnophrase { color: #0d0d0d; font-weight: bold; } .yell { font-weight: bold; } .italics { font-size: 6px; }"
+    elem "status_bar"
 		type = LABEL
 		pos = 0,470
 		size = 128x10
@@ -89,6 +89,17 @@ window "mapwindow"
 		saved-params = ""
 		text = ""
 		align = left
+    elem "nova_title_browser"
+		type = BROWSER
+		pos = 0,0
+		size = 640x480
+		anchor1 = 0,0
+		anchor2 = 100,100
+		background-color = none
+		is-visible = false
+		is-disabled = true
+		saved-params = ""
+		auto-format = false
 
 window "info_and_buttons"
 	elem "info_and_buttons"
@@ -178,6 +189,16 @@ window "infobuttons"
 		saved-params = "is-checked"
 		text = "Reconnect"
 		command = ".reconnect"
+	elem "nova-connect-to-relay"
+		type = BUTTON
+		pos = 461,5
+		size = 95x27
+		anchor1 = 71,0
+		anchor2 = 85,100
+		background-color = none
+		saved-params = "is-checked"
+		text = "Use Relay"
+		command = "connect-to-relay"
 	elem "chat"
 		type = BUTTON
 		pos = 560,5

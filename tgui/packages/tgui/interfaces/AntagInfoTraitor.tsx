@@ -3,6 +3,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { Window } from '../layouts';
+import { Rules } from './AntagInfoRules'; // NOVA EDIT ADDITION
 import { type Objective, ObjectivePrintout } from './common/Objectives';
 
 const allystyle = {
@@ -46,6 +47,13 @@ const IntroductionSection = (props) => {
         <Stack.Item fontSize="25px">{intro}</Stack.Item>
         <Stack.Item grow>
           <ObjectivePrintout objectives={objectives} />
+          {/* NOVA EDIT ADDITION START */}
+          <Stack.Item grow>
+            <Stack.Item>
+              <Rules />
+            </Stack.Item>
+          </Stack.Item>
+          {/* NOVA EDIT ADDITION END */}
         </Stack.Item>
       </Stack>
     </Section>
@@ -181,11 +189,12 @@ const CodewordsSection = (props) => {
   );
 };
 
+// NOVA EDIT: change height from 580 to 650
 export const AntagInfoTraitor = (props) => {
   const { data } = useBackend<Info>();
   const { theme, given_uplink } = data;
   return (
-    <Window width={620} height={580} theme={theme}>
+    <Window width={620} height={650} theme={theme}>
       <Window.Content>
         <Stack vertical fill>
           <Stack.Item grow>

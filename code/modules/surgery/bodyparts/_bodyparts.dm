@@ -49,8 +49,6 @@
 	var/is_invisible = FALSE
 	///The ID of a species used to generate the icon. Needs to match the icon_state portion in the limbs file!
 	var/limb_id = SPECIES_HUMAN
-	///ID of a species to use as an override for species-based biological logic, such as what species to pull the meat from, if our limb_id doesn't match
-	var/species_id = null
 	//Defines what sprite the limb should use if it is also sexually dimorphic.
 	var/limb_gender = "m"
 	///Is there a sprite difference between male and female?
@@ -297,7 +295,8 @@
 
 	owner = null
 
-	QDEL_LIST_ASSOC_VAL(applied_items)
+	if(LAZYLEN(applied_items))
+		QDEL_LIST_ASSOC_VAL(applied_items)
 	QDEL_LAZYLIST(scars)
 
 	for(var/atom/movable/movable in contents)
@@ -315,14 +314,12 @@
 		return FALSE
 	return  ..()
 
-/// Returns an assoc list of items dropped when the limb is butchered
-/// force - Force an update of drops ignoring the cache
-/obj/item/bodypart/proc/get_butcher_drops(force = FALSE)
-	if(!isnull(butcher_drops) && !force)
+/obj/item/bodypart/proc/get_butcher_drops()
+	if(!isnull(butcher_drops))
 		return butcher_drops
-	if (butcher_drop_cache[type] && !force)
+	if (butcher_drop_cache[type])
 		return butcher_drop_cache[type]
-	var/datum/species/species = GLOB.species_list[species_id || limb_id]
+	var/datum/species/species = GLOB.species_list[limb_id]
 	if (!species || !species.meat || !base_meat_amount)
 		return null
 	return list(species.meat = base_meat_amount)
@@ -452,7 +449,15 @@
 			else
 				check_list += span_warning(tourniquet_text)
 		if(current_gauze)
-			check_list += span_notice("\tThere is some [current_gauze.name] wrapped around it.")
+			// check_list += span_notice("\tThere is some [current_gauze.name] wrapped around it.") // NOVA EDIT REMOVAL
+			// NOVA EDIT ADDITION START - Copy of the tourniquet removal code above
+			var/gauze_href = "<a href='byond://?src=[REF(owner)];remove_gauze=[REF(src)]'>[icon2html(current_gauze, examiner)] \a [current_gauze]</a>"
+			var/gauze_text = "\tThere is some [gauze_href] wrapped around it."
+			if(body_zone == BODY_ZONE_HEAD)
+				check_list += span_boldwarning(gauze_text)
+			else
+				check_list += span_warning(gauze_text)
+			// NOVA EDIT ADDITION END
 	else if(can_bleed())
 		var/bleed_text = ""
 		switch(cached_bleed_rate)
@@ -582,7 +587,12 @@
 
 	if(ishuman(victim))
 		var/mob/living/carbon/human/human_victim = victim
-		if(HAS_TRAIT(victim, TRAIT_LIMBATTACHMENT) || HAS_TRAIT(src, TRAIT_EASY_ATTACH))
+		if(HAS_TRAIT(victim, TRAIT_LIMBATTACHMENT) || HAS_TRAIT(src, TRAIT_EASY_ATTACH) || HAS_TRAIT(victim, TRAIT_ROBOTIC_LIMBATTACHMENT)) // NOVA EDIT CHANGE - ORIGINAL: if(HAS_TRAIT(victim, TRAIT_LIMBATTACHMENT) || HAS_TRAIT(src, TRAIT_EASY_ATTACH))
+			// NOVA EDIT ADDITION START - robot_limb_detach_quirk - but first let peg limbs through, and also let androids through
+			if (!(HAS_TRAIT(src, TRAIT_EASY_ATTACH)) && !HAS_TRAIT(victim, TRAIT_LIMBATTACHMENT) && HAS_TRAIT(victim, TRAIT_ROBOTIC_LIMBATTACHMENT) && !(bodytype & BODYTYPE_ROBOTIC)) //if we're trying to attach something that's not robotic, end out - but ONLY if we have this quirk
+				to_chat(user, span_warning("[human_victim]'s body rejects [src]! It can only accept robotic limbs."))
+				return
+			// NOVA EDIT ADDITION END
 			if(!human_victim.get_bodypart(body_zone))
 				user.temporarilyRemoveItemFromInventory(src, TRUE)
 				if(!try_attach_limb(victim))
@@ -660,10 +670,6 @@
 		playsound(drop_loc, 'sound/misc/splort.ogg', 50, TRUE, -1)
 
 	update_icon_dropped()
-
-//Return TRUE to get whatever mob this is in to update health.
-/obj/item/bodypart/proc/on_life(seconds_per_tick)
-	SHOULD_CALL_PARENT(TRUE)
 
 /**
  * #receive_damage
@@ -755,10 +761,24 @@
 			return
 		// now we have our wounding_type and are ready to carry on with wounds and dealing the actual damage
 		if(wounding_dmg >= WOUND_MINIMUM_DAMAGE && wound_bonus != CANT_WOUND)
+			//NOVA EDIT ADDITION - MEDICAL
+			//This makes it so the more damaged bodyparts are, the more likely they are to get wounds
+			//However, this bonus isn't applied when the object doesn't pass the initial wound threshold, nor is it when it already has enough wounding dmg
+			if(wounding_dmg < DAMAGED_BODYPART_BONUS_WOUNDING_BONUS)
+				var/damaged_percent = (brute_dam + burn_dam) / max_damage
+				if(damaged_percent > DAMAGED_BODYPART_BONUS_WOUNDING_THRESHOLD)
+					damaged_percent = DAMAGED_BODYPART_BONUS_WOUNDING_THRESHOLD
+				wounding_dmg = min(DAMAGED_BODYPART_BONUS_WOUNDING_BONUS, wounding_dmg + (damaged_percent * DAMAGED_BODYPART_BONUS_WOUNDING_COEFF))
+
+			var/obj/item/stack/medical/wrap/current_gauze = LAZYACCESS(applied_items, LIMB_ITEM_GAUZE)
+			if(istype(current_gauze, /obj/item/stack/medical/wrap/gauze))
+				var/obj/item/stack/medical/wrap/gauze/our_gauze = current_gauze
+				our_gauze.get_hit(src)
+			//NOVA EDIT ADDITION END - MEDICAL
 			check_wounding(wounding_type, wounding_dmg, wound_bonus, exposed_wound_bonus, attack_direction, damage_source = damage_source, wound_clothing = wound_clothing)
 
 	for(var/datum/wound/iter_wound as anything in wounds)
-		iter_wound.receive_damage(wounding_type, wounding_dmg, wound_bonus, damage_source)
+		iter_wound.receive_damage(wounding_type, wounding_dmg, wound_bonus, attack_direction, damage_source)
 
 	/*
 	// END WOUND HANDLING
@@ -895,6 +915,12 @@
 			update_disabled()
 		if(updating_health)
 			owner.updatehealth()
+		//NOVA EDIT ADDITION BEGIN - CUSTOMIZATION
+		//Consider moving this to a new species proc "spec_heal" maybe?
+		if(owner.stat == DEAD && HAS_TRAIT(owner, TRAIT_REVIVES_BY_HEALING))
+			if(owner.health > 50)
+				owner.revive(FALSE)
+		//NOVA EDIT ADDITION END
 	return update_bodypart_damage_state()
 
 ///Sets the damage of a bodypart when it is created.
@@ -1178,6 +1204,7 @@
 	limb_gender = (human_owner.physique == MALE) ? "m" : "f"
 	if(HAS_TRAIT(human_owner, TRAIT_USES_SKINTONES))
 		skin_tone = human_owner.skin_tone
+		species_color = "" // NOVA EDIT ADDITION
 	else if(HAS_TRAIT(human_owner, TRAIT_MUTANT_COLORS))
 		skin_tone = ""
 		var/datum/species/owner_species = human_owner.dna.species
@@ -1191,12 +1218,33 @@
 
 	update_draw_color()
 
+	// NOVA EDIT ADDITION START - Alpha + Markings
+	var/datum/dna/owner_dna = human_owner.dna
+	var/datum/species/owner_species = owner_dna.species
+
+	if(owner_species && owner_species.specific_alpha != 255)
+		alpha = owner_species.specific_alpha
+
+	if(!(bodypart_flags & (BODYPART_PSEUDOPART | BODYPART_STUMP)) && !(bodyshape & BODYSHAPE_TAUR))
+		if(body_zone in owner_dna.body_markings)
+			markings = LAZYLISTDUPLICATE(owner_dna.body_markings[body_zone])
+		else
+			LAZYNULL(markings)
+		if(aux_zone && (aux_zone in owner_dna.body_markings))
+			aux_zone_markings = LAZYLISTDUPLICATE(owner_dna.body_markings[aux_zone])
+		else
+			LAZYNULL(aux_zone_markings)
+		markings_alpha = owner_species.markings_alpha
+	else
+		LAZYNULL(markings)
+		LAZYNULL(aux_zone_markings)
+	// NOVA EDIT ADDITION END
 	// Recolors mutant overlays to match new mutant colors
 	for(var/datum/bodypart_overlay/mutant/overlay in bodypart_overlays)
 		overlay.inherit_color(src, force = TRUE)
 	// Ensures marking overlays are updated accordingly as well
 	for(var/datum/bodypart_overlay/simple/body_marking/marking in bodypart_overlays)
-		marking.set_appearance(human_owner.dna.features[marking.dna_feature_key], species_color)
+		marking.set_appearance(owner_dna.features[marking.dna_feature_key], species_color)
 
 	return TRUE
 
@@ -1288,6 +1336,10 @@
 		. += image(icon_invisible, "invisible_[body_zone]", -BODYPARTS_LAYER, dir = image_dir)
 		SEND_SIGNAL(src, COMSIG_BODYPART_GET_LIMB_ICON, ., dropped)
 		return .
+	// NOVA EDIT ADDITION START - For invisible taur limbs, so we are not caching invalid keys and repeatedly adding the same overlay. I hate it here
+	if(is_actually_just_invisible)
+		return list()
+	// NOVA EDIT ADDITION END
 
 	// Normal non-husk handling
 	// This is the MEAT of limb icon code
@@ -1298,6 +1350,10 @@
 	var/used_state = "[limb_id]_[body_zone]"
 	if(is_dimorphic) // Does this type of limb have sexual dimorphism?
 		used_state = "[limb_id]_[body_zone]_[limb_gender]"
+	// NOVA EDIT ADDITION START
+	if(bodyshape & BODYSHAPE_DIGITIGRADE) // Is this a digi limb?
+		used_state += "_[ICON_KEY_DIGI]"
+	// NOVA EDIT ADDITION END
 
 	var/image/limb = image(used_icon, used_state, -BODYPARTS_LAYER, dir = image_dir)
 	var/image/aux = null
@@ -1331,9 +1387,10 @@
 		update_draw_color()
 
 	if(draw_color)
-		limb.color = "[draw_color]"
+		var/limb_color = alpha != 255 ? "[draw_color][num2hex(alpha, 2)]" : "[draw_color]" // NOVA EDIT ADDITION - Alpha values on limbs. We check if the limb is attached and if the owner has an alpha value to append
+		limb.color = limb_color // NOVA EDIT CHANGE - ORIGINAL: limb.color = "[draw_color]"
 		if(aux_zone)
-			aux.color = "[draw_color]"
+			aux.color = limb_color // NOVA EDIT CHANGE - ORIGINAL: aux.color = "[draw_color]"
 
 	var/atom/location = loc || owner || src
 	if(blocks_emissive != EMISSIVE_BLOCK_NONE)
@@ -1370,6 +1427,62 @@
 			// Add two masked images based on the old one
 			. += leg_source.generate_masked_leg(limb_image)
 
+	// NOVA EDIT ADDITION BEGIN - MARKINGS CODE
+	var/override_color
+	var/atom/offset_spokesman = owner || src
+	// First, check to see if this bodypart is husked. If so, we don't want to apply our sparkledog colors to the limb.
+	if(is_husked)
+		override_color = "#888888"
+	// We need to check that the owner exists(could be a placed bodypart) and that it's not a chainsawhand and that they're a human with usable DNA.
+	if(!(bodypart_flags & (BODYPART_PSEUDOPART | BODYPART_STUMP)) && (!(bodyshape & BODYSHAPE_TAUR))) // taur legs never ever render
+		for(var/key, marking in markings) // Cycle through all of our currently selected markings.
+			var/datum/body_marking/body_marking = GLOB.body_markings[key]
+			if (!body_marking) // Edge case prevention.
+				continue
+
+			var/gender_modifier = ""
+			if(body_zone == BODY_ZONE_CHEST) // Chest markings have male and female versions.
+				if(body_marking.gendered)
+					gender_modifier = is_dimorphic ? "_[limb_gender]" : "_m"
+			var/digi_modifier = ""
+			if(bodyshape & BODYSHAPE_DIGITIGRADE)
+				digi_modifier = "digitigrade_"
+			var/mutable_appearance/accessory_overlay
+			var/mutable_appearance/emissive
+			accessory_overlay = mutable_appearance(body_marking.icon, "[body_marking.icon_state]_[digi_modifier][body_zone][gender_modifier]", -BODYPARTS_LAYER)
+			accessory_overlay.alpha = markings_alpha
+			if(marking[2])
+				emissive = emissive_appearance_copy(accessory_overlay, offset_spokesman)
+			if(override_color)
+				accessory_overlay.color = override_color
+			else
+				accessory_overlay.color = marking[1]
+			. += accessory_overlay
+			if (emissive)
+				. += emissive
+
+		if(aux_zone)
+			for(var/key, marking in aux_zone_markings)
+				var/datum/body_marking/body_marking = GLOB.body_markings[key]
+				if (!body_marking) // Edge case prevention.
+					continue
+
+				var/render_limb_string = aux_zone
+
+				var/mutable_appearance/emissive
+				var/mutable_appearance/accessory_overlay
+				accessory_overlay = mutable_appearance(body_marking.icon, "[body_marking.icon_state]_[render_limb_string]", -aux_layer)
+				accessory_overlay.alpha = markings_alpha
+				if (marking[2])
+					emissive = emissive_appearance_copy(accessory_overlay, offset_spokesman)
+				if(override_color)
+					accessory_overlay.color = override_color
+				else
+					accessory_overlay.color = marking[1]
+				. += accessory_overlay
+				if (emissive)
+					. += emissive
+	// NOVA EDIT ADDITION END - MARKINGS CODE END
 	// Draw external organs like horns and frills
 	for(var/datum/bodypart_overlay/overlay as anything in bodypart_overlays)
 		if(!overlay.can_draw_on_bodypart(src, owner, is_husked))
@@ -1685,7 +1798,7 @@
 		owner.update_body_parts()
 
 	//This foot gun needs a safety
-	if(!icon_exists(icon_holder, "[limb_id]_[body_zone][is_dimorphic ? "_[limb_gender]" : ""]"))
+	if(!icon_exists(icon_holder, "[limb_id]_[body_zone][is_dimorphic ? "_[limb_gender]" : ""][(bodyshape & BODYSHAPE_DIGITIGRADE) ? "_[ICON_KEY_DIGI]" : ""]")) // NOVA EDIT CHANGE - ORIGINAL: if(!icon_exists(icon_holder, "[limb_id]_[body_zone][is_dimorphic ? "_[limb_gender]" : ""]"))
 		reset_appearance()
 		stack_trace("change_appearance([icon], [id], [greyscale], [dimorphic]) generated null icon")
 
@@ -1730,8 +1843,8 @@
 	var/burn_damage = AUGGED_LIMB_EMP_BURN_DAMAGE
 	if(severity == EMP_HEAVY)
 		time_needed *= 2
-		brute_damage *= 2
-		burn_damage *= 2
+		brute_damage *= 1.3 // NOVA EDIT : Balance - Lowers total damage from ~125 Brute to ~30
+		burn_damage *= 1.3 // NOVA EDIT : Balance - Lowers total damage from ~104 Burn to ~24
 
 	receive_damage(brute_damage, burn_damage)
 	do_sparks(number = 1, cardinal_only = FALSE, source = owner || src)

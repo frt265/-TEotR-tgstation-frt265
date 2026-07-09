@@ -76,6 +76,10 @@
 
 		if("purge_records")
 			// Don't let people off station futz with the station network.
+			//NOVA EDIT BEGIN: disable record purging/expunging to stop people messing around with the AI effortlessly
+			balloon_alert(usr, "access denied!")
+			return TRUE
+			/*
 			if(!is_station_level(z))
 				balloon_alert(user, "out of range!")
 				return TRUE
@@ -95,6 +99,8 @@
 				balloon_alert(user, "interrupted!")
 
 			return TRUE
+			*/
+			//NOVA EDIT END
 
 		if("view_record")
 			if(!target)

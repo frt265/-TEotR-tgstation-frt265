@@ -211,7 +211,7 @@
  * * path - the design path to check for
  */
 /obj/machinery/rnd/production/proc/build_efficiency(path)
-	PRIVATE_PROC(TRUE)
+	PROTECTED_PROC(TRUE) // NOVA EDIT CHANGE - ORIGINAL: PRIVATE_PROC(TRUE)
 	SHOULD_BE_PURE(TRUE)
 
 	if(ispath(path, /obj/item/stack/sheet) || ispath(path, /obj/item/stack/ore/bluespace_crystal))
@@ -345,12 +345,17 @@
 				charge_per_item += amount
 			charge_per_item = ROUND_UP((charge_per_item / (MAX_STACK_SIZE * SHEET_MATERIAL_AMOUNT)) * coefficient * active_power_usage)
 			var/build_time_per_item = (design.construction_time * design.lathe_time_factor * efficiency_coeff) ** 0.8
+			// NOVA EDIT ADDITION START - Faster lathes
+			if(!speedup_disabled)
+				build_time_per_item *= 0.1
+			// NOVA EDIT ADDITION END
 
 			//start production
 			busy = TRUE
 			SStgui.update_uis(src)
 			print_sound.start()
 			update_appearance()
+			start_printing_visuals() // NOVA EDIT ADDITION - COLONY FABRICATOR STUFF
 			var/turf/target_location
 			if(drop_direction)
 				target_location = get_step(src, drop_direction)

@@ -151,10 +151,13 @@
 
 	for(var/pack_id in SSshuttle.supply_packs)
 		var/datum/supply_pack/pack = SSshuttle.supply_packs[pack_id]
+		var/list/available_packs = get_packs_data(pack.group)
+		if(!length(available_packs)) //No available packs, hide category
+			continue
 		if(!data["supplies"][pack.group])
 			data["supplies"][pack.group] = list(
 				"name" = pack.group,
-				"packs" = get_packs_data(pack.group),
+				"packs" = available_packs,
 			)
 
 	data["displayed_currency_full_name"] = " [MONEY_NAME]"
@@ -186,6 +189,13 @@
 
 		if(!is_express && (pack.order_flags & ORDER_POD_ONLY))
 			continue
+		// NOVA EDIT ADDITION START
+		if (is_express && pack.express_lock && !bypass_express_lock)
+			continue
+
+		if(!(pack.console_flag & console_flag))
+			continue
+		// NOVA EDIT ADDITION END
 
 		var/obj/item/first_item = length(pack.contains) > 0 ? pack.contains[1] : null
 		packs += list(list(
@@ -270,7 +280,8 @@
 	var/list/working_list = SSshuttle.shopping_list
 	var/reason = ""
 	var/datum/bank_account/personal_department
-	if(requestonly && !self_paid && !(pack.order_flags & ORDER_GOODY))
+	var/uses_cargo_budget = FALSE // NOVA EDIT ADDITION - boolean flag to check if we are using the cargo budget without doing excessive shenanigans.
+	if(requestonly && !self_paid && (!(pack.order_flags & ORDER_GOODY) || (pack.order_flags & ORDER_DEPARTMENTAL_GOODY))) // NOVA EDIT CHANGE - should never have a dept goodie thats not a goody. ORIGINAL: if(requestonly && !self_paid && !(pack.order_flags & ORDER_GOODY))
 		working_list = SSshuttle.request_list
 		reason = tgui_input_text(user, "Reason", name, max_length = MAX_MESSAGE_LEN)
 		if(isnull(reason))
@@ -285,6 +296,11 @@
 					return
 				if(dept_choice == "Cargo Budget")
 					personal_department = null
+					uses_cargo_budget = TRUE // NOVA EDIT ADDITION
+			// NOVA EDIT ADDITION START
+			else
+				uses_cargo_budget = TRUE // NOVA EDIT ADDITION
+			// NOVA EDIT ADDITION END
 
 
 		if(isliving(user))
@@ -301,7 +317,7 @@
 				say("ERROR: User lacks the requisite access for this purchase request.")
 				return
 
-	if((pack.order_flags & ORDER_GOODY) && !self_paid)
+	if(((pack.order_flags & ORDER_GOODY) && (!(pack.order_flags & ORDER_DEPARTMENTAL_GOODY) || uses_cargo_budget)) && (!self_paid || !requestonly))
 		playsound(src, 'sound/machines/buzz/buzz-sigh.ogg', 50, FALSE)
 		say("ERROR: Small crates may only be purchased by private accounts.")
 		return
@@ -314,6 +330,12 @@
 
 	if(!self_paid)
 		account = personal_department
+		// NOVA EDIT ADDITION START
+		if ((uses_cargo_budget || !requestonly) && ((pack.order_flags & ORDER_COMPANY) == ORDER_COMPANY))
+			playsound(src, 'sound/machines/buzz/buzz-sigh.ogg', 50, FALSE)
+			say("ERROR: Small crates may only be purchased by private accounts.")
+			return
+		// NOVA EDIT ADDITION END
 
 	amount = clamp(amount, 1, CARGO_MAX_ORDER - similar_count)
 	for(var/count in 1 to amount)

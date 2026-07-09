@@ -1,5 +1,5 @@
 /datum/action/changeling/sting//parent path, not meant for users afaik
-	name = "Tiny Prick" //cellularemporium uses `nameToIconState` to button icon state must match this, on top of matching the hud below.
+	name = "Tiny Prick"
 	desc = "Stabby stabby"
 	category = "stings"
 	button_icon_state = "sting_null" //This must be equal to the icon state for `/atom/movable/screen/ling/sting`
@@ -54,6 +54,10 @@
 		return
 	if(!isturf(user.loc))
 		return
+	var/mob/living/carbon/human/to_check = target // NOVA EDIT START - STINGS DO NOT AFFECT ROBOTIC ENTITIES
+	if(to_check.mob_biotypes & MOB_ROBOTIC)
+		to_chat(user, "<span class='warning'>Our sting would have no effect on robotic entities</span>")
+		return // NOVA EDIT END
 	if(!length(get_path_to(user, target, max_distance = changeling.sting_range, simulated_only = FALSE)))
 		return // no path within the sting's range is found. what a weird place to use the pathfinding system
 	if(IS_CHANGELING(target))
@@ -68,7 +72,6 @@
 	if(IS_CHANGELING(target))
 		to_chat(target, span_warning("You feel a tiny prick."))
 	return 1
-
 
 /datum/action/changeling/sting/transformation
 	name = "Transformation Sting"

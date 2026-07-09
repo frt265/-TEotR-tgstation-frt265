@@ -70,6 +70,9 @@ SUBSYSTEM_DEF(ticker)
 	var/atom/movable/screen/reboot_timer/reboot_hud
 	/// ID of round reboot timer, if it exists
 	var/reboot_timer = null
+	var/real_round_start_time = 0 // NOVA EDIT ADDITION
+	var/discord_alerted = FALSE // NOVA EDIT ADDITION - DISCORD PING SPAM PREVENTION
+
 
 /datum/controller/subsystem/ticker/Initialize()
 	var/list/provisional_title_music = flist("[global.config.directory]/title_music/sounds/")
@@ -111,22 +114,6 @@ SUBSYSTEM_DEF(ticker)
 	else
 		set_lobby_music("[global.config.directory]/title_music/sounds/[pick(music)]")
 
-	if(!GLOB.syndicate_code_phrase)
-		GLOB.syndicate_code_phrase = generate_code_phrase(return_list=TRUE)
-
-		var/codewords = jointext(GLOB.syndicate_code_phrase, "|")
-		var/regex/codeword_match = new("([codewords])", "ig")
-
-		GLOB.syndicate_code_phrase_regex = codeword_match
-
-	if(!GLOB.syndicate_code_response)
-		GLOB.syndicate_code_response = generate_code_phrase(return_list=TRUE)
-
-		var/codewords = jointext(GLOB.syndicate_code_response, "|")
-		var/regex/codeword_match = new("([codewords])", "ig")
-
-		GLOB.syndicate_code_response_regex = codeword_match
-
 	start_at = world.time + (CONFIG_GET(number/lobby_countdown) * (1 SECONDS))
 
 	return SS_INIT_SUCCESS
@@ -139,11 +126,21 @@ SUBSYSTEM_DEF(ticker)
 			for(var/client/C in GLOB.clients)
 				window_flash(C, ignorepref = TRUE) //let them know lobby has opened up.
 			to_chat(world, span_notice("<b>Welcome to [station_name()]!</b>"))
+			// NOVA EDIT ADDITION START
+			if(!discord_alerted)
+				discord_alerted = TRUE // DISCORD SPAM PREVENTION
+				for(var/channel_tag in CONFIG_GET(str_list/channel_announce_new_game))
+					send2chat(new /datum/tgs_message_content("<@&[CONFIG_GET(string/game_alert_role_id)]> Round **[GLOB.round_id]** starting on [SSmapping.current_map.map_name], [CONFIG_GET(string/servername)]! \
+						\nIf you wish to be pinged for game related stuff, go to <#[CONFIG_GET(string/role_assign_channel_id)]> and assign yourself the roles."), channel_tag) // Role ping and round ID in game-alert
+			// NOVA EDIT ADDITION END
+			/* // NOVA EDIT REMOVAL START
 			for(var/channel_tag in CONFIG_GET(str_list/channel_announce_new_game))
 				send2chat(new /datum/tgs_message_content("New round starting on [SSmapping.current_map.map_name]!"), channel_tag)
+			*/ // NOVA EDIT REMOVAL END
 			current_state = GAME_STATE_PREGAME
+			SStitle.change_title_screen() // NOVA EDIT ADDITION - Title screen
+			addtimer(CALLBACK(SStitle, TYPE_PROC_REF(/datum/controller/subsystem/title, change_title_screen)), 1 SECONDS) // NOVA EDIT ADDITION - Title screen
 			SEND_SIGNAL(src, COMSIG_TICKER_ENTER_PREGAME)
-
 			fire()
 		if(GAME_STATE_PREGAME)
 			//lobby stats for statpanels
@@ -174,6 +171,7 @@ SUBSYSTEM_DEF(ticker)
 				SEND_SIGNAL(src, COMSIG_TICKER_ENTER_SETTING_UP)
 				current_state = GAME_STATE_SETTING_UP
 				Master.SetRunLevel(RUNLEVEL_SETUP)
+				SSevents.reschedule() // NOVA EDIT ADDITION
 				if(start_immediately)
 					fire()
 
@@ -195,6 +193,7 @@ SUBSYSTEM_DEF(ticker)
 				toggle_dooc(TRUE)
 				declare_completion(force_ending)
 				Master.SetRunLevel(RUNLEVEL_POSTGAME)
+				SEND_SIGNAL(src, COMSIG_TICKER_ROUND_ENDED) // NOVA EDIT ADDITION
 
 		if(GAME_STATE_FINISHED)
 			if(ready_for_reboot)
@@ -281,12 +280,14 @@ SUBSYSTEM_DEF(ticker)
 
 	round_start_time = world.time //otherwise round_start_time would be 0 for the signals
 	SEND_SIGNAL(src, COMSIG_TICKER_ROUND_STARTING, world.time)
+	real_round_start_time = REALTIMEOFDAY // NOVA EDIT ADDITION
+	SSautotransfer.new_shift(real_round_start_time) // NOVA EDIT ADDITION
 
 	log_world("Game start took [(world.timeofday - init_start)/10]s")
 	INVOKE_ASYNC(SSdbcore, TYPE_PROC_REF(/datum/controller/subsystem/dbcore,SetRoundStart))
 
 	to_chat(world, span_notice(span_bold("Welcome to [station_name()], enjoy your stay!")))
-	SEND_SOUND(world, sound(SSstation.announcer.get_rand_welcome_sound()))
+	alert_sound_to_playing(sound(SSstation.announcer.get_rand_welcome_sound())) // NOVA EDIT CHANGE - ORIGINAL: SEND_SOUND(world, sound(SSstation.announcer.get_rand_welcome_sound()))
 
 	current_state = GAME_STATE_PLAYING
 	Master.SetRunLevel(RUNLEVEL_GAME)
@@ -310,8 +311,11 @@ SUBSYSTEM_DEF(ticker)
 		SSdynamic.unqueue_ruleset(ruleset)
 		SSdynamic.executed_rulesets += ruleset
 	// Queue roundstart intercept report
+	/* // NOVA EDIT REMOVAL START
 	if(!CONFIG_GET(flag/no_intercept_report))
 		GLOB.communications_controller.queue_roundstart_report()
+	*/ // NOVA EDIT REMOVAL END
+	GLOB.communications_controller.queue_roundstart_report() // NOVA EDIT ADDITION: Config option handled inside
 	// Queue admin logout report
 	var/roundstart_logout_timer = CONFIG_GET(number/roundstart_logout_report_time_average)
 	var/roundstart_report_variance = CONFIG_GET(number/roundstart_logout_report_time_variance)
@@ -361,6 +365,7 @@ SUBSYSTEM_DEF(ticker)
 
 		iter_human.increment_scar_slot()
 		iter_human.load_persistent_scars()
+		SSpersistence.load_modular_persistence(iter_human.get_organ_slot(ORGAN_SLOT_BRAIN)) // NOVA EDIT ADDITION - MODULAR_PERSISTENCE
 
 		if(!iter_human.hardcore_survival_score)
 			continue
@@ -479,8 +484,13 @@ SUBSYSTEM_DEF(ticker)
 			GLOB.joined_player_list += player.ckey
 			var/atom/destination = player.mind.assigned_role.get_roundstart_spawn_point()
 			if(!destination) // Failed to fetch a proper roundstart location, won't be going anywhere.
+				player.show_title_screen() // NOVA EDIT ADDITION
 				continue
 			player.create_character(destination)
+		// NOVA EDIT ADDITION START
+		else
+			player.show_title_screen() //NOVA EDIT ADDITION
+		// NOVA EDIT ADDITION END
 		CHECK_TICK
 
 /datum/controller/subsystem/ticker/proc/collect_minds()
@@ -557,6 +567,13 @@ SUBSYSTEM_DEF(ticker)
 
 		if(ishuman(new_player_living))
 			SEND_SIGNAL(new_player_living, COMSIG_HUMAN_CHARACTER_SETUP_FINISHED)
+			// NOVA EDIT ADDITION START
+			var/list/loadout = new_player_living.client?.get_loadout_datums()
+			for(var/datum/loadout_item/item as anything in loadout)
+				if (item.restricted_roles && length(item.restricted_roles) && !(player_assigned_role.title in item.restricted_roles))
+					continue
+				item.post_equip_item(new_player_mob.client?.prefs, new_player_living)
+			// NOVA EDIT ADDITION END
 		CHECK_TICK
 
 	if(captainless)
@@ -687,10 +704,12 @@ SUBSYSTEM_DEF(ticker)
 		switch (current_state)
 			if(GAME_STATE_SETTING_UP)
 				Master.SetRunLevel(RUNLEVEL_SETUP)
+				SSevents.reschedule() // NOVA EDIT ADDITION
 			if(GAME_STATE_PLAYING)
 				Master.SetRunLevel(RUNLEVEL_GAME)
 			if(GAME_STATE_FINISHED)
 				Master.SetRunLevel(RUNLEVEL_POSTGAME)
+				SEND_SIGNAL(src, COMSIG_TICKER_ROUND_ENDED) // NOVA EDIT ADDITION
 
 /datum/controller/subsystem/ticker/proc/send_news_report()
 	var/news_message
@@ -787,6 +806,15 @@ SUBSYSTEM_DEF(ticker)
 		if(SUPERMATTER_CASCADE)
 			news_message = "Officials are advising nearby colonies about a newly declared exclusion zone in \
 				the sector surrounding [decoded_station_name]."
+	// NOVA EDIT ADDITION- START
+	if(SSblackbox.first_death)
+		var/list/ded = SSblackbox.first_death
+		if(ded.len)
+			news_message += " NT Sanctioned Psykers picked up faint traces of someone near the station, allegedly having had died. Their name was: [ded["name"]], [ded["role"]], at [ded["area"]].[ded["last_words"] ? " Their last words were: \"[ded["last_words"]]\"" : ""]" // " // An Extra quote and comment because highlighting goes weird
+		else
+			news_message += " NT Sanctioned Psykers proudly confirm reports that nobody died this shift!"
+	. = news_message || "We regret to inform you that shit be whack, yo. None of our reporters have any idea of what may or may not have gone on."
+	// NOVA EDIT ADDITION END
 
 	if(news_message)
 		send2otherserver(news_source, news_message, "News_Report")

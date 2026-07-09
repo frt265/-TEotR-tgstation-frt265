@@ -217,7 +217,7 @@
 
 /obj/item/banner/command/Initialize(mapload)
 	. = ..()
-	job_loyalties = DEPARTMENT_BITFLAG_COMMAND
+	job_loyalties = DEPARTMENT_BITFLAG_COMMAND | DEPARTMENT_BITFLAG_CENTRAL_COMMAND //NOVA EDIT ADDITION
 
 /obj/item/banner/command/mundane
 	inspiration_available = FALSE
@@ -336,6 +336,10 @@
 	var/conversion_color = "#ffffff"
 	var/staffcooldown = 0
 	var/staffwait = 30
+
+/obj/item/godstaff/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/walking_aid)
 
 /obj/item/godstaff/interact_with_atom(atom/interacting_with, mob/living/user, list/modifiers)
 	if(SHOULD_SKIP_INTERACTION(interacting_with, src, user))

@@ -173,6 +173,13 @@
 		reaction_message = equilibrium.reaction.mix_message
 		if(equilibrium.reaction.mix_sound)
 			playsound(get_turf(my_atom), equilibrium.reaction.mix_sound, 80, TRUE)
+	//NOVA EDIT ADDITION
+	//If the reaction pollutes, pollute it here if we have an atom
+	if(equilibrium.reaction.pollutant_type && my_atom)
+		var/turf/my_turf = get_turf(my_atom)
+		if(my_turf) // reactions can happen in nullspace (like inside of a mob's stomach for instance).
+			my_turf.pollute_turf(equilibrium.reaction.pollutant_type, equilibrium.reaction.pollutant_amount * equilibrium.reacted_vol)
+	//NOVA EDIT ADDITION END
 	qdel(equilibrium)
 	update_total()
 
@@ -256,6 +263,13 @@
 				extract.name = "used slime extract"
 				extract.desc = "This extract has been used up."
 				extract.can_grind = FALSE
+	// NOVA EDIT ADDITION START
+	// If the reaction pollutes, pollute it here if we have an atom
+	if(selected_reaction.pollutant_type && my_atom)
+		var/turf/my_turf = get_turf(my_atom)
+		if(my_turf) // just to be safe here
+			my_turf.pollute_turf(selected_reaction.pollutant_type, selected_reaction.pollutant_amount * multiplier)
+	// NOVA EDIT ADDITION END
 
 	//finish the reaction
 	selected_reaction.on_reaction(src, null, multiplier)

@@ -39,6 +39,7 @@
 		/obj/item/flashlight/seclite = 1,
 		/obj/item/knife/combat/survival = 1,
 		/obj/item/mining_voucher = 1,
+		/obj/item/suit_voucher = 1, //NOVA EDIT ADDITION
 		/obj/item/stack/marker_beacon/ten = 1,
 		/obj/item/t_scanner/adv_mining_scanner/lesser = 1,
 	)

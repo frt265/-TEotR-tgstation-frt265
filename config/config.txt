@@ -5,6 +5,7 @@ $include dbconfig.txt
 $include comms.txt
 $include logging.txt
 $include resources.txt
+$include nova/config_nova.txt
 $include interviews.txt
 $include lua.txt
 $include auxtools.txt
@@ -21,6 +22,12 @@ $include map_vote.txt
 ## Server name: This appears at the top of the screen in-game and in the BYOND hub. Uncomment and replace 'tgstation' with the name of your choice.
 # SERVERNAME tgstation
 
+## Server tagline: This will appear right below the server's title.
+# SERVERTAGLINE A generic TG-based server
+
+## Discord Link: This is the link to Nova Sector's discord server
+# DISCORD_LINK https://discord.gg/novasector
+
 ## Server SQL name: This is the name used to identify the server to the SQL DB, distinct from SERVERNAME as it must be at most 32 characters.
 # SERVERSQLNAME tgstation
 
@@ -29,6 +36,9 @@ STATIONNAME Space Station 13
 
 ## Put on byond hub: Uncomment this to put your server on the byond hub.
 #HUB
+
+## Once the server population reaches this number, it will be taken off the byond hub. 0 disables.
+#MAX_HUB_POP 100
 
 ## Lobby time: This is the amount of time between rounds that players have to setup their characters and be ready.
 LOBBY_COUNTDOWN 120
@@ -193,13 +203,13 @@ IPINTEL_REJECT_BAD
 # FORUMURL http://tgstation13.org/phpBB/index.php
 
 ## Wiki address
-# WIKIURL https://wiki.tgstation13.org
+# WIKIURL https://wiki.novasector13.com/wiki
 
 ## Rules address
-# RULESURL http://tgstation13.org/wiki/Rules
+# RULESURL https://wiki.novasector13.com/wiki/Policies
 
 ## Github address
-# GITHUBURL https://www.github.com/tgstation/tgstation
+# GITHUBURL https://github.com/NovaSector/NovaSector
 
 ## Discord bot command prefix, if the discord bot is used
 # DISCORDBOTCOMMANDPREFIX ?
@@ -381,6 +391,9 @@ AUTOADMIN_RANK Game Master
 
 ## Uncomment to automatically deadmin players when they click to ready up or join game. For latejoining, does it before they pick a role because it's best done early to limit metainfo.
 #AUTO_DEADMIN_ON_READY_OR_LATEJOIN
+
+## Number of game ticks before player-admins will be automatically deadminned.
+#AUTO_DEADMIN_TIMEGATE 600
 
 ## Uncomment to automatically deadmin antagonists when they gain the role.
 #AUTO_DEADMIN_ANTAGONISTS
@@ -600,9 +613,6 @@ PR_ANNOUNCEMENTS_PER_ROUND 5
 ## Uncomment to block granting profiling privileges to users with R_DEBUG, for performance purposes
 #FORBID_ADMIN_PROFILING
 
-## Uncomment to disable TTS messages on whispering, such as radio messages or the whisper verb. Useful for reducing your TTS load.
-#TTS_NO_WHISPER
-
 ## Link to a HTTP server that's been set up on a server. Docker-compose file can be found in tools/tts
 #TTS_HTTP_URL http://localhost:5002
 
@@ -618,6 +628,12 @@ PR_ANNOUNCEMENTS_PER_ROUND 5
 ## Add voices to the TTS voice blacklist.
 #TTS_VOICE_BLACKLIST Sans Undertale
 #TTS_VOICE_BLACKLIST Papyrus Undertale
+
+## Override the voice that the Tram system uses. If left undefined, the tram will pick a random voice.
+#TTS_TRAM_ANNOUNCER_OVERRIDE Sans Undertale
+
+## Override the voice that computers use. If left undefined, the subsystem will pick a random consistent computer voice.
+#TTS_COMPUTER_VOICE_OVERRIDE Papyrus Undertale
 
 ## Comment to disable sending a toast notification on the host server when initializations complete.
 ## Even if this is enabled, a notification will only be sent if there are no clients connected.

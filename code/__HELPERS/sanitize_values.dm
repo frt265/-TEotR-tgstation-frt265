@@ -53,6 +53,11 @@
 
 /proc/sanitize_hexcolor(color, desired_format = DEFAULT_HEX_COLOR_LEN, include_crunch = TRUE, default)
 	var/crunch = include_crunch ? "#" : ""
+	//NOVA EDIT ADDITION BEGIN - CUSTOMIZATION
+	if(islist(color))
+		var/list/color_list = color
+		color = color_list.Join()
+	//NOVA EDIT ADDITION END
 	if(!istext(color))
 		color = ""
 

@@ -89,6 +89,7 @@
 	living_mob.dropItemToGround(living_mob.get_active_held_item())
 	living_mob.dropItemToGround(living_mob.get_inactive_held_item())
 
+
 /obj/item/grenade/stingbang
 	name = "stingbang"
 	icon_state = "timeg_locked"

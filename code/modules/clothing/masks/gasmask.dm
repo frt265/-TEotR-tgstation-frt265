@@ -58,7 +58,7 @@ GLOBAL_LIST_INIT(clown_mask_options, list(
 		LAZYADD(gas_filters, inserted_filter)
 	has_filter = TRUE
 
-/obj/item/clothing/mask/gas/separate_worn_overlays(mutable_appearance/standing, mutable_appearance/draw_target, isinhands, icon_file)
+/obj/item/clothing/mask/gas/separate_worn_overlays(mutable_appearance/standing, mutable_appearance/draw_target, isinhands, icon_file, mutant_styles) // NOVA EDIT CHANGE - ORIGINAL: /obj/item/clothing/gloves/separate_worn_overlays(mutable_appearance/standing, mutable_appearance/draw_target, isinhands, icon_file)
 	. = ..()
 	if(!isinhands && cig)
 		. += cig.build_worn_icon(default_layer = FACEMASK_LAYER, default_icon_file = 'icons/mob/clothing/mask.dmi')
@@ -328,7 +328,7 @@ GLOBAL_LIST_INIT(clown_mask_options, list(
 		"The Rainbow Color" = image(icon = src.icon, icon_state = "rainbow"),
 		"The Dealer" = image(icon = src.icon, icon_state = "cards"),
 		)
-	AddElement(/datum/element/swabable, CELL_LINE_TABLE_CLOWN, CELL_VIRUS_TABLE_GENERIC, rand(2,3), 0)
+	//AddElement(/datum/element/swabable, CELL_LINE_TABLE_CLOWN, CELL_VIRUS_TABLE_GENERIC, rand(2,3), 0) //NOVA EDIT REMOVAL
 
 /obj/item/clothing/mask/gas/clown_hat/ui_action_click(mob/user)
 	if(!istype(user) || user.incapacitated)
@@ -408,7 +408,22 @@ GLOBAL_LIST_INIT(clown_mask_options, list(
 		return FALSE
 
 	if(src && choice && !user.incapacitated && in_range(user,src))
+		// NOVA EDIT ADDITION START - More mask variations
+		var/mob/living/carbon/human/human_user = user
+		var/datum/mutant_bodypart/snout = human_user.dna.mutant_bodyparts[FEATURE_SNOUT]
+		if(snout)
+			icon = 'modular_nova/master_files/icons/obj/clothing/masks.dmi'
+			worn_icon = 'modular_nova/master_files/icons/mob/clothing/mask_muzzled.dmi'
+			var/list/avian_snouts = list("Beak", "Big Beak", "Corvid Beak")
+			if(snout.name in avian_snouts)
+				icon_state = "[options[choice]]_b"
+		else
+			icon = 'icons/obj/clothing/masks.dmi'
+			worn_icon = 'icons/mob/clothing/mask.dmi'
+			icon_state = options[choice]
+		/* NOVA EDIT ADDITION END
 		icon_state = options[choice]
+		*/
 		user.update_worn_mask()
 		update_item_action_buttons()
 		to_chat(user, span_notice("Your Mime Mask has now morphed into [choice]!"))

@@ -5,6 +5,7 @@
 #define SCANGATE_WANTED "Wanted"
 #define SCANGATE_SPECIES "Species"
 #define SCANGATE_NUTRITION "Nutrition"
+#define SCANGATE_GENDER "Gender" // NOVA EDIT ADDITION
 
 /obj/machinery/scanner_gate
 	name = "scanner gate"
@@ -61,6 +62,7 @@
 		SCANGATE_WANTED,
 		SCANGATE_SPECIES,
 		SCANGATE_NUTRITION,
+		SCANGATE_GENDER, // NOVA EDIT ADDITION
 	)
 	/// All disease severity thresholds available to the scanner
 	var/static/list/all_disease_thresholds = list(
@@ -79,6 +81,8 @@
 	)
 	/// Overlay object we're using for scanlines
 	var/obj/effect/overlay/scanline = null
+	var/detect_gender = "male" //NOVA EDIT ADDITION - MORE SCANNER GATE OPTIONS
+
 
 /obj/machinery/scanner_gate/Initialize(mapload)
 	. = ..()
@@ -259,6 +263,15 @@
 				if(scanned_human.nutrition >= detect_nutrition && detect_nutrition == NUTRITION_LEVEL_FAT)
 					beep = TRUE
 					detected_thing = "Obesity"
+		//NOVA EDIT ADDITION BEGIN - MORE SCANNER GATE OPTIONS
+		if(SCANGATE_GENDER)
+			detected_thing = detect_gender
+			if(ishuman(thing))
+				var/mob/living/carbon/human/scanned_human = thing
+				if((scanned_human.gender in list("male", "female"))) //funny thing: nb people will always get by the scan B)
+					if(scanned_human.gender == detect_gender)
+						beep = TRUE
+		//NOVA EDIT ADDITION END - MORE SCANNER GATE OPTIONS
 
 	if(reverse)
 		beep = !beep
@@ -324,7 +337,7 @@
 	data["disease_threshold"] = disease_threshold
 	data["target_species_id"] = detect_species_id
 	data["target_nutrition"] = detect_nutrition
-	data["target_zombie"] = (detect_species_id == SPECIES_ZOMBIE)
+	data["target_gender"] = detect_gender //NOVA EDIT - MORE SCANNER GATE OPTIONS
 	return data
 
 /obj/machinery/scanner_gate/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
@@ -368,6 +381,21 @@
 				if("Obese")
 					detect_nutrition = NUTRITION_LEVEL_FAT
 			. = TRUE
+		//NOVA EDIT BEGIN - MORE SCANNER GATE OPTIONS
+		if("set_target_gender")
+			var/new_gender = params["new_gender"]
+			var/gender_list = list(
+				"Male",
+				"Female"
+			)
+			if(new_gender && (new_gender in gender_list))
+				switch(new_gender)
+					if("Male")
+						detect_gender = "male"
+					if("Female")
+						detect_gender = "female"
+			. = TRUE
+		//NOVA EDIT END - MORE SCANNER GATE OPTIONS
 
 /obj/machinery/scanner_gate/preset_guns
 	locked = TRUE
@@ -381,3 +409,4 @@
 #undef SCANGATE_WANTED
 #undef SCANGATE_SPECIES
 #undef SCANGATE_NUTRITION
+#undef SCANGATE_GENDER // NOVA EDIT ADDITION

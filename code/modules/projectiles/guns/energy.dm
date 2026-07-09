@@ -184,6 +184,7 @@
 		if(!chambered) //if empty chamber we try to charge a new shot
 			recharge_newshot(TRUE)
 		update_appearance()
+		SEND_SIGNAL(src, COMSIG_UPDATE_AMMO_HUD) // NOVA EDIT ADDITION
 
 /obj/item/gun/energy/attack_self(mob/living/user as mob)
 	. = ..()
@@ -208,7 +209,6 @@
 				var/obj/item/ammo_casing/energy/shot = ammo_type[select] //Necessary to find cost of shot
 				if(robot.cell.use(shot.e_cost)) //Take power from the borg...
 					cell.give(shot.e_cost) //... to recharge the shot
-					return ..()
 
 	if(!chambered)
 		var/obj/item/ammo_casing/energy/AC = ammo_type[select]
@@ -272,10 +272,9 @@
 		worn_icon_state = temp_icon_to_use
 	return ..()
 
-
 /obj/item/gun/energy/update_overlays()
 	. = ..()
-	if(!automatic_charge_overlays)
+	if(!automatic_charge_overlays || !cell) // NOVA EDIT CHANGE - in the event a gun loses its cell - ORIGINAL: if(!automatic_charge_overlays)
 		return
 
 	var/overlay_icon_state = "[icon_state]_charge"
@@ -294,6 +293,11 @@
 	if(shot_type_fluff_overlay)
 		. += "[icon_state]_[initial(shot.select_name)]_extra"
 
+	// NOVA EDIT ADDITION START: labeled charge mode
+	if(shaded_charge == SHADED_CHARGE_MODE_LABELED) // support a third shaded_charge state
+		. += "[icon_state]_[initial(shot.select_name)]_charge[ratio]"
+		return
+	// NOVA EDIT ADDITION END
 	if(shaded_charge)
 		. += "[icon_state]_charge[ratio]"
 		return

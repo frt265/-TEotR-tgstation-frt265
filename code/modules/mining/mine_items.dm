@@ -80,6 +80,7 @@
 	else
 		new /obj/item/survivalcapsule(src)
 	new /obj/item/assault_pod/mining(src)
+	new /obj/item/ore_box_reinforcement(src) // NOVA EDIT ADDITION
 
 
 /obj/structure/closet/secure_closet/miner/populate_contents_immediate()
@@ -94,7 +95,7 @@
 	desc = "Used to call and send the mining shuttle."
 	circuit = /obj/item/circuitboard/computer/mining_shuttle
 	shuttleId = "mining"
-	possible_destinations = "mining_home;mining_away;landing_zone_dock;mining_public"
+	possible_destinations = "mining_home;mining_away;landing_zone_dock"
 	no_destination_swap = TRUE
 
 //ATTACK HAND IGNORING PARENT RETURN VALUE

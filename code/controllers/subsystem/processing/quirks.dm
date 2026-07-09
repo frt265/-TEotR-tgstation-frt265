@@ -17,7 +17,7 @@ GLOBAL_LIST_INIT_TYPED(quirk_blacklist, /list/datum/quirk, list(
 	list(/datum/quirk/transhumanist, /datum/quirk/body_purist),
 	list(/datum/quirk/prosthetic_organ, /datum/quirk/tin_man, /datum/quirk/body_purist),
 	list(/datum/quirk/quadruple_amputee, /datum/quirk/paraplegic, /datum/quirk/hemiplegic),
-	list(/datum/quirk/quadruple_amputee, /datum/quirk/frail),
+	//list(/datum/quirk/quadruple_amputee, /datum/quirk/frail), // NOVA EDIT REMOVAL- Since we have synth wounds now, frail has a large downside for prosthetics and such
 	list(/datum/quirk/social_anxiety, /datum/quirk/mute),
 	list(/datum/quirk/mute, /datum/quirk/softspoken),
 	list(/datum/quirk/bilingual, /datum/quirk/foreigner, /datum/quirk/csl),
@@ -27,6 +27,26 @@ GLOBAL_LIST_INIT_TYPED(quirk_blacklist, /list/datum/quirk, list(
 	list(/datum/quirk/numb, /datum/quirk/selfaware),
 	list(/datum/quirk/empath, /datum/quirk/evil),
 	list(/datum/quirk/keen_nose, /datum/quirk/item_quirk/anosmia),
+	// NOVA EDIT ADDITION BEGIN
+	list(/datum/quirk/equipping/nerve_staple, /datum/quirk/nonviolent),
+	list(/datum/quirk/equipping/nerve_staple, /datum/quirk/item_quirk/nearsighted),
+	list(/datum/quirk/no_guns, /datum/quirk/poor_aim),
+	list(/datum/quirk/no_guns, /datum/quirk/nonviolent),
+	list(/datum/quirk/spacer_born, /datum/quirk/oversized),
+	list(/datum/quirk/feline_aspect, /datum/quirk/canine_aspect, /datum/quirk/avian_aspect),
+	list(/datum/quirk/all_nighter, /datum/quirk/heavy_sleeper),
+	list(/datum/quirk/light_drinker, /datum/quirk/drunkhealing),
+	list(/datum/quirk/oversized, /datum/quirk/freerunning),
+	list(/datum/quirk/oversized, /datum/quirk/settler),
+	list(/datum/quirk/echolocation, /datum/quirk/monochromatic),
+	list(/datum/quirk/echolocation, /datum/quirk/item_quirk/blindness, /datum/quirk/item_quirk/nearsighted, /datum/quirk/item_quirk/deafness),
+	list(/datum/quirk/sensitive_hearing, /datum/quirk/item_quirk/blindness, /datum/quirk/item_quirk/deafness, /datum/quirk/echolocation),
+	list(/datum/quirk/visitor, /datum/quirk/item_quirk/underworld_connections),
+	list(/datum/quirk/adapted_lungs, /datum/quirk/item_quirk/breather/water_breather, /datum/quirk/item_quirk/breather/nitrogen_breather, /datum/quirk/item_quirk/breather/plasma_breather),
+	list(/datum/quirk/psionic_dampener, /datum/quirk/telepathic),
+	list(/datum/quirk/hydrophobia, /datum/quirk/item_quirk/breather/water_breather),
+	list(/datum/quirk/unblinking, /datum/quirk/item_quirk/fluoride_stare),
+	// NOVA EDIT ADDITION END
 ))
 
 GLOBAL_LIST_INIT(quirk_string_blacklist, generate_quirk_string_blacklist())
@@ -179,13 +199,18 @@ PROCESSING_SUBSYSTEM_DEF(quirks)
 /// be valid.
 /// If no changes need to be made, will return the same list.
 /// Expects all quirk names to be unique, but makes no other expectations.
-/datum/controller/subsystem/processing/quirks/proc/filter_invalid_quirks(list/quirks)
+/datum/controller/subsystem/processing/quirks/proc/filter_invalid_quirks(list/quirks, list/augments) // NOVA EDIT CHANGE - AUGMENTS+ - ORIGINAL: /datum/controller/subsystem/processing/quirks/proc/filter_invalid_quirks(list/quirks)
 	var/list/new_quirks = list()
 	var/list/positive_quirks = list()
 	var/balance = -default_quirk_points
 
 	var/list/all_quirks = get_quirks()
 
+	// NOVA EDIT ADDITION BEGIN - AUGMENTS+
+	for(var/key, aug_path in augments)
+		var/datum/augment_item/aug = GLOB.augment_items[aug_path]
+		balance += aug.cost
+	// NOVA EDIT ADDITION END
 	for (var/quirk_name in quirks)
 		var/datum/quirk/quirk = all_quirks[quirk_name]
 		if (isnull(quirk))

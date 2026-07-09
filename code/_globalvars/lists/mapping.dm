@@ -126,9 +126,6 @@ GLOBAL_LIST_EMPTY(jobspawn_overrides)
 
 GLOBAL_LIST_EMPTY(gorilla_start)
 GLOBAL_LIST_EMPTY(wizardstart)
-GLOBAL_LIST_EMPTY(nukeop_start)
-GLOBAL_LIST_EMPTY(nukeop_leader_start)
-GLOBAL_LIST_EMPTY(nukeop_overwatch_start)
 GLOBAL_LIST_EMPTY(newplayer_start)
 GLOBAL_LIST_EMPTY(prisonwarp) //admin prisoners go to these
 GLOBAL_LIST_EMPTY(holdingfacility) //captured people go here (ninja energy net)
@@ -148,6 +145,10 @@ GLOBAL_LIST_EMPTY(bar_areas)
 GLOBAL_LIST_EMPTY(river_waypoint_list) // Assoc list of river waypoint markers by z-level
 GLOBAL_LIST_EMPTY(mining_center) // For determining vent size ranked lists, epicenters for comparison goes here.
 GLOBAL_LIST_EMPTY(map_generators_by_z) // Assoc list of shared generators by z by type
+
+// NOVA ADDITIONS START
+GLOBAL_LIST_EMPTY(traitor_start)
+// NOVA ADDITIONS END
 
 /// List of all the maps that have been cached for /proc/load_map
 GLOBAL_LIST_EMPTY(cached_maps)

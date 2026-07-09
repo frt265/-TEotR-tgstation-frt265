@@ -91,6 +91,7 @@
 		"leader_experience" = list("desc" = "Pick an experienced leader", "type" = "boolean", "value" = "[(ertemplate.leader_experience ? "Yes" : "No")]"),
 		"random_names" = list("desc" = "Randomize names", "type" = "boolean", "value" = "[(ertemplate.random_names ? "Yes" : "No")]"),
 		"spawn_admin" = list("desc" = "Spawn yourself as briefing officer", "type" = "boolean", "value" = "[(ertemplate.spawn_admin ? "Yes" : "No")]"),
+		"notify_players" = list("desc" = "Notify players that you have sent an ERT", "type" = "boolean", "value" = "[(ertemplate.notify_players ? "Yes" : "No")]"), //NOVA EDIT ADDITION
 		"use_custom_shuttle" = list("desc" = "Use the ERT's custom shuttle (if it has one)", "type" = "boolean", "value" = "[(ertemplate.use_custom_shuttle ? "Yes" : "No")]"),
 		"mob_type" = list("desc" = "Base Species", "callback" = CALLBACK(src, PROC_REF(makeERTTemplateModified)), "type" = "datum", "path" = "/mob/living/carbon/human", "subtypesonly" = TRUE, "value" = ertemplate.mob_type),
 		)
@@ -119,6 +120,7 @@
 	ertemplate.leader_experience = prefs["leader_experience"]["value"] == "Yes"
 	ertemplate.random_names = prefs["random_names"]["value"] == "Yes"
 	ertemplate.spawn_admin = prefs["spawn_admin"]["value"] == "Yes"
+	ertemplate.notify_players = prefs["notify_players"]["value"] == "Yes" //NOVA EDIT ADDITION
 	ertemplate.use_custom_shuttle = prefs["use_custom_shuttle"]["value"] == "Yes"
 	ertemplate.mob_type = prefs["mob_type"]["value"]
 
@@ -261,6 +263,10 @@
 
 	message_admins("[key_name_admin(owner)] created a CentCom response team.")
 	message_admins("[capitalize(ertemplate.polldesc)] has spawned with the mission: [ertemplate.mission]")
+	// NOVA EDIT ADDITION BEGIN
+	if(ertemplate.notify_players)
+		priority_announce("Central command has responded to your request for a CODE [uppertext(ertemplate.code)] Emergency Response Team and have confirmed one to be enroute.", "ERT Request", ANNOUNCER_ERTYES)
+	// NOVA EDIT END
 	return TRUE
 
 ADMIN_VERB(summon_ert, R_FUN, "Summon ERT", "Summons an emergency response team.", ADMIN_CATEGORY_FUN)

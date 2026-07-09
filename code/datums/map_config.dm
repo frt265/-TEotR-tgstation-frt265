@@ -34,8 +34,10 @@
 	var/wilderness_levels = 0
 	/// Directory to the wilderness area we can spawn in
 	var/wilderness_directory
+	/// Z-Level traits our wilderness maps will get, ice box traits by default
+	var/list/wilderness_z_traits = ZTRAITS_ICY_WILDS
 	/// Index of map names (inside wilderness_directory) with the amount to spawn. ("ice_planes" = 1) for one ice spawn
-	var/list/maps_to_spawn = list()
+	var/list/wilderness_maps_to_spawn = list()
 
 	///The type of mining Z-level that should be loaded.
 	var/minetype = MINETYPE_LAVALAND
@@ -43,12 +45,23 @@
 	var/blacklist_file
 
 	var/allow_custom_shuttles = TRUE
+// NOVA EDIT REMOVAL BEGIN - CUSTOM SHUTTLE LIST OVERRIDE
+	/*
+	// TG original
 	var/shuttles = list(
 		"cargo" = "cargo_box",
 		"ferry" = "ferry_fancy",
 		"whiteship" = "whiteship_meta",
 		"emergency" = "emergency_meta",
 	)
+	*/
+	var/shuttles = list(
+		"cargo" = "cargo_nova",
+		"ferry" = "ferry_fancy",
+		"whiteship" = "whiteship_meta",
+		"emergency" = "emergency_nova",
+	)
+// NOVA EDIT END
 
 	/// Dictionary of job sub-typepath to template changes dictionary
 	var/job_changes = list()
@@ -212,6 +225,11 @@
 	if ("planetary" in json)
 		planetary = json["planetary"]
 
+	// NOVA EDIT ADDITION START - Planetary maps with space access.
+	if ("allow_space_when_planetary" in json)
+		allow_space_when_planetary = json["allow_space_when_planetary"]
+	// NOVA EDIT END
+
 	if ("blacklist_file" in json)
 		blacklist_file = json["blacklist_file"]
 
@@ -255,8 +273,12 @@
 
 		// Just pick and take based on weight
 		for(var/i in 1 to wilderness_levels)
-			maps_to_spawn += pick_weight_take(wilderness)
-		shuffle(maps_to_spawn)
+			wilderness_maps_to_spawn += pick_weight_take(wilderness)
+		shuffle(wilderness_maps_to_spawn)
+
+	var/list/wilderness_level_traits = json["wilderness_level_traits"]
+	if (islist(wilderness_level_traits))
+		wilderness_z_traits = wilderness_level_traits
 
 #ifdef UNIT_TESTS
 	// Check for unit tests to skip, no reason to check these if we're not running tests

@@ -7,6 +7,8 @@
 		/datum/reagent/medicine/c2/multiver,\
 		/datum/reagent/medicine/salglu_solution,\
 		/datum/reagent/medicine/spaceacillin,\
+		/datum/reagent/medicine/lidocaine, /* NOVA EDIT ADDITION - added Lidocaine */ \
+		/datum/reagent/medicine/potass_iodide, /* NOVA EDIT ADDITION - added Potassium Iodine */ \
 	)
 #define EXPANDED_MEDICAL_REAGENTS list(\
 		/datum/reagent/medicine/haloperidol,\
@@ -18,6 +20,8 @@
 		/datum/reagent/medicine/pen_acid,\
 		/datum/reagent/medicine/rezadone,\
 		/datum/reagent/medicine/sal_acid,\
+		/datum/reagent/medicine/sal_acid, /* NOVA EDIT ADDITION - added comma for below */ \
+		/datum/reagent/toxin/formaldehyde, /* NOVA EDIT ADDITION - added Formaldehyde */ \
 	)
 #define HACKED_MEDICAL_REAGENTS list(\
 		/datum/reagent/toxin/cyanide,\
@@ -50,6 +54,7 @@
 		/datum/reagent/medicine/morphine,\
 		/datum/reagent/medicine/potass_iodide,\
 		/datum/reagent/medicine/syndicate_nanites,\
+		/datum/reagent/medicine/atropine,\
 	)
 #define BASE_SERVICE_REAGENTS list(/datum/reagent/consumable/applejuice, /datum/reagent/consumable/banana,\
 		/datum/reagent/consumable/berryjuice, /datum/reagent/consumable/cherryjelly, /datum/reagent/consumable/coffee,\
@@ -253,9 +258,12 @@
 	. += "Currently loaded: [selected_reagent ? "[selected_reagent]. [selected_reagent.description]" : "nothing."]"
 	. += span_notice("<i>Alt+Click</i> to change transfer amount. Currently set to [amount_per_transfer_from_this]u.")
 
+/* NOVA EDIT REMOVAL START - SEE master_files/code/modules/reagents/reagent_containers.dm
 /obj/item/reagent_containers/borghypo/click_alt(mob/living/user)
+
 	change_transfer_amount(user)
 	return CLICK_ACTION_SUCCESS
+NOVA EDIT REMOVAL END */
 
 /// Default Medborg Hypospray
 /obj/item/reagent_containers/borghypo/medical
@@ -483,8 +491,8 @@
 /obj/item/reagent_containers/borghypo/borgshaker/hacked
 	name = "cyborg shaker"
 	desc = "Will mix drinks that knock them dead."
-	icon_state = "threemileislandglass"
 	icon = 'icons/obj/drinks/mixed_drinks.dmi'
+	icon_state = "threemileislandglass"
 	tgui_theme = "syndicate"
 	dispensed_temperature = WATER_MATTERSTATE_CHANGE_TEMP
 	default_reagent_types = HACKED_SERVICE_REAGENTS

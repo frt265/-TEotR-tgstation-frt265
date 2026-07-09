@@ -112,7 +112,8 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		migrate_character_to_tgui_prefs_menu()
 
 	if (current_version < 42)
-		migrate_body_types(save_data)
+		// migrate_body_types(save_data) // NOVA EDIT - This'll fuck up savefiles
+		migrate_mentor() // NOVA EDIT - Make mentors alive again
 
 	if (current_version < 43)
 		migrate_legacy_sound_toggles(savefile)
@@ -239,19 +240,19 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	apply_all_client_preferences()
 
 	//general preferences
-	lastchangelog = savefile.get_entry("lastchangelog", lastchangelog)
-	be_special = savefile.get_entry("be_special", be_special)
-	default_slot = savefile.get_entry("default_slot", default_slot)
-	chat_toggles = savefile.get_entry("chat_toggles", chat_toggles)
-	toggles = savefile.get_entry("toggles", toggles)
-	ignoring = savefile.get_entry("ignoring", ignoring)
+	lastchangelog = savefile.get_entry("lastchangelog")
+	be_special = savefile.get_entry("be_special")
+	default_slot = savefile.get_entry("default_slot")
+	chat_toggles = savefile.get_entry("chat_toggles")
+	toggles = savefile.get_entry("toggles")
+	ignoring = savefile.get_entry("ignoring")
 
 	// OOC commendations
-	hearted_until = savefile.get_entry("hearted_until", hearted_until)
+	hearted_until = savefile.get_entry("hearted_until")
 	if(hearted_until > world.realtime)
 		hearted = TRUE
 	//favorite outfits
-	favorite_outfits = savefile.get_entry("favorite_outfits", favorite_outfits)
+	favorite_outfits = savefile.get_entry("favorite_outfits")
 
 	var/list/parsed_favs = list()
 	for(var/typetext in favorite_outfits)
@@ -261,7 +262,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	favorite_outfits = unique_list(parsed_favs)
 
 	// Custom hotkeys
-	key_bindings = savefile.get_entry("key_bindings", key_bindings)
+	key_bindings = savefile.get_entry("key_bindings")
 
 	//try to fix any outdated data if necessary
 	if(SHOULD_UPDATE_DATA(data_validity_integer))
@@ -369,6 +370,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	//Quirks
 	all_quirks = save_data?["all_quirks"]
+	load_character_nova(save_data) // NOVA EDIT ADDITION
 
 	//try to fix any outdated data if necessary
 	//preference updating will handle saving the updated data for us.
@@ -379,14 +381,17 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	randomise = SANITIZE_LIST(randomise)
 	job_preferences = SANITIZE_LIST(job_preferences)
 	all_quirks = SANITIZE_LIST(all_quirks)
+	languages = SANITIZE_LIST(languages) // NOVA EDIT ADDITION
+	augments = SANITIZE_LIST(augments) // NOVA EDIT ADDITION
 
 	//Validate job prefs
 	for(var/j in job_preferences)
 		if(job_preferences[j] != JP_LOW && job_preferences[j] != JP_MEDIUM && job_preferences[j] != JP_HIGH)
 			job_preferences -= j
 
-	all_quirks = SSquirks.filter_invalid_quirks(SANITIZE_LIST(all_quirks))
+	all_quirks = SSquirks.filter_invalid_quirks(SANITIZE_LIST(all_quirks), SANITIZE_LIST(augments)) // NOVA EDIT CHANGE - AUGMENTS+ - ORIGINAL: all_quirks = SSquirks.filter_invalid_quirks(SANITIZE_LIST(all_quirks))
 	validate_quirks()
+	sanitize_languages() // NOVA EDIT ADDITION
 
 	return TRUE
 
@@ -427,6 +432,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 
 	//Quirks
 	save_data["all_quirks"] = all_quirks
+	save_character_nova(save_data) // NOVA EDIT ADDITION
 
 	return TRUE
 
@@ -443,6 +449,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 		preference_middleware.on_new_character(usr)
 
 	character_preview_view.update_body()
+	SSstatpanels.update_job_estimation(ckey = parent.ckey) // update the job estimations with their new char // NOVA EDIT ADDITION
 
 /datum/preferences/proc/remove_current_slot()
 	PRIVATE_PROC(TRUE)
@@ -489,6 +496,6 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 #undef SAVEFILE_VERSION_MIN
 #undef SAVE_DATA_NO_ERROR
 #undef SAVE_DATA_EMPTY
-#undef SAVE_DATA_OBSOLETE
+//#undef SAVE_DATA_OBSOLETE - NOVA EDIT REMOVAL - Used in [modular_nova\modules\admin\code\preferences_loadverb.dm]
 #undef IS_DATA_OBSOLETE
 #undef SHOULD_UPDATE_DATA

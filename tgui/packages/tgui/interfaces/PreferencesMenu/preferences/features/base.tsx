@@ -15,6 +15,7 @@ import {
   NumberInput,
   Slider,
   Stack,
+  TextArea, // NOVA EDIT ADDITION
 } from 'tgui-core/components';
 import type { BooleanLike } from 'tgui-core/react';
 
@@ -162,6 +163,7 @@ export type FeatureChoicedServerData = {
   choices: string[];
   display_names?: Record<string, string>;
   icons?: Record<string, string>;
+  extra_quirk_data?: Record<string, string>; // NOVA EDIT ADDITION
 };
 
 export type FeatureChoiced = Feature<string, string, FeatureChoicedServerData>;
@@ -265,3 +267,100 @@ export function FeatureShortTextInput(
     />
   );
 }
+// NOVA EDIT ADDITION START - NOVA FEATURES DOWN HERE
+export const FeatureLongTextInput = (
+  props: FeatureValueProps<string, string, FeatureShortTextData>,
+) => {
+  const { serverData, handleSetValue, value } = props;
+
+  if (!serverData) {
+    return <Box>Loading...</Box>;
+  }
+
+  return (
+    <TextArea
+      height="100px"
+      fluid
+      value={value}
+      maxLength={serverData?.maximum_length}
+      onBlur={(value) => handleSetValue(value)}
+    />
+  );
+};
+
+export const FeatureTriColorInput = (props: FeatureValueProps<string[]>) => {
+  const { act } = useBackend<PreferencesMenuData>();
+  const { featureId, shrink, value } = props;
+
+  const buttonFromValue = (index) => {
+    return (
+      <Stack.Item>
+        <Button
+          onClick={() => {
+            act('set_tricolor_preference', {
+              preference: featureId,
+              value: index + 1,
+            });
+          }}
+        >
+          <Stack align="center" fill>
+            <Stack.Item>
+              <Box
+                style={{
+                  background: value[index].startsWith('#')
+                    ? value[index]
+                    : `#${value[index]}`,
+                  border: '2px solid white',
+                  boxSizing: 'content-box',
+                  height: '11px',
+                  width: '11px',
+                  ...(shrink
+                    ? {
+                        margin: '1px',
+                      }
+                    : {}),
+                }}
+              />
+            </Stack.Item>
+
+            {!shrink && <Stack.Item>Change</Stack.Item>}
+          </Stack>
+        </Button>
+      </Stack.Item>
+    );
+  };
+  return (
+    <Stack align="center" fill>
+      {buttonFromValue(0)}
+      {buttonFromValue(1)}
+      {buttonFromValue(2)}
+    </Stack>
+  );
+};
+
+export const FeatureTriBoolInput = (props: FeatureValueProps<boolean[]>) => {
+  const { handleSetValue, value } = props;
+
+  const buttonFromValue = (index) => {
+    return (
+      <Stack.Item align="center">
+        <Button.Checkbox
+          checked={!!value[index]}
+          onClick={() => {
+            const currentValue = [...value];
+            currentValue[index] = !currentValue[index];
+            handleSetValue(currentValue);
+          }}
+        />
+      </Stack.Item>
+    );
+  };
+  return (
+    <Stack align="center" fill>
+      {buttonFromValue(0)}
+      {buttonFromValue(1)}
+      {buttonFromValue(2)}
+    </Stack>
+  );
+};
+// NOVA EDIT ADDITION END

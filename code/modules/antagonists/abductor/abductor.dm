@@ -207,7 +207,7 @@
 	..()
 	team_number = team_count++
 	name = "Mothership [pick(GLOB.greek_letters)]" //TODO Ensure unique and actual alieny names
-	add_objective(new /datum/objective/experiment)
+	//add_objective(new /datum/objective/experiment) //NOVA EDIT REMOVAL
 	// Some aliens can be green as a treat
 	if(prob(check_holidays(APRIL_FOOLS) ? 50 : 2) && isnull(team_skincolor))
 		team_skincolor = COLOR_EMERALD

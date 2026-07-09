@@ -289,6 +289,11 @@ SUBSYSTEM_DEF(polling)
 	if(the_ignore_category)
 		if(potential_candidate.ckey in GLOB.poll_ignore[the_ignore_category])
 			return FALSE
+	// NOVA EDIT ADDITION BEGIN
+	if(is_banned_from(potential_candidate.ckey, BAN_GHOST_TAKEOVER) || is_banned_from(potential_candidate.ckey, BAN_ANTAGONIST))
+		to_chat(potential_candidate, "There was a ghost prompt for: [role], unfortunately you are banned from ghost takeovers.")
+		return FALSE
+	// NOVA EDIT ADDITION END
 	if(role && potential_candidate.client)
 		if(!(role in potential_candidate.client.prefs.be_special))
 			return FALSE

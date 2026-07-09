@@ -4,8 +4,8 @@
 		Procedure, eat donuts."
 	auto_deadmin_role_flags = DEADMIN_POSITION_SECURITY
 	faction = FACTION_STATION
-	total_positions = 5 //Handled in /datum/controller/occupations/proc/setup_officer_positions()
-	spawn_positions = 5 //Handled in /datum/controller/occupations/proc/setup_officer_positions()
+	total_positions = 8 //Handled in /datum/controller/occupations/proc/setup_officer_positions() //NOVA EDIT: SET TO 8, WAS 5
+	spawn_positions = 8 //Handled in /datum/controller/occupations/proc/setup_officer_positions() //NOVA EDIT: SEE ABOVE
 	supervisors = "the Head of Security, and the head of your assigned department (if applicable)"
 	minimal_player_age = 7
 	exp_requirements = 300
@@ -74,16 +74,24 @@ GLOBAL_LIST_EMPTY(security_officer_distribution)
 
 /datum/job/security_officer/after_roundstart_spawn(mob/living/spawning, client/player_client)
 	. = ..()
+	//NOVA EDIT REMOVAL
+	/*
 	if(ishuman(spawning))
 		setup_department(spawning, player_client, move_to = TRUE)
+	*/
+	//NOVA EDIT END
 
 
 /datum/job/security_officer/after_latejoin_spawn(mob/living/spawning)
 	. = ..()
+	//NOVA EDIT REMOVAL
+	/*
 	if(ishuman(spawning))
 		var/department = setup_department(spawning, spawning.client)
 		if(department)
 			announce_latejoin(spawning, department, GLOB.security_officer_distribution)
+	*/
+	//NOVA EDIT END
 
 
 /// Returns the department this mob was assigned to, if any.
@@ -233,9 +241,10 @@ GLOBAL_LIST_EMPTY(security_officer_distribution)
 	id_trim = /datum/id_trim/job/security_officer
 	uniform = /obj/item/clothing/under/rank/security/officer
 	suit = /obj/item/clothing/suit/armor/vest/alt/sec
-	suit_store = /obj/item/gun/energy/disabler
 	backpack_contents = list(
 		/obj/item/evidencebag = 1,
+		/obj/item/security_voucher/primary = 1,
+		/obj/item/security_voucher/utility = 1
 		)
 	belt = /obj/item/modular_computer/pda/security
 	ears = /obj/item/radio/headset/headset_sec/alt

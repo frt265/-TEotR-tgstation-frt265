@@ -56,6 +56,7 @@ h1.alert, h2.alert		{color: #000000;}
 
 .emote					{}
 .infoplain				{}
+.mentor					{}
 
 .userdanger				{color: #ff0000;	font-weight: bold;	font-size: 3;}
 .danger					{color: #ff0000;	font-weight: bold;}
@@ -156,4 +157,20 @@ h1.alert, h2.alert		{color: #000000;}
 .upside_down			{display: inline; -moz-transform: scale(-1, -1); -webkit-transform: scale(-1, -1); -o-transform: scale(-1, -1); -ms-transform: scale(-1, -1); transform: scale(-1, -1);}
 
 .cyan					{color: #bde0dc;}
+// NOVA EDIT ADDITION BEGIN
+.velvet					{color: #660015; 	font-weight: bold;}
+.hexnut 				{color: #0099ff;	font-weight: bold;}
+.glossy					{color: #9b6000;	font-weight: bold;}
+.doyourjobidiot {color: #c51e1e;	text-shadow: 0 0 4px #e22525;	font-size: 125%;}
+.brass {color: #BE8700;}
+.big_brass {color: #BE8700;	font-size: 3;	font-weight: bold;	font-style: italic;}
+.clockyellow {color: #DAAA18;	font-weight: bold;	font-style: italic;}
+.clockgray {color: #42474D;	font-weight: bold;	font-style: italic;}
+.clockred {color: #6E001A;	font-weight: bold;	font-style: italic;}
+.brown {color: #3d2009;}
+.orange {color: #b8761a;}
+.yellow {color: #c7b72c;}
+.cyan_nova {color: #0ea1e6;}
+.horizonblue {color: #7ca2b8;}
+// NOVA EDIT ADDITION END
 </style>"}

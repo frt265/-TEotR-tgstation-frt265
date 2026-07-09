@@ -43,6 +43,14 @@
 #define ORGAN_MUTANT (1<<15)
 /// The organ has been chomped or otherwise rendered unusable.
 #define ORGAN_UNUSABLE (1<<16)
+// NOVA EDIT ADDITION START - Customization
+/// Synthetic organ granted by a species (for use for organ replacements between species)
+#define ORGAN_SYNTHETIC_FROM_SPECIES (1<<17)
+/// Organ flag for organs of hemophage origin, or organs that have since been infected by an hemophage's tumor.
+#define ORGAN_TUMOR_CORRUPTED (1<<18)
+/// Organ flag for nanomachine organs
+#define ORGAN_NANOMACHINE (1<<19)
+// NOVA EDIT ADDITION END
 
 /// Organ flags that correspond to bodytypes
 #define ORGAN_TYPE_FLAGS (ORGAN_ORGANIC | ORGAN_ROBOTIC | ORGAN_MINERAL | ORGAN_GHOST)
