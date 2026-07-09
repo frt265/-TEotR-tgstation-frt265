@@ -503,7 +503,6 @@
 		balloon_alert(user, "[magazine_wording] unloaded")
 	update_appearance()
 
-
 /obj/item/gun/ballistic/can_shoot()
 	return chambered?.loaded_projectile
 
@@ -568,7 +567,7 @@
 	if (!num_loaded)
 		return FALSE
 
-	handle_box_reload(user, ammo, num_loaded) // NOVA EDIT CHANGE - ORIGINAL: balloon_alert(user, "[num_loaded] [cartridge_wording]\s loaded")
+	balloon_alert(user, "[num_loaded] [cartridge_wording]\s loaded")
 	playsound(src, load_sound, load_sound_volume, load_sound_vary)
 	if (chambered == null && bolt_type == BOLT_TYPE_NO_BOLT)
 		chamber_round()
@@ -692,7 +691,6 @@
 		if (!forced)
 			balloon_alert(user, "it's empty!")
 		return
-	SEND_SIGNAL(src, COMSIG_UPDATE_AMMO_HUD) // NOVA EDIT ADDITION - this is normally handled by eject_magazine() but internal magazines are a special case
 
 	if (!forced)
 		balloon_alert(user, "[num_unloaded] [cartridge_wording]\s unloaded")

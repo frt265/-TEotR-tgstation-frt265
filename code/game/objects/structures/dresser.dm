@@ -1,7 +1,7 @@
 /obj/structure/dresser
 	name = "dresser"
 	desc = "A nicely-crafted wooden dresser. It's filled with lots of undies."
-	icon = 'icons/obj/fluff/general.dmi' //NOVA EDIT - ICON OVERRIDDEN IN AESTHETICS MODULE
+	icon = 'icons/obj/fluff/general.dmi'
 	icon_state = "dresser"
 	resistance_flags = FLAMMABLE
 	density = TRUE
@@ -33,7 +33,7 @@
 		to_chat(dressing_human, span_warning("You are not capable of wearing underwear."))
 		return
 
-	var/choice = tgui_input_list(user, "Underwear, Bra, Undershirt, or Socks?", "Changing", list("Underwear", "Underwear Color", "Bra", "Bra Color", "Undershirt", "Undershirt Color", "Socks", "Socks Color")) //NOVA EDIT ADDITION - Colorable Undershirt/Socks/Bra
+	var/choice = tgui_input_list(user, "Underwear, Undershirt, or Socks?", "Changing", list("Underwear","Underwear Color","Undershirt","Socks"))
 	if(isnull(choice))
 		return
 
@@ -56,27 +56,6 @@
 			var/new_socks = tgui_input_list(user, "Select your socks", "Changing", SSaccessories.socks_list)
 			if(new_socks)
 				dressing_human.socks = new_socks
-		//NOVA EDIT ADDITION BEGIN - Colorable Undershirt/Socks/Bras
-		if("Undershirt Color")
-			var/new_undershirt_color = tgui_color_picker(dressing_human, "Choose your undershirt color", "Undershirt Color", dressing_human.undershirt_color)
-			if(new_undershirt_color)
-				dressing_human.undershirt_color = sanitize_hexcolor(new_undershirt_color)
-		if("Socks Color")
-			var/new_socks_color = tgui_color_picker(dressing_human, "Choose your socks color", "Socks Color", dressing_human.socks_color)
-			if(new_socks_color)
-				dressing_human.socks_color = sanitize_hexcolor(new_socks_color)
-
-		if("Bra")
-			var/new_bra = tgui_input_list(user, "Select your Bra", "Changing", SSaccessories.bra_list)
-			if(new_bra)
-				dressing_human.bra = new_bra
-
-		if("Bra Color")
-			var/new_bra_color = tgui_color_picker(dressing_human, "Choose your Bra color", "Bra Color", dressing_human.bra_color)
-			if(new_bra_color)
-				dressing_human.bra_color = sanitize_hexcolor(new_bra_color)
-
-		//NOVA EDIT ADDITION END - Colorable Undershirt/Socks/Bras
 
 	add_fingerprint(dressing_human)
 	dressing_human.update_body()

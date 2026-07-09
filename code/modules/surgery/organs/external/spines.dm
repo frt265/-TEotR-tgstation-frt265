@@ -7,7 +7,7 @@
 	zone = BODY_ZONE_CHEST
 	slot = ORGAN_SLOT_EXTERNAL_SPINES
 
-	//dna_block = /datum/dna_block/feature/accessory/spine // NOVA EDIT REMOVAL - Customization - We have our own system to handle DNA.
+	dna_block = /datum/dna_block/feature/accessory/spine
 	restyle_flags = EXTERNAL_RESTYLE_FLESH
 
 	bodypart_overlay = /datum/bodypart_overlay/mutant/spines

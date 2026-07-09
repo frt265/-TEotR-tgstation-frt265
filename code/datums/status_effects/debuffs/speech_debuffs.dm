@@ -103,7 +103,7 @@
 
 /datum/status_effect/speech/stutter/anxiety
 	id = "anxiety_stutter"
-	stutter_prob = 0 // NOVA EDIT CHANGE - ORIGINAL: stutter_prob = 5 | Preserve the stutter removal
+	stutter_prob = 5
 	four_char_chance = 4
 	three_char_chance = 10
 	two_char_chance = 100

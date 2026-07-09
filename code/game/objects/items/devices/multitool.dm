@@ -13,7 +13,7 @@
 /obj/item/multitool
 	name = "multitool"
 	desc = "Used for pulsing wires to test which to cut. Not recommended by doctors. You can activate it in-hand to locate the nearest APC."
-	icon = 'icons/obj/devices/tool.dmi' //NOVA EDIT - ICON OVERRIDDEN IN AESTHETICS MODULE
+	icon = 'icons/obj/devices/tool.dmi'
 	icon_state = "multitool"
 	inhand_icon_state = "multitool"
 	icon_angle = -90
@@ -150,8 +150,6 @@
 // Syndicate device disguised as a multitool; it will turn red when an AI camera is nearby.
 
 /obj/item/multitool/ai_detect
-	special_desc_requirement = EXAMINE_CHECK_SYNDICATE // NOVA EDIT ADDITION - Role-locked descriptions
-	special_desc = "A special sensor embedded stealthily into this device can detect and warn of nearby silicon activity and camera vision range." // NOVA EDIT ADDITION - Role-locked descriptions
 	apc_scanner = FALSE
 	/// How close the AI is to us
 	var/detect_state = PROXIMITY_NONE

@@ -282,19 +282,15 @@
 
 	if(all_robotic)
 		owner.add_traits(list(
-			/* NOVA EDIT REMOVAL BEGIN - You are not immune to temperature
 			TRAIT_RESISTCOLD,
 			TRAIT_RESISTHEAT,
-			NOVA EDIT REMOVAL END */
 			TRAIT_RESISTLOWPRESSURE,
 			TRAIT_RESISTHIGHPRESSURE,
 			), AUGMENTATION_TRAIT)
 	else
 		owner.remove_traits(list(
-			/* NOVA EDIT REMOVAL BEGIN - You are not immune to temperature
 			TRAIT_RESISTCOLD,
 			TRAIT_RESISTHEAT,
-			NOVA EDIT REMOVAL END */
 			TRAIT_RESISTLOWPRESSURE,
 			TRAIT_RESISTHIGHPRESSURE,
 			), AUGMENTATION_TRAIT)

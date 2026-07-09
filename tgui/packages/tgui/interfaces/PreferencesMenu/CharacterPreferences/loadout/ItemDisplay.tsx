@@ -128,7 +128,7 @@ function sortByGroup(items: LoadoutItem[]): LoadoutGroup[] {
 
 export function ItemListDisplay(props: ListProps) {
   const { data } = useBackend<LoadoutManagerData>();
-  const loadout_list = data.character_preferences.misc.loadout_lists.loadout; // NOVA EDIT CHANGE: Multiple loadout presets: ORIGINAL: const { loadout_list } = data.character_preferences.misc;
+  const { loadout_list } = data.character_preferences.misc;
   const itemGroups = sortByGroup(props.items);
 
   return (
@@ -147,8 +147,7 @@ export function ItemListDisplay(props: ListProps) {
             )}
             <Stack.Item>
               <Stack wrap g={0.5}>
-                {FilterItemList(group.items).map((item) => (
-                  // NOVA EDIT CHANGE - ORIGINAL: {group.items.map((item) => (
+                {group.items.map((item) => (
                   <Stack.Item key={item.name}>
                     <ItemDisplay
                       item={item}
@@ -171,31 +170,6 @@ type TabProps = {
   category: LoadoutCategory | undefined;
 };
 
-// NOVA EDIT ADDITION START - Expanded loadout framework
-const FilterItemList = (items: LoadoutItem[]) => {
-  const { data } = useBackend<LoadoutManagerData>();
-  const { is_donator, is_nova_star, erp_pref, nova_star_restrictions } = data;
-  const ckey = data.ckey;
-
-  return items.filter((item: LoadoutItem) => {
-    if (item.ckey_whitelist && item.ckey_whitelist.indexOf(ckey) === -1) {
-      return false;
-    }
-    if (item.donator_only && !is_donator) {
-      return false;
-    }
-    if (nova_star_restrictions && item.nova_stars_only && !is_nova_star) {
-      return false;
-    }
-    if (item.erp_item && !erp_pref) {
-      return false;
-    }
-
-    return true;
-  });
-};
-
-// NOVA EDIT ADDITION END
 export function LoadoutTabDisplay(props: TabProps) {
   const { category } = props;
   if (!category) {
@@ -216,8 +190,6 @@ type SearchProps = {
 
 export function SearchDisplay(props: SearchProps) {
   const { loadout_tabs, currentSearch } = props;
-  const { data } = useBackend<LoadoutManagerData>(); // NOVA EDIT ADDITION
-  const { erp_pref } = data; // NOVA EDIT ADDITION
 
   const search = createSearch(
     currentSearch,
@@ -225,10 +197,6 @@ export function SearchDisplay(props: SearchProps) {
   );
 
   const validLoadoutItems = loadout_tabs
-    // NOVA EDIT ADDITION START - Prefslocked tabs
-    .filter(
-      (curTab) => !curTab.erp_category || (curTab.erp_category && erp_pref),
-    ) // NOVA EDIT ADDITION END
     .flatMap((tab) => tab.contents)
     .filter(search)
     .sort((a, b) => (a.name > b.name ? 1 : -1));

@@ -107,6 +107,7 @@
 
 	chassis.toggle_strafe()
 
+
 /obj/vehicle/sealed/mecha/proc/toggle_strafe()
 	if(!(mecha_flags & CAN_STRAFE))
 		to_chat(occupants, "this mecha doesn't support strafing!")

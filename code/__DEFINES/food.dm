@@ -20,7 +20,6 @@
 #define GORE (1<<19)
 #define STONE (1<<20)
 #define EGG (1<<21)
-#define BLOODY (1<<22) // NOVA EDIT ADDITION - Hemophage Food
 
 DEFINE_BITFIELD(foodtypes, list(
 	"MEAT" = MEAT,
@@ -45,7 +44,6 @@ DEFINE_BITFIELD(foodtypes, list(
 	"GORE" = GORE,
 	"STONE" = STONE,
 	"EGG" = EGG,
-	"BLOODY" = BLOODY, // NOVA EDIT ADDITION - Hemophage Food
 ))
 
 /// A list of food type names, in order of their flags
@@ -72,7 +70,6 @@ DEFINE_BITFIELD(foodtypes, list(
 	"GORE", \
 	"STONE", \
 	"EGG", \
-	"BLOODY", /* NOVA EDIT ADDITION - Hemophage Food */ \
 )
 
 /// IC meaning (more or less) for food flags
@@ -99,7 +96,6 @@ DEFINE_BITFIELD(foodtypes, list(
 	"Gore", \
 	"Rocks", \
 	"Eggs", \
-	"Bloody", /* NOVA EDIT ADDITION - Hemophage Food */ \
 )
 
 /// Food types assigned to all podperson organs
@@ -112,7 +108,6 @@ DEFINE_BITFIELD(foodtypes, list(
 #define DRINK_FANTASTIC 5
 
 #define FOOD_AMAZING 6
-#define RACE_DRINK 7 // NOVA EDIT ADDITION
 
 #define FOOD_QUALITY_NORMAL 1
 #define FOOD_QUALITY_NICE 2
@@ -137,7 +132,7 @@ GLOBAL_ALIST_INIT(food_quality_description, alist(
 	FOOD_QUALITY_VERYGOOD = "very good",
 	FOOD_QUALITY_FANTASTIC = "fantastic",
 	FOOD_QUALITY_AMAZING = "amazing",
-	FOOD_QUALITY_TOP = "divine",
+	FOOD_QUALITY_TOP = "godlike",
 ))
 
 /// Weighted lists of crafted food buffs randomly given according to crafting_complexity unless the food has a specific buff
@@ -186,7 +181,7 @@ DEFINE_BITFIELD(food_flags, list(
 ///Define for return value of the after_eat callback that will call OnConsume if it hasn't already.
 #define FOOD_AFTER_EAT_CONSUME_ANYWAY 2
 
-#define STOP_SERVING_BREAKFAST (35 MINUTES) // NOVA EDIT CHANGE - ORIGINAL: #define STOP_SERVING_BREAKFAST (15 MINUTES)
+#define STOP_SERVING_BREAKFAST (15 MINUTES)
 
 #define FOOD_MEAT_HUMAN 50
 #define FOOD_MEAT_MUTANT 100

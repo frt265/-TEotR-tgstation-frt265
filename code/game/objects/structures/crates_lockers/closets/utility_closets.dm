@@ -33,12 +33,10 @@
 /obj/structure/closet/emcloset/PopulateContents()
 	..()
 
-	new /obj/item/storage/box/emergency_spacesuit(src) // NOVA EDIT ADD
-
 	if (prob(40))
 		new /obj/item/storage/toolbox/emergency(src)
 
-	switch (pick_weight(list("small" = 20, "aid" = 20, "tank" = 20, "both" = 30))) // NOVA EDIT CHANGE - ORIGINAL: switch (pick_weight(list("small" = 20, "aid" = 20, "tank" = 20, "both" = 30, "nothing" = 10)))
+	switch (pick_weight(list("small" = 20, "aid" = 20, "tank" = 20, "both" = 30, "nothing" = 10)))
 		if ("small")
 			new /obj/item/tank/internals/emergency_oxygen(src)
 			new /obj/item/tank/internals/emergency_oxygen(src)
@@ -58,13 +56,9 @@
 			new /obj/item/tank/internals/emergency_oxygen(src)
 			new /obj/item/clothing/mask/breath(src)
 
-		// NOVA EDIT REMOVAL START
-		/*
 		if ("nothing")
 			// doot
 			pass()
-		*/
-		// NOVA EDIT REMOVAL END
 
 /*
  * Fire Closet
@@ -76,23 +70,22 @@
 
 /obj/structure/closet/firecloset/PopulateContents()
 	..()
+
 	new /obj/item/clothing/suit/utility/fire/firefighter(src)
-	new /obj/item/clothing/mask/gas/alt(src) //NOVA EDIT CHANGE - ORIGINAL: /obj/item/clothing/mask/gas(src)
+	new /obj/item/clothing/mask/gas(src)
 	new /obj/item/tank/internals/oxygen/red(src)
 	new /obj/item/extinguisher(src)
 	new /obj/item/clothing/head/utility/hardhat/red(src)
 	new /obj/item/crowbar/large/emergency(src)
-	new /obj/item/storage/inflatable(src) //NOVA EDIT ADDITION - INFLATABLES
 
 /obj/structure/closet/firecloset/full/PopulateContents()
 	new /obj/item/clothing/suit/utility/fire/firefighter(src)
-	new /obj/item/clothing/mask/gas/alt(src) //NOVA EDIT CHANGE - ORIGINAL: /obj/item/clothing/mask/gas(src)
+	new /obj/item/clothing/mask/gas(src)
 	new /obj/item/flashlight(src)
 	new /obj/item/tank/internals/oxygen/red(src)
 	new /obj/item/extinguisher(src)
 	new /obj/item/clothing/head/utility/hardhat/red(src)
 	new /obj/item/crowbar/large/emergency(src)
-
 
 /*
  * Tool Closet

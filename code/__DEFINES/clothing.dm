@@ -68,18 +68,6 @@
 #define GMESSENGER "Grey Messenger Bag"
 /// Backpack type: Leather satchel
 #define LSATCHEL "Leather Satchel"
-// NOVA EDIT ADDITION START - Adds tpacks, tiny backpacks
-/// Backpack type: Belt pack
-#define TPACKB "Beltpack"
-/// Backpack type: Waist pack
-#define TPACKA "Waistpack"
-/// Backpack type: Chest pack
-#define TPACKC "Chest pack"
-/// Backpack type: U.D.C.
-#define UDCPACK "U.D.C"
-/// Backpack type: Large Gun Case
-#define GUNCASE "Guncase"
-// NOVA EDIT ADDITION END
 
 //Defines for space suits. The respective define is also an icon.
 #define SPACESUIT_NO_ICON "none"

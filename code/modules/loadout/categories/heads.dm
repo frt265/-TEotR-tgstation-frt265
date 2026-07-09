@@ -16,7 +16,6 @@
 	else
 		outfit.head = item_path
 
-/* NOVA EDIT REMOVAL - Already exists in our loadout
 /datum/loadout_item/head/beanie
 	name = "Beanie (Colorable)"
 	item_path = /obj/item/clothing/head/beanie
@@ -28,7 +27,6 @@
 /datum/loadout_item/head/red_beret
 	name = "Red Beret (Colorable)"
 	item_path = /obj/item/clothing/head/beret
-*/ // NOVA REMOVAL END
 
 /datum/loadout_item/head/black_cap
 	name = "Cap (Black)"
@@ -126,11 +124,9 @@
 	name ="Ushanka"
 	item_path = /obj/item/clothing/head/costume/ushanka
 
-/* NOVA EDIT REMOVAL - Already exists in our loadout
 /datum/loadout_item/head/plague_doctor
 	name = "Cap (Plague Doctor)"
 	item_path = /obj/item/clothing/head/bio_hood/plague
-*/ // NOVA REMOVAL END
 
 /datum/loadout_item/head/rose
 	name = "Rose"

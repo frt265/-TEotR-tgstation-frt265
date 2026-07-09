@@ -286,7 +286,7 @@
 			// intended effect here is to floor you immediately if you are shocked twice in quick succession
 			// or to keep you floored if you are already incapacitated otherwise
 			if(incapacitated)
-				StaminaKnockdown(stun_duration / 4) // NOVA EDIT CHANGE - ORIGINAL: Paralyze(stun_duration)
+				Paralyze(stun_duration)
 			// otherwise it just stuns you upright - until the second shock, which floors you
 			else
 				Stun(stun_duration)
@@ -303,7 +303,7 @@
 ///Called slightly after electrocute act to apply a secondary stun.
 /mob/living/carbon/proc/secondary_shock(stun, stun_duration)
 	if (stun)
-		StaminaKnockdown(stun_duration / 6) // NOVA EDIT CHANGE - ORIGINAL: Paralyze(stun_duration)
+		Paralyze(stun_duration)
 	else
 		Knockdown(stun_duration)
 
@@ -325,7 +325,6 @@
 		who_touched_us.blood_in_hands -= 1
 
 /mob/living/carbon/proc/help_shake_act(mob/living/carbon/helper, force_friendly)
-	var/nosound = FALSE //NOVA EDIT ADDITION - EMOTES
 	if(on_fire)
 		to_chat(helper, span_warning("You can't put [p_them()] out with just your bare hands!"))
 		return
@@ -345,29 +344,7 @@
 						null, span_hear("You hear the rustling of clothes."), DEFAULT_MESSAGE_RANGE, list(helper, src))
 		to_chat(helper, span_notice("You shake [src] trying to pick [p_them()] up!"))
 		to_chat(src, span_notice("[helper] shakes you to get you up!"))
-	//NOVA EDIT ADDITION BEGIN - EMOTES -- SENSITIVE SNOUT TRAIT ADDITION
-	else if(helper.zone_selected == BODY_ZONE_PRECISE_MOUTH)
-		nosound = TRUE
-		if(HAS_TRAIT(src, TRAIT_QUICKREFLEXES) && (src.stat != UNCONSCIOUS) && !INCAPACITATED_IGNORING(src, INCAPABLE_RESTRAINTS))
-			visible_message(span_warning("[helper] tries to boop [src] on the nose, but [p_they()] move[p_s()] out of the way."))
-			return
-		else
-			playsound(src, 'modular_nova/modules/emotes/sound/emotes/Nose_boop.ogg', 50, 0)
-			helper.visible_message(span_notice("[helper] boops [src]'s nose."), span_notice("You boop [src] on the nose."))
-			if(HAS_TRAIT(src, TRAIT_SENSITIVESNOUT) && is_location_accessible(BODY_ZONE_PRECISE_MOUTH))
-				var/datum/quirk/sensitivesnout/poor_snout = src.get_quirk(/datum/quirk/sensitivesnout)
-				poor_snout?.get_booped(helper)
-			return
-	//NOVA EDIT ADDITION END
 	else if(check_zone(helper.zone_selected) == BODY_ZONE_HEAD && get_bodypart(BODY_ZONE_HEAD)) //Headpats!
-		//NOVA EDIT ADDITION BEGIN - OVERSIZED & DISALLOWED HEADPATS
-		if(HAS_TRAIT(src, TRAIT_OVERSIZED) && !HAS_TRAIT(helper, TRAIT_OVERSIZED))
-			visible_message(span_warning("[helper] tries to pat [src] on the head, but can't reach!"))
-			return
-		else if(HAS_TRAIT(src, TRAIT_QUICKREFLEXES) && (src.stat != UNCONSCIOUS) && !INCAPACITATED_IGNORING(src, INCAPABLE_RESTRAINTS))
-			visible_message(span_warning("[helper] tries to pat [src] on the head, but [p_they()] move[p_s()] out of the way."))
-			return
-		//NOVA EDIT ADDITION END
 		helper.visible_message(span_notice("[helper] gives [src] a pat on the head to make [p_them()] feel better!"), \
 					null, span_hear("You hear a soft patter."), DEFAULT_MESSAGE_RANGE, list(helper, src))
 		to_chat(helper, span_notice("You give [src] a pat on the head to make [p_them()] feel better!"))
@@ -376,12 +353,6 @@
 		share_blood_on_touch(helper, ITEM_SLOT_HEAD|ITEM_SLOT_MASK)
 		if(HAS_TRAIT(src, TRAIT_BADTOUCH))
 			to_chat(helper, span_warning("[src] looks visibly upset as you pat [p_them()] on the head."))
-		//NOVA EDIT ADDITION BEGIN - EMOTES
-		if(HAS_TRAIT(src, TRAIT_EXCITABLE))
-			var/obj/item/organ/tail/src_tail = get_organ_slot(ORGAN_SLOT_EXTERNAL_TAIL)
-			if(src_tail && !(src_tail.wag_flags & WAG_WAGGING))
-				emote("wag")
-		//NOVA EDIT ADDITION END
 
 	else if ((helper.zone_selected == BODY_ZONE_PRECISE_GROIN) && !isnull(src.get_organ_by_type(/obj/item/organ/tail)))
 		helper.visible_message(span_notice("[helper] pulls on [src]'s tail!"), \
@@ -411,11 +382,6 @@
 			to_chat(helper, span_notice("You wrap [src] into a tight bear hug!"))
 			to_chat(src, span_notice("[helper] squeezes you super tightly in a firm bear hug!"))
 		else
-			// NOVA EDIT ADDITION START
-			if (HAS_TRAIT(src, TRAIT_QUICKREFLEXES) && (src.stat != UNCONSCIOUS) && !INCAPACITATED_IGNORING(src, INCAPABLE_RESTRAINTS))
-				visible_message(span_warning("[helper] tries to hug [src], but [p_they()] move[p_s()] out of the way."))
-				return
-			// NOVA EDIT ADDITION END
 			helper.visible_message(span_notice("[helper] hugs [src] to make [p_them()] feel better!"), \
 						null, span_hear("You hear the rustling of clothes."), DEFAULT_MESSAGE_RANGE, list(helper, src))
 			to_chat(helper, span_notice("You hug [src] to make [p_them()] feel better!"))
@@ -469,8 +435,7 @@
 	if(body_position != STANDING_UP && !resting && !buckled && !HAS_TRAIT(src, TRAIT_FLOORED))
 		get_up(TRUE)
 
-	if(!nosound) // NOVA EDIT ADDITION - EMOTES
-		playsound(loc, 'sound/items/weapons/thudswoosh.ogg', 50, TRUE, -1) // NOVA EDIT CHANGE - EMOTES - Original was unindented but otherwise the same
+	playsound(loc, 'sound/items/weapons/thudswoosh.ogg', 50, TRUE, -1)
 
 	// Shake animation
 	if (incapacitated)
@@ -601,11 +566,11 @@
 		if (!IS_ORGANIC_LIMB(limb))
 			. += (limb.brute_dam * limb.body_damage_coeff) + (limb.burn_dam * limb.body_damage_coeff)
 
-/mob/living/carbon/grabbedby(mob/living/user, supress_message = FALSE, grabbed_part) // NOVA EDIT CHANGE - ORIGINAL: /mob/living/carbon/grabbedby(mob/living/user, supress_message = FALSE)
+/mob/living/carbon/grabbedby(mob/living/user, supress_message = FALSE)
 	if(user != src)
 		return ..()
 
-	var/obj/item/bodypart/grasped_part = grabbed_part ? grabbed_part : get_bodypart(zone_selected) // NOVA EDIT CHANGE - ORIGINAL: var/obj/item/bodypart/grasped_part = get_bodypart(zone_selected)
+	var/obj/item/bodypart/grasped_part = get_bodypart(zone_selected)
 	if(!grasped_part?.can_be_grasped())
 		return
 	var/starting_hand_index = active_hand_index
@@ -709,7 +674,7 @@
 	var/changed_something = FALSE
 	var/obj/item/organ/new_organ = pick(GLOB.bioscrambler_valid_organs)
 	var/obj/item/organ/replaced = get_organ_slot(initial(new_organ.slot))
-	if ((!replaced || ORGAN_CAN_BE_BIOSCRAMBLED(replaced)) && get_bodypart(deprecise_zone(new_organ.zone)))
+	if (!replaced || ORGAN_CAN_BE_BIOSCRAMBLED(replaced))
 		changed_something = TRUE
 		new_organ = new new_organ()
 		new_organ.replace_into(src)

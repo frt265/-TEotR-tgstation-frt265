@@ -1,16 +1,9 @@
 import { ByondUi } from 'tgui-core/components';
 
-export const CharacterPreview = (props: {
-  width?: string; // NOVA EDIT
-  height: string;
-  id: string;
-}) => {
-  // NOVA EDIT
-  const { width = '272px' } = props;
-  // NOVA EDIT END
+export const CharacterPreview = (props: { height: string; id: string }) => {
   return (
     <ByondUi
-      width={width} // NOVA EDIT
+      width="220px"
       height={props.height}
       params={{
         id: props.id,

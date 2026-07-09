@@ -94,7 +94,7 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 	RegisterSignal(hud, COMSIG_QDELETING, PROC_REF(on_hud_delete))
 
 /// Returns the mob this is being displayed to, if any
-/atom/movable/screen/proc/get_mob() as /mob
+/atom/movable/screen/proc/get_mob()
 	return hud?.mymob
 
 /atom/movable/screen/proc/on_hud_delete(datum/source)
@@ -396,11 +396,8 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 	var/vertical = FALSE
 
 /atom/movable/screen/floor_changer/Click(location,control,params)
-	var/mob/living/user = get_mob()
-	if(usr != user)
-		return
-
 	var/list/modifiers = params2list(params)
+
 	var/mouse_position
 
 	if(vertical)
@@ -409,23 +406,10 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 		mouse_position = text2num(LAZYACCESS(modifiers, ICON_X))
 
 	if(mouse_position > 16)
-		//non-living can't RMB anyway, but just a precaution.
-		if(LAZYACCESS(modifiers, RIGHT_CLICK) && isliving(user))
-			if(user.looking_vertically == UP)
-				user.end_look()
-			else
-				user.look_up()
-			return
-		hud.mymob.up()
+		usr.up()
 		return
 
-	if(LAZYACCESS(modifiers, RIGHT_CLICK) && isliving(user))
-		if(user.looking_vertically == DOWN)
-			user.end_look()
-		else
-			user.look_down()
-		return
-	hud.mymob.down()
+	usr.down()
 	return
 
 /atom/movable/screen/floor_changer/vertical
@@ -1026,7 +1010,7 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 	plane = SPLASHSCREEN_PLANE
 	var/client/holder
 
-/* NOVA EDIT REMOVAL
+
 /atom/movable/screen/splash/Initialize(mapload, datum/hud/hud_owner, client/C, visible, use_previous_title)
 	. = ..()
 	if(!istype(C))
@@ -1046,7 +1030,6 @@ INITIALIZE_IMMEDIATE(/atom/movable/screen) // I hate this place
 		icon = SStitle.previous_icon
 
 	holder.screen += src
-*/ // NOVA EDIT END
 
 /atom/movable/screen/splash/proc/fade(out, qdel_after = TRUE)
 	if(QDELETED(src))

@@ -192,7 +192,6 @@
 
 /obj/item/clothing/shoes/pirate/Initialize(mapload)
 	. = ..()
-	create_storage(storage_type = /datum/storage/pockets/shoes)
 	AddElement(/datum/element/adjust_fishing_difficulty, -4)
 
 /obj/item/clothing/shoes/pirate/armored

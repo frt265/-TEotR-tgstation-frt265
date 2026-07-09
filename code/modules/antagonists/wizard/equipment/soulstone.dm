@@ -200,18 +200,8 @@
 	if(HAS_TRAIT(M, TRAIT_NO_SOUL))
 		to_chat(user, span_warning("This body does not possess a soul to capture."))
 		return
-	// NOVA EDIT START
-	if(!do_after(user, 5 SECONDS, M))
-		to_chat(user, span_warning("You must stand still to capture their soul!"))
-		return
-	// NOVA EDIT END
 	log_combat(user, M, "captured [M.name]'s soul", src)
 	capture_soul(M, user)
-
-/obj/item/soulstone/suicide_act(mob/living/user)
-	. = ..()
-	user.visible_message(span_suicide("[user] is capturing [user.p_their()] own soul with [src]! It looks like [user.p_theyre()] trying to commit suicide!"))
-	return capture_soul(user, null, TRUE) ? MANUAL_SUICIDE : BRUTELOSS
 
 ///////////////////Options for using captured souls///////////////////////////////////////
 

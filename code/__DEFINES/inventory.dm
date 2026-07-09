@@ -120,18 +120,6 @@ DEFINE_BITFIELD(no_equip_flags, list(
 #define HAIR_APPENDAGE_HANGING_REAR (1<<6)
 #define HAIR_APPENDAGE_ALL (HAIR_APPENDAGE_FRONT|HAIR_APPENDAGE_LEFT|HAIR_APPENDAGE_RIGHT|HAIR_APPENDAGE_REAR|HAIR_APPENDAGE_TOP|HAIR_APPENDAGE_HANGING_FRONT|HAIR_APPENDAGE_HANGING_REAR)
 
-//NOVA EDIT ADDITION: CUSTOM EAR TOGGLE FOR ANTHRO/ETC EAR SHOWING -
-/// Manually set this on items you want anthro ears to show on!
-#define SHOWSPRITEEARS (1<<15)
-/// Does this sprite hide the tail?
-#define HIDETAIL (1<<16)
-/// Does this sprite also hide the spine on tails? Realistically only useful for the clothes that have a special tail overlay, like MODsuits
-#define HIDESPINE (1<<17)
-/// Does this sprite hide devious devices?
-#define HIDESEXTOY (1<<18)
-/// If this has our taur variant, do we hide our taur part?
-#define HIDETAUR (1<<19)
-//NOVA EDIT ADDITION END
 //bitflags for clothing coverage - also used for limbs
 #define CHEST (1<<0)
 #define GROIN (1<<1)
@@ -168,10 +156,6 @@ DEFINE_BITFIELD(no_equip_flags, list(
 #define FEMALE_UNIFORM_TOP_ONLY (1<<1)
 /// For when you don't want the "breast" effect to be applied (the one that cuts two pixels in the middle of the front of the uniform when facing east or west).
 #define FEMALE_UNIFORM_NO_BREASTS (1<<2)
-// NOVA EDIT ADDITION START
-/// For when you -don't- want to apply FEMALE_UNIFORM_TOP_ONLY to the digi version (which happens by default).
-#define FEMALE_UNIFORM_DIGI_FULL (1<<3)
-// NOVA EDIT ADDITION END
 
 //flags for alternate styles: These are hard sprited so don't set this if you didn't put the effort in
 #define NORMAL_STYLE 0
@@ -185,24 +169,6 @@ DEFINE_BITFIELD(no_equip_flags, list(
 #define CLOTHING_DIGITIGRADE_VARIATION_NO_NEW_ICON (1<<1)
 /// Auto-generates the leg portion of the sprite with GAGS
 #define CLOTHING_DIGITIGRADE_MASK (1<<2)
-// NOVA EDIT ADDITION START
-/// The sprite works fine for snouts.
-#define CLOTHING_SNOUTED_VARIATION (1<<3)
-/// The sprite works fine for snouts as-is.
-#define CLOTHING_SNOUTED_VARIATION_NO_NEW_ICON (1<<4)
-/// The sprite works fine for vox snouts.
-#define CLOTHING_SNOUTED_VOX_VARIATION (1<<5)
-/// The sprite works fine for vox snouts as is.
-#define CLOTHING_SNOUTED_VOX_VARIATION_NO_NEW_ICON (1<<6)
-/// The sprite works fine for vox snouts.
-#define CLOTHING_SNOUTED_BETTER_VOX_VARIATION (1<<7)
-/// The sprite works fine for vox snouts as is.
-#define CLOTHING_SNOUTED_BETTER_VOX_VARIATION_NO_NEW_ICON (1<<8)
-/// The clothing item has a custom sprite for the big legs type taur bodyshape
-#define CLOTHING_BIG_LEGS_VARIATION (1<<9)
-/// The sprite mask particularly for the big legs type taur bodyshape
-#define CLOTHING_BIG_LEGS_MASK (1<<10)
-// NOVA EDIT ADDITION END
 
 /// All variation flags which render "correctly" on a digitigrade leg setup
 #define DIGITIGRADE_VARIATIONS (CLOTHING_DIGITIGRADE_VARIATION|CLOTHING_DIGITIGRADE_VARIATION_NO_NEW_ICON|CLOTHING_DIGITIGRADE_MASK)
@@ -298,7 +264,6 @@ GLOBAL_LIST_INIT(security_vest_allowed, list(
 	/obj/item/storage/belt/holster/energy,
 	/obj/item/gun/ballistic/shotgun/automatic/combat/compact,
 	/obj/item/pen/red/security,
-	/obj/item/storage/belt/machete, // NOVA EDIT ADDITION
 ))
 
 GLOBAL_LIST_INIT(security_wintercoat_allowed, list(
@@ -311,7 +276,6 @@ GLOBAL_LIST_INIT(security_wintercoat_allowed, list(
 	/obj/item/storage/belt/holster/nukie,
 	/obj/item/storage/belt/holster/energy,
 	/obj/item/gun/ballistic/shotgun/automatic/combat/compact,
-	/obj/item/storage/belt/machete, // NOVA EDIT ADDITION
 ))
 
 //Allowed list for all chaplain suits (except the honkmother robe)
@@ -349,11 +313,6 @@ GLOBAL_LIST_INIT(mining_suit_allowed, list(
 	/obj/item/resonator,
 	/obj/item/spear,
 	/obj/item/gun/ballistic/bow/ashenbow,
-	// NOVA EDIT ADDITION START
-	/obj/item/forging/reagent_weapon,
-	/obj/item/gun/ballistic/bow,
-	/obj/item/storage/belt/machete,
-	// NOVA EDIT ADDITION END
 ))
 
 // Allowed list for personal carry firearms and holsters

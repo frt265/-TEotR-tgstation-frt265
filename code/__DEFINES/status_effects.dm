@@ -62,14 +62,13 @@
 #define STASIS_LEGION_EATEN "stasis_eaten"
 #define STASIS_SLIME_BZ "stasis_slime_bz"
 #define STASIS_ELDRITCH_ETHER "stasis_eldritch_ether"
-#define STASIS_CRATE_EFFECT "stasis_crate"
 
 #define STASIS_NETPOD_EFFECT "stasis_netpod"
 
 // Defines for the ballmer peak.
-#define BALLMER_PEAK_LOW_END 25.8 // NOVA EDIT CHANGE - ORIGINAL: #define BALLMER_PEAK_LOW_END 12.9
-#define BALLMER_PEAK_HIGH_END 27.6// NOVA EDIT CHANGE - ORIGINAL: #define BALLMER_PEAK_HIGH_END 13.8
-#define BALLMER_PEAK_WINDOWS_ME 37 // NOVA EDIT CHANGE - ORIGINAL: #define BALLMER_PEAK_WINDOWS_ME 26
+#define BALLMER_PEAK_LOW_END 12.9
+#define BALLMER_PEAK_HIGH_END 13.8
+#define BALLMER_PEAK_WINDOWS_ME 26
 
 /// Causes the mob to become blind via the passed source
 #define become_blind(source) apply_status_effect(/datum/status_effect/grouped/blindness, source)

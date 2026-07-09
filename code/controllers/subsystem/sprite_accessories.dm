@@ -37,27 +37,17 @@ SUBSYSTEM_DEF(accessories) // just 'accessories' for brevity
 	var/list/undershirt_list //! stores /datum/sprite_accessory/clothing/undershirt indexed by name
 	var/list/undershirt_m //! stores only undershirt name
 	var/list/undershirt_f //! stores only undershirt name
-	// NOVA EDIT ADDITION START - Underwear/bra split
-	var/list/bra_list
-	var/list/bra_m
-	var/list/bra_f
-	// NOVA EDIT ADDITION END
 
 	//Socks
 	var/list/socks_list //! stores /datum/sprite_accessory/clothing/socks indexed by name
 
 	//All features, indexed by feature key, then name of the sprite accessory to the datum iteslf
 	var/list/list/feature_list
-	// NOVA EDIT ADDITION START - Customization
-	var/list/sprite_accessories = list()
-	var/list/cached_mutant_icon_files = list()
-	// NOVA EDIT ADDITION END
 
 /datum/controller/subsystem/accessories/PreInit() // this stuff NEEDS to be set up before GLOB for preferences and stuff to work so this must go here. sorry
 	setup_lists()
 	init_hair_gradients()
 	init_hair_masks()
-	make_sprite_accessory_references() // NOVA EDIT ADDITION - Customization
 
 /// Sets up all of the lists for later utilization in the round and building sprites.
 /// In an ideal world we could tack everything that just needed `DEFAULT_SPRITE_LIST` into static variables on the top, but due to the initialization order
@@ -83,12 +73,6 @@ SUBSYSTEM_DEF(accessories) // just 'accessories' for brevity
 	undershirt_list = undershirt_lists[DEFAULT_SPRITE_LIST]
 	undershirt_m = undershirt_lists[MALE_SPRITE_LIST]
 	undershirt_f = undershirt_lists[FEMALE_SPRITE_LIST]
-	// NOVA EDIT ADDITION START - Underwear/bra split
-	var/bra_lists = init_sprite_accessory_subtypes(/datum/sprite_accessory/clothing/bra)
-	bra_list = bra_lists[DEFAULT_SPRITE_LIST]
-	bra_m = bra_lists[MALE_SPRITE_LIST]
-	bra_f = bra_lists[FEMALE_SPRITE_LIST]
-	// NOVA EDIT ADDITION END
 
 	socks_list = init_sprite_accessory_subtypes(/datum/sprite_accessory/clothing/socks)[DEFAULT_SPRITE_LIST]
 
@@ -147,10 +131,6 @@ SUBSYSTEM_DEF(accessories) // just 'accessories' for brevity
 
 	for(var/path in subtypesof(prototype))
 		var/datum/sprite_accessory/accessory = new path
-		// NOVA EDIT ADDITION START - Don't put organizational types (e.g. sprite_accessory/ears/big) in the list
-		if(!accessory.name)
-			continue
-		// NOVA EDIT ADDITION END
 
 		if(accessory.icon_state)
 			returnable_list[DEFAULT_SPRITE_LIST][accessory.name] = accessory
@@ -166,7 +146,7 @@ SUBSYSTEM_DEF(accessories) // just 'accessories' for brevity
 				returnable_list[MALE_SPRITE_LIST] += accessory.name
 				returnable_list[FEMALE_SPRITE_LIST] += accessory.name
 
-	if(add_blank && isnull(returnable_list[DEFAULT_SPRITE_LIST][SPRITE_ACCESSORY_NONE])) // NOVA EDIT CHANGE - Do not overwrite 'None' subtypes - ORIGINAL: if(add_blank)
+	if(add_blank)
 		returnable_list[DEFAULT_SPRITE_LIST][SPRITE_ACCESSORY_NONE] = new /datum/sprite_accessory/blank
 
 	return returnable_list

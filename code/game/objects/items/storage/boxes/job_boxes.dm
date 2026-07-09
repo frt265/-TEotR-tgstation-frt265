@@ -50,23 +50,16 @@
 	if(give_hook && length(SSmapping.levels_by_trait(ZTRAIT_STATION)) > 1 && SSmapping.current_map.give_players_hooks)
 		new /obj/item/climbing_hook/emergency(src)
 
-	new /obj/item/oxygen_candle(src) //NOVA EDIT ADDITION
-
 /obj/item/storage/box/survival/radio/PopulateContents()
 	..() // we want the survival stuff too.
 	new /obj/item/radio/off(src)
 
 /obj/item/storage/box/survival/proc/wardrobe_removal()
-	if(!isplasmaman(loc) && !isvox(loc)) //We need to specially fill the box with plasmaman gear, since it's intended for one	//NOVA EDIT: && !isvox(loc)
+	if(!isplasmaman(loc)) //We need to specially fill the box with plasmaman gear, since it's intended for one
 		return
 	var/obj/item/mask = locate(mask_type) in src
 	var/obj/item/internals = locate(internal_type) in src
-	//NOVA EDIT ADDITION START - VOX INTERNALS - Vox mimic the above and below behavior, removing the redundant mask/internals; they dont mimic the plasma breathing though
-	if(!isvox(loc))
-		new /obj/item/tank/internals/plasmaman/belt(src)
-	else
-		new /obj/item/tank/internals/nitrogen/belt/emergency(src)
-	//NOVA EDIT ADDITION END - VOX INTERNALS
+	new /obj/item/tank/internals/plasmaman/belt(src)
 	qdel(mask) // Get rid of the items that shouldn't be
 	qdel(internals)
 

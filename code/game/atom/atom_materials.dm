@@ -43,7 +43,7 @@
 			LAZYADD(nonpos_mats, "[mat] = [materials[mat]]")
 			materials -= mat
 	if(length(nonpos_mats))
-		//stack_trace("materials with non-positive values found in [type]: [english_list(nonpos_mats, and_text = ", ")]") // NOVA EDIT REMOVAL Fix this ammo box bug upstream, this is silly.
+		stack_trace("materials with non-positive values found in [type]: [english_list(nonpos_mats, and_text = ", ")]")
 		if(!length(materials))
 			return
 

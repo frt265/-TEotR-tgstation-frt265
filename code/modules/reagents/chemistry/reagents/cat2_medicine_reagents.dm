@@ -216,25 +216,14 @@
 	inverse_chem_val = 0.3
 	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
 	randomized_spawns = REAGENT_SPAWN_ALL_RANDOM_SPAWNS
-	process_flags = REAGENT_ORGANIC | REAGENT_SYNTHETIC // NOVA EDIT ADDITION - Lets hercuri process in synths
 
 /datum/reagent/medicine/c2/hercuri/on_mob_life(mob/living/carbon/affected_mob, seconds_per_tick, metabolization_ratio)
 	. = ..()
 	var/need_mob_update
-	/* // NOVA EDIT REMOVAL START - Original
 	if(affected_mob.get_fire_loss() > 50)
 		need_mob_update = affected_mob.adjust_fire_loss(-3 * metabolization_ratio * seconds_per_tick * normalise_creation_purity(), updating_health = FALSE, required_bodytype = affected_bodytype)
 	else
 		need_mob_update = affected_mob.adjust_fire_loss(-2.25 * metabolization_ratio * seconds_per_tick * normalise_creation_purity(), updating_health = FALSE, required_bodytype = affected_bodytype)
-	*/ // NOVA EDIT REMOVAL END
-	// NOVA EDIT ADDITION START -- Adds check for owner_flags; indented the get_fire_loss check and everything under it, so synths can get cooled down
-	var/owner_flags = affected_mob.dna.species.reagent_flags
-	if (owner_flags & PROCESS_ORGANIC)
-		if(affected_mob.get_fire_loss() > 50)
-			need_mob_update = affected_mob.adjust_fire_loss(-3 * metabolization_ratio * seconds_per_tick * normalise_creation_purity(), updating_health = FALSE, required_bodytype = affected_bodytype)
-		else
-			need_mob_update = affected_mob.adjust_fire_loss(-2.25 * metabolization_ratio * seconds_per_tick * normalise_creation_purity(), updating_health = FALSE, required_bodytype = affected_bodytype)
-	// NOVA EDIT ADDITION END
 	affected_mob.adjust_bodytemperature(rand(-25,-5) * TEMPERATURE_DAMAGE_COEFFICIENT * metabolization_ratio * seconds_per_tick, 50)
 	if(ishuman(affected_mob))
 		var/mob/living/carbon/human/humi = affected_mob
@@ -620,7 +609,6 @@
 /datum/reagent/medicine/c2/penthrite/on_mob_life(mob/living/carbon/affected_mob, seconds_per_tick, metabolization_ratio)
 	. = ..()
 	var/need_mob_update
-	need_mob_update = affected_mob.adjust_stamina_loss(-12.5 * REM * seconds_per_tick, updating_stamina = FALSE) // NOVA EDIT ADDITION - COMBAT - makes your heart beat faster, fills you with energy. For miners
 	need_mob_update = affected_mob.adjust_organ_loss(ORGAN_SLOT_STOMACH, 0.25 * metabolization_ratio * seconds_per_tick, required_organ_flag = affected_organ_flags)
 	if(affected_mob.health <= HEALTH_THRESHOLD_CRIT && affected_mob.health > (affected_mob.crit_threshold + HEALTH_THRESHOLD_FULLCRIT * (2 * normalise_creation_purity()))) //we cannot save someone below our lowered crit threshold.
 

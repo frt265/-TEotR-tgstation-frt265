@@ -43,7 +43,7 @@
 
 /obj/item/clothing/glasses/visor_toggling()
 	. = ..()
-	alternate_worn_layer = up ? ABOVE_BODY_FRONT_HEAD_LAYER : initial(alternate_worn_layer) // NOVA EDIT CHANGE - ORIGINAL : alternate_worn_layer = up ? ABOVE_BODY_FRONT_HEAD_LAYER : null
+	alternate_worn_layer = up ? ABOVE_BODY_FRONT_HEAD_LAYER : null
 	if(visor_vars_to_toggle & VISOR_VISIONFLAGS)
 		vision_flags ^= initial(vision_flags)
 	if(visor_vars_to_toggle & VISOR_INVISVIEW)
@@ -499,7 +499,6 @@
 	pickup_sound = SFX_GOGGLES_PICKUP
 	drop_sound = SFX_GOGGLES_DROP
 	equip_sound = SFX_GOGGLES_EQUIP
-	alternate_worn_layer = ABOVE_BODY_FRONT_HEAD_LAYER // NOVA EDIT - Just so it works until I make the change upstream
 
 /obj/item/clothing/glasses/welding/Initialize(mapload)
 	. = ..()
@@ -593,14 +592,21 @@
 	color_cutoffs = null
 	vision_flags = SEE_TURFS|SEE_MOBS|SEE_OBJS
 	glass_colour_type = /datum/client_colour/glass_colour/lightblue
-	clothing_traits = list(TRAIT_XRAY_VISION)
+
+/obj/item/clothing/glasses/thermal/xray/equipped(mob/living/carbon/human/user, slot)
+	. = ..()
+	if(!(slot & ITEM_SLOT_EYES) || !istype(user))
+		return
+	ADD_TRAIT(user, TRAIT_XRAY_VISION, GLASSES_TRAIT)
+
+/obj/item/clothing/glasses/thermal/xray/dropped(mob/living/carbon/human/user)
+	. = ..()
+	REMOVE_TRAIT(user, TRAIT_XRAY_VISION, GLASSES_TRAIT)
 
 /obj/item/clothing/glasses/thermal/syndi
 	name = "chameleon thermals"
 	desc = "A pair of thermal optic goggles with an onboard chameleon generator."
 	actions_types = list(/datum/action/item_action/chameleon/change/glasses/no_preset)
-	special_desc_requirement = EXAMINE_CHECK_SYNDICATE // NOVA EDIT ADDITION
-	special_desc = "Chameleon thermal goggles employed by the Syndicate in infiltration operations." //NOVA EDIT ADDITION, I don't think the regular description persists through chameleon changes.
 
 /obj/item/clothing/glasses/thermal/monocle
 	name = "thermoncle"
@@ -628,10 +634,6 @@
 	. = ..()
 	icon_state = (icon_state == base_icon_state) ? "[base_icon_state]_flipped" : base_icon_state
 	user.update_worn_glasses()
-
-/datum/armor/glasses_science
-	fire = 80
-	acid = 100
 
 /obj/item/clothing/glasses/cold
 	name = "cold goggles"

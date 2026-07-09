@@ -113,9 +113,6 @@ GLOBAL_LIST_EMPTY(station_turfs)
 	///The typepath we use for lazy fishing on turfs, to save on world init time.
 	var/fish_source
 
-	/// If TRUE, then this turf will be skipped entirely by minimap rendering.
-	var/skip_minimap_rendering = FALSE
-
 
 /turf/vv_edit_var(var_name, new_value)
 	var/static/list/banned_edits = list(NAMEOF_STATIC(src, x), NAMEOF_STATIC(src, y), NAMEOF_STATIC(src, z))
@@ -214,6 +211,7 @@ GLOBAL_LIST_EMPTY(station_turfs)
 		for(var/A in B.contents)
 			qdel(A)
 		return
+
 	LAZYCLEARLIST(blueprint_data)
 	flags_1 &= ~INITIALIZED_1
 	requires_activation = FALSE
@@ -623,8 +621,7 @@ GLOBAL_LIST_EMPTY(station_turfs)
 	. = ..()
 	if((acidpwr <= 0) || (acid_volume <= 0))
 		return FALSE
-	if(QDELETED(src)) //NOVA EDIT: fix createanddestroy
-		return FALSE
+
 	AddComponent(/datum/component/acid, acidpwr, acid_volume, GLOB.acid_overlay)
 
 	return . || TRUE
@@ -648,7 +645,6 @@ GLOBAL_LIST_EMPTY(station_turfs)
 	return TRUE
 
 /turf/handle_fall(mob/faller)
-	SEND_SIGNAL(src, COMSIG_TURF_MOB_FALL, faller) //NOVA EDIT ADDITION
 	if(has_gravity(src))
 		playsound(src, SFX_BODYFALL, 50, TRUE)
 	faller.drop_all_held_items()

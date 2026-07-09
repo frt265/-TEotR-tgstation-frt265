@@ -7,7 +7,7 @@
 	zone = BODY_ZONE_PRECISE_GROIN
 	slot = ORGAN_SLOT_EXTERNAL_TAIL
 
-	//dna_block = /datum/dna_block/feature/accessory/tail // NOVA EDIT REMOVAL - Customization - We have our own system to handle DNA.
+	dna_block = /datum/dna_block/feature/accessory/tail
 	restyle_flags = EXTERNAL_RESTYLE_FLESH
 
 	// defaults to cat, but the parent type shouldn't be created regardless
@@ -65,13 +65,8 @@
 
 	tail_spines_overlay = new
 	tail_spines_overlay.tail_spine_key = tail_spine_key
-	// NOVA EDIT ADDITION START
-	if(!bodypart.owner.dna.mutant_bodyparts[FEATURE_SPINES])
-		bodypart.owner.dna.mutant_bodyparts[FEATURE_SPINES] = build_mutant_part(SPRITE_ACCESSORY_NONE, list("#886600", "#886600", "#886600"))
-	// NOVA EDIT ADDITION END
-	var/datum/mutant_bodypart/mutant_bodypart = bodypart.owner.dna.mutant_bodyparts[FEATURE_SPINES]
-	var/feature_name = mutant_bodypart.name // NOVA EDIT CHANGE - ORIGINAL: var/feature_name = bodypart.owner.dna.features[FEATURE_SPINES] //tail spines don't live in DNA, but share feature names with regular spines
-	tail_spines_overlay.set_appearance_from_dna(bodypart.owner.dna, feature_name, feature_key = FEATURE_SPINES, limb = bodypart_owner) // NOVA EDIT CHANGE - ORIGINAL: tail_spines_overlay.set_appearance_from_name(feature_name)
+	var/feature_name = bodypart.owner.dna.features[FEATURE_SPINES] //tail spines don't live in DNA, but share feature names with regular spines
+	tail_spines_overlay.set_appearance_from_name(feature_name)
 	bodypart.add_bodypart_overlay(tail_spines_overlay)
 
 /// If we have a tail spines overlay, delete it
@@ -168,8 +163,8 @@
 
 ///Cat tail bodypart overlay
 /datum/bodypart_overlay/mutant/tail/cat
-	feature_key = FEATURE_TAIL // NOVA EDIT - Customization - ORIGINAL: feature_key = FEATURE_TAIL_CAT
-	// color_source = ORGAN_COLOR_HAIR // NOVA EDIT REMOVAL
+	feature_key = FEATURE_TAIL_CAT
+	color_source = ORGAN_COLOR_HAIR
 
 /obj/item/organ/tail/monkey
 	name = "monkey tail"
@@ -180,7 +175,7 @@
 ///Monkey tail bodypart overlay
 /datum/bodypart_overlay/mutant/tail/monkey
 	color_source = NONE
-	feature_key = FEATURE_TAIL // NOVA EDIT - Customization - ORIGINAL: feature_key = FEATURE_TAIL_MONKEY
+	feature_key = FEATURE_TAIL_MONKEY
 
 /obj/item/organ/tail/xeno
 	name = "alien tail"
@@ -220,7 +215,7 @@
 ///Alien tail bodypart overlay
 /datum/bodypart_overlay/mutant/tail/xeno
 	color_source = NONE
-	feature_key = FEATURE_TAIL // NOVA EDIT CHANGE - CUSTOMIZATION - ORIGINAL: feature_key = FEATURE_TAIL_XENO
+	feature_key = FEATURE_TAIL_XENO
 	draw_on_husks = HUSK_OVERLAY_GRAYSCALE
 	imprint_on_next_insertion = FALSE
 	/// We don't want to bother writing this in DNA, just use this appearance
@@ -243,11 +238,11 @@
 	bodypart_overlay = /datum/bodypart_overlay/mutant/tail/lizard
 
 	wag_flags = WAG_ABLE
-	//dna_block = /datum/dna_block/feature/accessory/tail_lizard// NOVA EDIT REMOVAL - Customization - We have our own system to handle DNA.
+	dna_block = /datum/dna_block/feature/accessory/tail_lizard
 
 ///Lizard tail bodypart overlay datum
 /datum/bodypart_overlay/mutant/tail/lizard
-	feature_key = FEATURE_TAIL // NOVA EDIT - Customization - ORIGINAL: feature_key = FEATURE_TAIL_LIZARD
+	feature_key = FEATURE_TAIL_LIZARD
 	draw_on_husks = HUSK_OVERLAY_GRAYSCALE
 
 /obj/item/organ/tail/lizard/fake

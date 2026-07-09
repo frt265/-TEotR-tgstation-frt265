@@ -113,9 +113,6 @@
 	clawfootstep = FOOTSTEP_WOOD_CLAW
 	heavyfootstep = FOOTSTEP_GENERIC_HEAVY
 
-/turf/open/floor/bamboo/lavaland
-	initial_gas_mix = LAVALAND_DEFAULT_ATMOS
-
 /turf/open/floor/bamboo/broken_states()
 	return list("bamboodamaged")
 

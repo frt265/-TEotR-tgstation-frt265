@@ -55,7 +55,7 @@
 #define COMSIG_GLOB_NEW_MACHINE "!new_machine"
 /// a client (re)connected, after all /client/New() checks have passed : (client/connected_client)
 #define COMSIG_GLOB_CLIENT_CONNECT "!client_connect"
-/// a weather event of some kind occurred (all pass the datum/weather that changed state)
+/// a weather event of some kind occurred
 #define COMSIG_WEATHER_TELEGRAPH(event_type) "!weather_telegraph [event_type]"
 #define COMSIG_WEATHER_START(event_type) "!weather_start [event_type]"
 #define COMSIG_WEATHER_WINDDOWN(event_type) "!weather_winddown [event_type]"
@@ -88,14 +88,6 @@
 /// global signal when a global nullrod type is picked
 #define COMSIG_GLOB_NULLROD_PICKED "!nullrod_picked"
 
-/// global signal when someone prays via prayer verb.
-#define COMSIG_GLOB_SEND_PRAYER "!send_prayer"
-	#define ARG_PRAYING_MOB 1
-	#define ARG_PRAYER_MSG 2
-	#define ARG_PRAYER_TYPE 3
-	#define ARG_PRAYER_SYMBOL 4
-	#define ARG_PRAYED_DEITIES 5
-
 /// Global signal when light debugging is canceled
 #define COMSIG_LIGHT_DEBUG_DISABLED "!light_debug_disabled"
 
@@ -116,8 +108,3 @@
 /// Global signal whenever a camera network broadcast is started/stopped/updated: (camera_net, is_show_active, announcement)
 #define COMSIG_GLOB_NETWORK_BROADCAST_UPDATED "!network_broadcast_updated"
 
-///Global signal sent when the player list grows. Called by [mob/add_to_player_list] (mob/player)
-#define COMSIG_GLOB_PLAYER_LOGIN "!player_login"
-
-///Global signal sent when the player list shrinks. Called by [mob/remove_from_player_list] (mob/player)
-#define COMSIG_GLOB_PLAYER_LOGOUT "!player_logout"

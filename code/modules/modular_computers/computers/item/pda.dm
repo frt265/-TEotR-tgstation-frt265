@@ -46,8 +46,6 @@
 		/datum/computer_file/program/nt_pay,
 		/datum/computer_file/program/notepad,
 		/datum/computer_file/program/crew_manifest,
-		/datum/computer_file/program/crew_self_serve, // NOVA EDIT ADDITION - Adds punch clock app to all base tablets
-		/datum/computer_file/program/maintenance/camera, // NOVA EDIT ADDITION - Adds camera to all base tablets
 	)
 	///List of items that can be stored in a PDA
 	var/static/list/contained_item = list(
@@ -351,7 +349,6 @@
 		/datum/computer_file/program/robotact,
 		/datum/computer_file/program/atmosscan,
 		/datum/computer_file/program/crew_manifest,
-		/datum/computer_file/program/messenger, // NOVA EDIT ADDITION - Messenger for borgs
 	)
 
 /obj/item/modular_computer/pda/silicon/Initialize(mapload)
@@ -365,7 +362,6 @@
 
 /obj/item/modular_computer/pda/silicon/Destroy()
 	silicon_owner = null
-	robotact = null
 	return ..()
 
 ///Silicons don't have the tools (or hands) to make circuits setups with their own PDAs.

@@ -1,4 +1,3 @@
-/* // NOVA EDIT REMOVAL START
 /datum/preference/choiced/species_feature/tail_felinid
 	savefile_key = "feature_cat_tail"
 	savefile_identifier = PREFERENCE_CHARACTER
@@ -12,4 +11,3 @@
 	category = PREFERENCE_CATEGORY_SECONDARY_FEATURES
 	can_randomize = FALSE
 	relevant_organ = /obj/item/organ/ears/cat
-*/ // NOVA EDIT REMOVAL END

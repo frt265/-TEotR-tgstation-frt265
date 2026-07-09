@@ -53,21 +53,6 @@ All ShuttleMove procs go here
 
 	if(!shuttle_depth)
 		CRASH("A turf queued to move via shuttle somehow had no skipover in baseturfs. [src]([type]):[loc]")
-	//NOVA EDIT ADDITION
-	if(new_turf.lgroup)
-		new_turf.lgroup.remove_from_group(new_turf)
-	if(new_turf.liquids)
-		if(new_turf.liquids.immutable)
-			new_turf.liquids.remove_turf(src)
-		else
-			qdel(new_turf.liquids, TRUE)
-
-	if(lgroup)
-		lgroup.remove_from_group(src)
-	if(liquids)
-		liquids.ChangeToNewTurf(new_turf)
-		new_turf.reasses_liquids()
-	//NOVA EDIT END
 	new_turf.CopyOnTop(src, 1, shuttle_depth, TRUE, ignore_area_change ? CHANGETURF_NO_AREA_CHANGE : NONE) // Don't automatically change space area to nearspace if we'll override it later
 	new_turf.blocks_air = TRUE
 	new_turf.air_update_turf(TRUE, FALSE)
@@ -347,10 +332,6 @@ All ShuttleMove procs go here
 	var/knockdown = movement_force["KNOCKDOWN"]
 	if(buckled && istype(get_area(src), /area/shuttle/arrival))
 		//if we're on the arrival shuttle, unbuckle so that new player's don't get stuck in there
-		// NOVA EDIT ADDITION START - Ensures that the unbuckling only happens when its leaving hyperspace not entering
-		if (!istype(oldT, /turf/open/space/transit) || istype(buckled, /obj/vehicle/ridden/wheelchair))
-			return
-		// NOVA EDIT ADDITION END
 		buckled.user_unbuckle_mob(src, src)
 		return
 	if(knockdown > 0)

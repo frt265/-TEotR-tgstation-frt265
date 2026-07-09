@@ -13,7 +13,7 @@
 /// Amount of oxyloss that KOs a human
 #define OXYLOSS_PASSOUT_THRESHOLD 50
 //Blood levels
-#define BLOOD_VOLUME_MAXIMUM 1000 // NOVA EDIT CHANGE - Blood volume balancing (mainly for Hemophages as nobody else really goes much above regular blood volume) - ORIGINAL: #define BLOOD_VOLUME_MAXIMUM 1000
+#define BLOOD_VOLUME_MAXIMUM 2000
 #define BLOOD_VOLUME_MAX_LETHAL (BLOOD_VOLUME_MAXIMUM * 1.075) // 2150 units if BLOOD_VOLUME_MAXIMUM is 2000
 #define BLOOD_VOLUME_EXCESS (BLOOD_VOLUME_MAXIMUM * 1.05) // 2100 units if BLOOD_VOLUME_MAXIMUM is 2000
 #define BLOOD_VOLUME_SLIME_SPLIT (BLOOD_VOLUME_MAXIMUM * 0.56) // 1120 units if BLOOD_VOLUME_MAXIMUM is 2000
@@ -172,12 +172,6 @@
 #define BODYTYPE_SHADOW (1<<7)
 //This limb is a ghost limb and can phase through walls.
 #define BODYTYPE_GHOST (1<<8)
-// NOVA EDIT ADDITION START
-///The limb is synthetic, this is for an additional surgery check.
-#define BODYTYPE_SYNTHETIC (1<<9)
-/// It's a ghoul limb, which is detachable
-#define BODYTYPE_GHOUL (1<<10)
-// NOVA EDIT ADDITION END
 
 // Bodyshape defines for how things can be worn, i.e., what "shape" the mob sprite is
 ///The limb fits the human mold. This is not meant to be literal, if the sprite "fits" on a human, it is "humanoid", regardless of origin.
@@ -190,19 +184,9 @@
 #define BODYSHAPE_SNOUTED (1<<3)
 /// Golem's wacky rocky limbs
 #define BODYSHAPE_GOLEM (1<<4)
-// NOVA EDIT ADDITION START
-///The limb fits a modular custom shape
-#define BODYSHAPE_CUSTOM (1<<5)
-///The limb fits a taur body
-#define BODYSHAPE_TAUR (1<<6)
-///The limb causes shoes to no longer be displayed, useful for taurs.
-#define BODYSHAPE_HIDE_SHOES (1<<7)
-///The limb causes glasses and hats to be drawn on layers 5 and 4 respectively. Currently used for snouts with the (Top) suffix, which are drawn on layer 6 and would normally cover facewear
-#define BODYSHAPE_ALT_FACEWEAR_LAYER (1<<8)
-// NOVA EDIT ADDITION END
 
 /// List of body part flags that can not be bioscrambled
-#define BODYTYPE_BIOSCRAMBLE_INCOMPATIBLE (BODYTYPE_ROBOTIC | BODYTYPE_LARVA_PLACEHOLDER | BODYTYPE_GOLEM | BODYTYPE_PEG | BODYTYPE_GHOUL) // NOVA EDIT CHANGE - ORIGINAL: #define BODYTYPE_BIOSCRAMBLE_INCOMPATIBLE (BODYTYPE_ROBOTIC | BODYTYPE_LARVA_PLACEHOLDER | BODYTYPE_GOLEM | BODYTYPE_PEG)
+#define BODYTYPE_BIOSCRAMBLE_INCOMPATIBLE (BODYTYPE_ROBOTIC | BODYTYPE_LARVA_PLACEHOLDER | BODYTYPE_GOLEM | BODYTYPE_PEG)
 /// Check to see if a bodypart limb can be bioscrambled
 #define BODYPART_CAN_BE_BIOSCRAMBLED(bodypart) (!(bodypart.bodytype & BODYTYPE_BIOSCRAMBLE_INCOMPATIBLE) && !(bodypart.flags_1 & HOLOGRAM_1))
 
@@ -367,7 +351,7 @@
 #define ETHEREAL_CHARGE_OVERLOAD (2.5 * STANDARD_ETHEREAL_CHARGE)
 #define ETHEREAL_CHARGE_DANGEROUS (3 * STANDARD_ETHEREAL_CHARGE)
 
-#define CRYSTALIZE_COOLDOWN_LENGTH (5 MINUTES) //NOVA EDIT CHANGE - Ethereal Rework 2024 - Original: 120 SECONDS
+#define CRYSTALIZE_COOLDOWN_LENGTH (120 SECONDS)
 #define CRYSTALIZE_PRE_WAIT_TIME (40 SECONDS)
 #define CRYSTALIZE_DISARM_WAIT_TIME (120 SECONDS)
 #define CRYSTALIZE_HEAL_TIME (60 SECONDS)
@@ -504,17 +488,13 @@
 #define OFFSET_SUIT "suit"
 #define OFFSET_NECK "neck"
 #define OFFSET_HELD "held"
-#define OFFSET_ACCESSORY "accessory" // NOVA EDIT - addition
-#define OFFSET_HAIR "hair" // NOVA EDIT - addition - Akulas
 
 //MINOR TWEAKS/MISC
 #define AGE_MIN 18 //youngest a character can be
-#define AGE_MAX 100 //oldest a character can be //NOVA EDIT CHANGE - Increase max character age to 100 - ORIGINAL: #define AGE_MAX 85 //oldest a character can be
-#define AGE_CHRONO_MAX 400 //NOVA EDIT ADDITION - Chronological age
-#define AGE_MINOR 18 //NOVA EDIT CHANGE - We dont use these features, and its easier to just patch it from here. Original: AGE_MINOR 20 //legal age of space drinking and smoking
+#define AGE_MAX 85 //oldest a character can be
+#define AGE_MINOR 20 //legal age of space drinking and smoking
 #define WIZARD_AGE_MIN 30 //youngest a wizard can be
 #define APPRENTICE_AGE_MIN 29 //youngest an apprentice can be
-
 #define SHOES_SLOWDOWN 0 //How much shoes slow you down by default. Negative values speed you up
 #define POCKET_STRIP_DELAY (4 SECONDS) //time taken to search somebody's pockets
 #define DOOR_CRUSH_DAMAGE 20 //the amount of damage that airlocks deal when they crush you
@@ -626,9 +606,6 @@
 #define DEFIB_FAIL_BLACKLISTED (1<<9)
 #define DEFIB_NOGRAB_AGHOST (1<<10)
 #define DEFIB_FAIL_GOLEM (1<<11)
-//NOVA EDIT ADDITION START
-#define DEFIB_FAIL_DNR (1<<12)
-//NOVA EDIT ADDITION END
 
 // Bit mask of possible return values by can_defib that would result in a revivable patient
 #define DEFIB_REVIVABLE_STATES (DEFIB_FAIL_NO_HEART | DEFIB_FAIL_FAILING_HEART | DEFIB_FAIL_HUSK | DEFIB_FAIL_TISSUE_DAMAGE | DEFIB_FAIL_FAILING_BRAIN | DEFIB_FAIL_GOLEM | DEFIB_POSSIBLE)
@@ -790,38 +767,27 @@ GLOBAL_LIST_INIT(human_heights_to_offsets, list(
 /// Total number of layers for mob overlays
 /// KEEP THIS UP-TO-DATE OR SHIT WILL BREAK
 /// Also consider updating layers_to_offset
-#define TOTAL_LAYERS 45 // NOVA EDIT CHANGE - ORIGINAL: #define TOTAL_LAYERS 39
+#define TOTAL_LAYERS 39
 /// Mutations layer - Tk headglows, cold resistance glow, etc
-#define MUTATIONS_LAYER 44 // NOVA EDIT CHANGE - ORIGINAL: #define MUTATIONS_LAYER 38
+#define MUTATIONS_LAYER 38
 /// Mutantrace features (tail when looking south) that must appear behind the body parts
-#define BODY_BEHIND_LAYER 43 // NOVA EDIT CHANGE - ORIGINAL: #define BODY_BEHIND_LAYER 37
+#define BODY_BEHIND_LAYER 37
 /// Layer for bodyparts that should appear behind every other bodypart - Mostly, legs when facing WEST or EAST
-#define BODYPARTS_LOW_LAYER 42 // NOVA EDIT CHANGE - ORIGINAL: #define BODYPARTS_LOW_LAYER 36
+#define BODYPARTS_LOW_LAYER 36
 /// Layer for most bodyparts, appears above BODYPARTS_LOW_LAYER and below BODYPARTS_HIGH_LAYER
-#define BODYPARTS_LAYER 41 // NOVA EDIT CHANGE - ORIGINAL: #define BODYPARTS_LAYER 35
+#define BODYPARTS_LAYER 35
 /// Mutantrace features (snout, body markings) that must appear above the body parts
-#define BODY_ADJ_LAYER 40 // NOVA EDIT CHANGE - ORIGINAL: #define BODY_ADJ_LAYER 34
+#define BODY_ADJ_LAYER 34
 /// Underwear, undershirts, socks
-#define BODY_LAYER 39 // NOVA EDIT CHANGE - ORIGINAL: #define BODY_LAYER 33
+#define BODY_LAYER 33
 /// Eyes and eyelids
-#define EYES_LAYER 38 // NOVA EDIT CHANGE - ORIGINAL: #define EYES_LAYER 32
+#define EYES_LAYER 32
 /// Mutations that should appear above body, body_adj and bodyparts layer (e.g. laser eyes)
-#define FRONT_MUTATIONS_LAYER 37 // NOVA EDIT CHANGE - ORIGINAL: #define FRONT_MUTATIONS_LAYER 31
+#define FRONT_MUTATIONS_LAYER 31
 /// Damage indicators (cuts and burns)
-#define DAMAGE_LAYER 36 // NOVA EDIT CHANGE - ORIGINAL: #define DAMAGE_LAYER 30
-// NOVA EDIT ADDITION START
-/// This layer is used for things that shouldn't be over clothes, but should be over mutations
-#define BODY_FRONT_UNDER_CLOTHES 35
-// NOVA EDIT ADDITION END
+#define DAMAGE_LAYER 30
 /// Jumpsuit clothing layer
-#define UNIFORM_LAYER 34 // NOVA EDIT CHANGE - ORIGINAL: #define UNIFORM_LAYER 29
-// NOVA EDIT ADDITION BEGIN - cursed layers under clothing
-#define ANUS_LAYER 33
-#define VAGINA_LAYER 32
-#define PENIS_LAYER 31
-#define NIPPLES_LAYER 30
-#define BANDAGE_LAYER 29
-//NOVA EDIT ADDITION END
+#define UNIFORM_LAYER 29
 /// ID card layer
 #define ID_LAYER 28
 /// ID card layer (might be deprecated)
@@ -929,21 +895,13 @@ GLOBAL_LIST_INIT(layers_to_offset, list(
 	// WOUND_LAYER (full body)
 ))
 
-//Bitflags for the layers an external organ can draw on (organs can be drawn on multiple layers)
-/// Draws organ on the BODY_FRONT_LAYER
-#define EXTERNAL_FRONT (1 << 1)
-/// Draws organ on the BODY_ADJ_LAYER
-#define EXTERNAL_ADJACENT (1 << 2)
-/// Draws organ on the BODY_BEHIND_LAYER
-#define EXTERNAL_BEHIND (1 << 3)
-// NOVA EDIT ADDITION - Customization
-/// Draws organ on the BODY_FRONT_UNDER_CLOTHES
-#define EXTERNAL_FRONT_UNDER_CLOTHES (1 << 4)
-/// Draws organ on the ABOVE_BODY_FRONT_HEAD_LAYER
-#define EXTERNAL_FRONT_OVER (1 << 5)
-/// Draws organ on the HEAD_LAYER, for things that need to be above hair but below hats.
-#define EXTERNAL_FRONT_ABOVE_HAIR (1 << 6)
-// NOVA EDIT END (not touching what comes next because we don't actually have to (nor want to))
+//Bitflags for the layers a bodypart overlay can draw on (can be drawn on multiple layers)
+/// Draws overlay on the BODY_FRONT_LAYER
+#define EXTERNAL_FRONT (1 << 0)
+/// Draws overlay on the BODY_ADJ_LAYER
+#define EXTERNAL_ADJACENT (1 << 1)
+/// Draws overlay on the BODY_BEHIND_LAYER
+#define EXTERNAL_BEHIND (1 << 2)
 /// Draws organ on all EXTERNAL layers
 #define ALL_EXTERNAL_OVERLAYS EXTERNAL_FRONT | EXTERNAL_ADJACENT | EXTERNAL_BEHIND
 
@@ -959,8 +917,6 @@ GLOBAL_LIST_INIT(layers_to_offset, list(
 //Mob Overlay Index Shortcuts for alternate_worn_layer, layers
 //Because I *KNOW* somebody will think layer+1 means "above"
 //IT DOESN'T OK, IT MEANS "UNDER"
-/// The layer underneath the uniform
-#define UNDER_UNIFORM_LAYER (UNIFORM_LAYER+1)
 /// The layer underneath the suit
 #define UNDER_SUIT_LAYER (SUIT_LAYER+1)
 /// The layer underneath the head (for hats)
@@ -1137,15 +1093,6 @@ GLOBAL_LIST_INIT(layers_to_offset, list(
 
 /// Helper macro that determines if the mob is at the threshold to start vomitting due to high toxin levels
 #define AT_TOXIN_VOMIT_THRESHOLD(mob) (mob.get_tox_loss() > 45 && mob.nutrition > 20)
-
-/// Shared cooldown for manually triggered emote audio
-#define MANUAL_GENERAL_EMOTE_AUDIO_COOLDOWN "manual_general_emote_audio_cooldown"
-/// Per emote cooldown for manually triggered emote audio
-#define MANUAL_SPECIFIC_EMOTE_AUDIO_COOLDOWN(type) "manual_specific_emote_audio_cooldown_[type]"
-/// Shared cooldown for forced emote audio
-#define FORCED_GENERAL_EMOTE_AUDIO_COOLDOWN "forced_general_emote_audio_cooldown"
-/// Per emote cooldown for forced emote audio
-#define FORCED_SPECIFIC_EMOTE_AUDIO_COOLDOWN(type) "forced_specific_emote_audio_cooldown_[type]"
 
 /// The duration of the flip emote animation
 #define FLIP_EMOTE_DURATION 0.7 SECONDS

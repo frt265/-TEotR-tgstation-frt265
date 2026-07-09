@@ -79,9 +79,6 @@
 		//SOUND STUFF//
 		///////////////
 
-	/// Sound tokens currently playing for this client. Managed by /datum/sound_token and the soundtoken subsystem!! SOUND TOKENS 2026
-	var/list/datum/sound_token/sound_tokens = list()
-
 		////////////
 		//SECURITY//
 		////////////

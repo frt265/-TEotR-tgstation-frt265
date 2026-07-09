@@ -1,5 +1,4 @@
 GLOBAL_LIST(admin_objective_list) //Prefilled admin assignable objective list
-GLOBAL_LIST_EMPTY(objectives) //NOVA EDIT ADDITION
 
 /datum/objective
 	var/datum/mind/owner //The primary owner of the objective. !!SOMEWHAT DEPRECATED!! Prefer using 'team' for new code.
@@ -19,13 +18,11 @@ GLOBAL_LIST_EMPTY(objectives) //NOVA EDIT ADDITION
 	var/admin_grantable = FALSE
 
 /datum/objective/New(text)
-	GLOB.objectives += src //NOVA EDIT ADDITION
 	if(text)
 		explanation_text = text
 
 //Apparently objectives can be qdel'd. Learn a new thing every day
 /datum/objective/Destroy()
-	GLOB.objectives -= src //NOVA EDIT ADDITION
 	return ..()
 
 /datum/objective/proc/get_owners() // Combine owner and team into a single list.
@@ -140,14 +137,6 @@ GLOBAL_LIST_EMPTY(objectives) //NOVA EDIT ADDITION
 	if(!HAS_TRAIT(SSstation, STATION_TRAIT_LATE_ARRIVALS) && istype(target_area, /area/shuttle/arrival))
 		return FALSE
 
-	// NOVA EDIT ADDITION
-	if(SSticker.IsRoundInProgress() && istype(target_area, /area/centcom/interlink))
-		return FALSE
-	if(!count_space_areas)
-		if(istype(target_area, /area/space) || istype(target_area, /area/ruin) || istype(target_area, /area/icemoon) || istype(target_area, /area/lavaland))
-			return FALSE
-	// NOVA EDIT END
-
 	return TRUE
 
 //dupe_search_range is a list of antag datums / minds / teams
@@ -161,7 +150,6 @@ GLOBAL_LIST_EMPTY(objectives) //NOVA EDIT ADDITION
 		var/datum/mind/O = I
 		if(O.late_joiner)
 			try_target_late_joiners = TRUE
-	var/opt_in_disabled = CONFIG_GET(flag/disable_antag_opt_in_preferences) // NOVA EDIT ADDITION - ANTAG OPT-IN
 	for(var/datum/mind/possible_target in get_crewmember_minds())
 		if(possible_target in owners)
 			continue
@@ -171,10 +159,6 @@ GLOBAL_LIST_EMPTY(objectives) //NOVA EDIT ADDITION
 			continue
 		if(!is_valid_target(possible_target))
 			continue
-		// NOVA EDIT ADDITION START - Antag Opt In
-		if (!opt_in_disabled && !opt_in_valid(possible_target))
-			continue
-		// NOVA EDIT ADDITION END
 		possible_targets += possible_target
 	if(try_target_late_joiners)
 		var/list/all_possible_targets = possible_targets.Copy()
@@ -246,7 +230,7 @@ GLOBAL_LIST_EMPTY(objectives) //NOVA EDIT ADDITION
 /datum/objective/assassinate/update_explanation_text()
 	..()
 	if(target?.current)
-		explanation_text = "Assassinate [target.name], the [!target_role_type ? target.assigned_role.title : english_list(target.get_special_roles())] ONCE." // NOVA EDIT CHANGE - add "ONCE" - Original: explanation_text = "Assassinate [target.name], the [!target_role_type ? target.assigned_role.title : english_list(target.get_special_roles())]."
+		explanation_text = "Assassinate [target.name], the [!target_role_type ? target.assigned_role.title : english_list(target.get_special_roles())]."
 	else
 		explanation_text = "Free objective."
 
@@ -885,15 +869,7 @@ GLOBAL_LIST_EMPTY(possible_items)
 /datum/objective/destroy/find_target(dupe_search_range, list/blacklist)
 	var/list/possible_targets = active_ais(TRUE)
 	possible_targets -= blacklist
-	//var/mob/living/silicon/ai/target_ai = pick(possible_targets) // NOVA EDIT REMOVAL - Uses the below loop
-	// NOVA EDIT ADDITION BEGIN - ANTAG OPTIN
-	var/mob/living/silicon/ai/target_ai
-	var/opt_in_disabled = CONFIG_GET(flag/disable_antag_opt_in_preferences) // NOVA EDIT ADDITION - ANTAG OPT-IN
-	for (var/mob/living/silicon/ai/possible_target as anything in shuffle(possible_targets))
-		if (!opt_in_disabled && !opt_in_valid(possible_target))
-			continue
-		target_ai = possible_target
-	// NOVA EDIT ADDITION END
+	var/mob/living/silicon/ai/target_ai = pick(possible_targets)
 	target = target_ai.mind
 	update_explanation_text()
 	return target

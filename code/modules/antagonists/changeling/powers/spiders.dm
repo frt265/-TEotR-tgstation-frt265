@@ -1,5 +1,3 @@
-//NOVA EDIT REMOVAL BEGIN: Removes Spread Infestation due to NRP usage and abuse by changelings
-/*
 /datum/action/changeling/spiders
 	name = "Spread Infestation"
 	desc = "Our form divides, creating a cluster of eggs which will grow into a deadly arachnid. Costs 45 chemicals."
@@ -23,5 +21,3 @@
 	..()
 	new /obj/effect/mob_spawn/ghost_role/spider/bloody(user.loc)
 	return TRUE
-*/
-//NOVA EDIT REMOVAL END

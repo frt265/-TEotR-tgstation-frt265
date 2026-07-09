@@ -19,8 +19,6 @@
 	var/perma_docked = FALSE //highlander with RESPAWN??? OH GOD!!!
 	var/obj/docking_port/stationary/target_dock  // for badminry
 
-	shuttle_sounds = FALSE //NOVA EDIT ADDITION
-
 /obj/docking_port/mobile/arrivals/Initialize(mapload)
 	. = ..()
 	preferred_direction = dir
@@ -43,8 +41,6 @@
 					new_latejoin += shuttle_chair
 				if(isnull(console))
 					console = locate() in arrival_turf
-					if(SStts.tts_enabled && console)
-						console.voice = SStts.tram_voice
 					RegisterSignal(console, COMSIG_QDELETING, PROC_REF(find_console))
 		areas += arrival_area
 
@@ -118,8 +114,6 @@
 				var/obj/machinery/requests_console/target = locate() in arrival_turf
 				if(!QDELETED(target))
 					console = target
-					if(SStts.tts_enabled && console)
-						console.voice = SStts.tram_voice
 					RegisterSignal(console, COMSIG_QDELETING, PROC_REF(find_console))
 					return
 

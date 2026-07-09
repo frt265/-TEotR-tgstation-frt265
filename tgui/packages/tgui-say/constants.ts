@@ -32,11 +32,4 @@ export const RADIO_PREFIXES = {
   ':u ': 'Supp',
   ':v ': 'Svc',
   ':y ': 'CCom',
-  // NOVA EDIT ADDITION START
-  ':w ': 'Dyne',
-  ':k ': 'Tark',
-  ':q ': 'Csun',
-  ':i ': 'Guild',
-  ':l ': 'SolFed',
-  // NOVA EDIT ADDITION END
 } as const;

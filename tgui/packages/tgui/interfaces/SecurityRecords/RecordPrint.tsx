@@ -86,17 +86,13 @@ export const RecordPrint = (props) => {
             Missing
           </Button>
           <Button
-            // NOVA EDIT REMOVE START - REMOVE INNOCENT CHECK, ALLOWS RAPSHEETS TO BE PRINTED WITHOUT ANY CRIMES HAVING BEEN LOGGED
-            // disabled={innocent}
-            // SKYRA EDIT REMOVE END
+            disabled={innocent}
             icon="file-alt"
             onClick={() => swapTabs(PRINTOUT.Rapsheet)}
             selected={printType === PRINTOUT.Rapsheet}
-            tooltip={`Prints a standard paper with the record on it.`} // NOVA EDIT CHANGE START - ORIGINAL:
-            // tooltip={`Prints a standard paper with the record on it.${
-            //  innocent ? ' (Requires crimes)' : ''
-            // }`}
-            // NOVA EDIT CHANGE END
+            tooltip={`Prints a standard paper with the record on it.${
+              innocent ? ' (Requires crimes)' : ''
+            }`}
             tooltipPosition="bottom"
           >
             Rapsheet

@@ -13,6 +13,7 @@ Doesn't work on other aliens/AI.*/
 	button_icon = 'icons/mob/actions/actions_xeno.dmi'
 	button_icon_state = "spell_default"
 	check_flags = AB_CHECK_IMMOBILE | AB_CHECK_CONSCIOUS | AB_CHECK_INCAPACITATED
+
 	/// How much plasma this action uses.
 	var/plasma_cost = 0
 
@@ -337,11 +338,7 @@ Doesn't work on other aliens/AI.*/
 		span_notice("[owner] vomits up a thick purple substance and begins to shape it."),
 		span_notice("You shape a [choice] out of resin."),
 	)
-	//NOVA EDIT START - Roundstart xenohybrid organs
-	if(build_duration && !do_after(owner, build_duration))
-		owner.balloon_alert(owner, "interrupted!")
-		return
-	//NOVA EDIT END
+
 	new choice_path(owner.loc)
 	return TRUE
 

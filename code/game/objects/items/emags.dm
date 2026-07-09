@@ -171,7 +171,7 @@
  */
 /obj/item/card/emag/doorjack
 	desc = "Commonly known as a \"doorjack\", this device is a specialized cryptographic sequencer specifically designed to override station airlock access codes. Uses self-refilling charges to hack airlocks."
-	name = "modified ID card"
+	name = "airlock authentication override card"
 	icon_state = "doorjack"
 	worn_icon_state = "doorjack"
 	var/type_whitelist //List of types

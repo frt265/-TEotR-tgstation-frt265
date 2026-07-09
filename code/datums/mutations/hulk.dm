@@ -112,8 +112,7 @@
 
 	if(ishuman(possible_throwable))
 		var/mob/living/carbon/human/human_throwable = possible_throwable
-		//if(human_throwable.obscured_slots & HIDEJUMPSUIT) // ORIGINAL
-		if(human_throwable.obscured_slots & HIDETAIL) // NOVA EDIT CHANGE
+		if(human_throwable.obscured_slots & HIDEJUMPSUIT)
 			to_chat(user, span_warning("You can't reach [human_throwable]'s tail through [human_throwable.p_their()] [human_throwable.wear_suit.name]!"))
 			return
 

@@ -191,7 +191,7 @@
 
 	var/power_coefficient = 0
 	for(var/datum/stock_part/capacitor/capacitor in component_parts)
-		power_coefficient += 2 ** (capacitor.tier - 1) // NOVA EDIT CHANGE - Original: power_coefficient += capacitor.tier
+		power_coefficient += capacitor.tier
 	input_level_max = initial(input_level_max) * power_coefficient
 	output_level_max = initial(output_level_max) * power_coefficient
 
@@ -512,7 +512,6 @@
 	PRIVATE_PROC(TRUE)
 
 	investigate_log("Input/Output: [input_level]/[output_level] | Charge: [total_charge()] | Output-mode: [output_attempt?"ON":"OFF"] | Input-mode: [input_attempt?"AUTO":"OFF"] by [user ? key_name(user) : "outside forces"]", INVESTIGATE_ENGINE)
-
 
 /obj/machinery/power/smes/emp_act(severity)
 	. = ..()

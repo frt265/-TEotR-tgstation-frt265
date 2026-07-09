@@ -37,10 +37,6 @@ GLOBAL_LIST_INIT(unrecommended_builds, list(
 /client/Topic(href, href_list, hsrc, hsrc_command)
 	if(!usr || usr != mob) //stops us calling Topic for somebody else's client. Also helps prevent usr=null
 		return
-	// NOVA EDIT ADDITION BEGIN - MENTOR / other client procs
-	if(client_procs(href_list))
-		return
-	// NOVA EDIT ADDITION END
 
 #ifndef TESTING
 	if (LOWER_TEXT(hsrc_command) == "_debug") //disable the integrated byond vv in the client side debugging tools since it doesn't respect vv read protections
@@ -636,20 +632,15 @@ GLOBAL_LIST_INIT(unrecommended_builds, list(
 
 	QDEL_LIST_ASSOC_VAL(char_render_holders)
 
-	sound_tokens = null
-
 	SSambience.remove_ambience_client(src)
 	SSmouse_entered.hovers -= src
 	SSping.currentrun -= src
-	SSsound_tokens.clients_needing_update -= src
-	SSsound_tokens.currentrun -= src
 	QDEL_NULL(view_size)
 	QDEL_NULL(void)
 	QDEL_NULL(tooltips)
 	QDEL_NULL(loot_panel)
 	QDEL_NULL(parallax_rock)
 	seen_messages = null
-	sound_tokens = null
 	Master.UpdateTickRate()
 	..() //Even though we're going to be hard deleted there are still some things that want to know the destroy is happening
 	return QDEL_HINT_HARDDEL_NOW
@@ -692,7 +683,6 @@ GLOBAL_LIST_INIT(unrecommended_builds, list(
 		return
 
 	var/client_is_in_db = query_client_in_db.NextRow()
-	/* //NOVA EDIT REMOVAL - Original
 	// If we aren't an admin, and the flag is set (the panic bunker is enabled).
 	if(CONFIG_GET(flag/panic_bunker) && !holder && !GLOB.deadmins[ckey])
 		// The amount of hours needed to bypass the panic bunker.
@@ -723,25 +713,8 @@ GLOBAL_LIST_INIT(unrecommended_builds, list(
 				qdel(query_client_in_db)
 				qdel(src)
 				return
-	*/ // NOVA EDIT REMOVAL END
 
 	if(!client_is_in_db)
-		//NOVA EDIT ADDITION BEGIN - PANICBUNKER
-		if (CONFIG_GET(flag/panic_bunker) && !holder && !GLOB.deadmins[ckey] && !(ckey in GLOB.bunker_passthrough))
-			log_access("Failed Login: [key] - [address] - New account attempting to connect during panic bunker")
-			message_admins(span_adminnotice("Failed Login: [key] - [address] - New account attempting to connect during panic bunker"))
-			to_chat_immediate(src, span_notice("Hi! We have temporarily enabled safety measures that prevents new players from joining currently. <br>Please try again later, or contact a staff on Discord if you have any questions. <br> <br> To join our community, check out our Discord! To gain full access to our Discord, read the rules and post a request in the #access-requests channel under the \"Landing Zone\" category in the Discord server linked here: <a href='https://discord.gg/novasector'>https://discord.gg/novasector</a>"))
-			var/list/connectiontopic_a = params2list(connectiontopic)
-			var/list/panic_addr = CONFIG_GET(string/panic_server_address)
-			if(panic_addr && !connectiontopic_a["redirect"])
-				var/panic_name = CONFIG_GET(string/panic_server_name)
-				to_chat(src, span_notice("Sending you to [panic_name ? panic_name : panic_addr]."))
-				winset(src, null, "command=.options")
-				src << link("[panic_addr]?redirect=1")
-			qdel(query_client_in_db)
-			qdel(src)
-			return
-		//NOVA EDIT END
 		new_player = 1
 		account_join_date = findJoinDate()
 		var/datum/db_query/query_add_player = SSdbcore.NewQuery({"
@@ -756,10 +729,6 @@ GLOBAL_LIST_INIT(unrecommended_builds, list(
 		if(!account_join_date)
 			account_join_date = "Error"
 			account_age = -1
-		//NOVA EDIT ADDITION BEGIN - PANICBUNKER
-		else if(ckey in GLOB.bunker_passthrough)
-			GLOB.bunker_passthrough -= ckey
-		//NOVA EDIT END
 	qdel(query_client_in_db)
 	var/datum/db_query/query_get_client_age = SSdbcore.NewQuery(
 		"SELECT firstseen, DATEDIFF(Now(),firstseen), accountjoindate, DATEDIFF(Now(),accountjoindate) FROM [format_table_name("player")] WHERE ckey = :ckey",

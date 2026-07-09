@@ -73,7 +73,7 @@
 			return
 
 		if(W == A)
-			W.attack_self(src, modifiers)
+			W.attack_self(src)
 			return
 
 		// cyborgs are prohibited from using storage items so we can I think safely remove (A.loc in contents)
@@ -93,7 +93,7 @@
 
 //Give cyborgs hotkey clicks without breaking existing uses of hotkey clicks
 // for non-doors/apcs
-/mob/living/silicon/robot/CtrlShiftClickOn(atom/target) // Procs overriden in modular_nova/modules/Silicon_QoL
+/mob/living/silicon/robot/CtrlShiftClickOn(atom/target)
 	target.BorgCtrlShiftClick(src)
 
 /mob/living/silicon/robot/ShiftClickOn(atom/target)
@@ -206,13 +206,11 @@
  * * user The mob holding the right click
  * * modifiers The list of the custom click modifiers
  */
-/*	//NOVA EDIT - MOVED TO modular_nova/master_files/code/_onclick/cyborg.dm
 /atom/proc/attack_robot(mob/user, modifiers)
 	if (SEND_SIGNAL(src, COMSIG_ATOM_ATTACK_ROBOT, user, modifiers) & COMPONENT_CANCEL_ATTACK_CHAIN)
 		return
 
 	attack_ai(user)
-*/	//NOVA EDIT END
 
 /**
  * What happens when the cyborg without active module holds right-click on an item. Returns a SECONDARY_ATTACK_* value.

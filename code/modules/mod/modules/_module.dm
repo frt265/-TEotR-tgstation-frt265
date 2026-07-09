@@ -150,10 +150,9 @@
 	if(!COOLDOWN_FINISHED(src, cooldown_timer))
 		balloon_alert(activator, "on cooldown!")
 		return FALSE
-	if((!mod.active || mod.activating || !mod.get_charge()) && !(allow_flags & MODULE_ALLOW_INACTIVE)) // NOVA EDIT CHANGE - ORIGINAL: if(!mod.active || mod.activating || !mod.get_charge())
+	if(!mod.active || mod.activating || !mod.get_charge())
 		balloon_alert(activator, "unpowered!")
 		return FALSE
-
 	if(!(allow_flags & MODULE_ALLOW_PHASEOUT) && istype(mod.wearer.loc, /obj/effect/dummy/phased_mob))
 		//specifically a to_chat because the user is phased out.
 		to_chat(activator, span_warning("You cannot activate this right now."))
@@ -415,7 +414,7 @@
 	if (!used_overlay)
 		return
 
-	var/mutable_appearance/module_icon = mutable_appearance(mod.wearer?.dna?.species.get_custom_mod_module_icon() || overlay_icon_file, used_overlay, layer = standing.layer + 0.1) // NOVA EDIT CHANGE - ORIGINAL: var/mutable_appearance/module_icon = mutable_appearance(overlay_icon_file, used_overlay, layer = standing.layer + 0.1)
+	var/mutable_appearance/module_icon = mutable_appearance(overlay_icon_file, used_overlay, layer = standing.layer + 0.1)
 	if(use_mod_colors)
 		module_icon.color = mod.color
 		if (mod.cached_color_filter)

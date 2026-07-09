@@ -258,7 +258,7 @@
 	autolathe_exportable = FALSE
 
 /datum/design/mag_autorifle
-	name = "WT-550 Autorifle Magazine (4.6x30mm)"
+	name = "WT-550 Autorifle Magazine (4.6x30mm) (Lethal)"
 	desc = "A 20 round magazine for the out of date WT-550 Autorifle."
 	id = "mag_autorifle"
 	build_type = PROTOLATHE | AWAY_LATHE
@@ -270,7 +270,7 @@
 	departmental_flags = DEPARTMENT_BITFLAG_SECURITY
 
 /datum/design/mag_autorifle/ap_mag
-	name = "WT-550 Autorifle Armour Piercing Magazine (4.6x30mm AP)"
+	name = "WT-550 Autorifle Armour Piercing Magazine (4.6x30mm AP) (Lethal)"
 	desc = "A 20 round armour piercing magazine for the out of date WT-550 Autorifle."
 	id = "mag_autorifle_ap"
 	materials = list(/datum/material/iron = SHEET_MATERIAL_AMOUNT * 3, /datum/material/silver = SMALL_MATERIAL_AMOUNT * 6)
@@ -278,7 +278,7 @@
 	departmental_flags = DEPARTMENT_BITFLAG_SECURITY
 
 /datum/design/mag_autorifle/ic_mag
-	name = "WT-550 Autorifle Incendiary Magazine (4.6x30mm IC)"
+	name = "WT-550 Autorifle Incendiary Magazine (4.6x30mm IC) (Lethal/Highly Destructive)"
 	desc = "A 20 round armour piercing magazine for the out of date WT-550 Autorifle."
 	id = "mag_autorifle_ic"
 	materials = list(/datum/material/iron = SHEET_MATERIAL_AMOUNT * 3, /datum/material/silver = SMALL_MATERIAL_AMOUNT * 6, /datum/material/glass =HALF_SHEET_MATERIAL_AMOUNT)
@@ -636,7 +636,7 @@
 	id = "liberator_gun"
 	build_type = AUTOLATHE
 	materials = list(/datum/material/plastic = SHEET_MATERIAL_AMOUNT * 2, /datum/material/iron = SMALL_MATERIAL_AMOUNT * 15)
-	build_path = /obj/item/gun/ballistic/automatic/pistol/doohickey
+	build_path = /obj/item/gun/ballistic/automatic/pistol/doorhickey
 	category = list(RND_CATEGORY_IMPORTED)
 
 /datum/design/stun_boomerang

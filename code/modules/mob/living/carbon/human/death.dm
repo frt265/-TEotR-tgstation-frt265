@@ -65,10 +65,6 @@ GLOBAL_LIST_EMPTY(dead_players_during_shift)
 
 /mob/living/carbon/proc/Drain()
 	become_husk(CHANGELING_DRAIN)
-	//NOVA EDIT REMOVAL START
-	/*
 	ADD_TRAIT(src, TRAIT_BADDNA, CHANGELING_DRAIN)
-	*/
-	//NOVA EDIT END
 	set_blood_volume(0)
 	return TRUE

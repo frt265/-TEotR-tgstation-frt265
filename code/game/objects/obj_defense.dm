@@ -111,8 +111,7 @@
 	. = ..()
 	if((resistance_flags & UNACIDABLE) || (acid_volume <= 0) || (acidpwr <= 0))
 		return FALSE
-	if(QDELETED(src)) //NOVA EDIT: fix createanddestroy
-		return FALSE
+
 	AddComponent(/datum/component/acid, acidpwr, acid_volume, custom_acid_overlay || GLOB.acid_overlay)
 	return TRUE
 
@@ -126,7 +125,6 @@
 /obj/fire_act(exposed_temperature, exposed_volume)
 	if(HAS_TRAIT(src, TRAIT_UNDERFLOOR))
 		return
-	SEND_SIGNAL(src, COMSIG_ATOM_PRE_FIRE_ACT, exposed_temperature, exposed_volume) // NOVA EDIT ADDITION
 	var/potential_damage = 0.02 * exposed_temperature
 	if(exposed_temperature && !(resistance_flags & FIRE_PROOF) && (potential_damage > damage_deflection))
 		take_damage(clamp(potential_damage, 0, 20), BURN, FIRE, 0)

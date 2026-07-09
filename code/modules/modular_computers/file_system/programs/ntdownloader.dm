@@ -117,7 +117,6 @@
 	// We do cap out our completion to avoid UI issues
 	download_completion = min(download_completion  + download_netspeed, downloaded_file.size)
 
-
 /datum/computer_file/program/ntnetdownload/ui_act(action, params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()
 	switch(action)

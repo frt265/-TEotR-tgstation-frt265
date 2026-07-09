@@ -22,21 +22,12 @@
 /// Someone, for the love of god, profile this.  Is there a reason to cache mutable_appearance
 /// if so, why are we JUST doing the airlocks when we can put this in mutable_appearance.dm for
 /// everything
-/proc/get_airlock_overlay(icon_state, icon_file, atom/offset_spokesman, em_block, state_color = null) // NOVA EDIT - Airlock accent greyscale color support - Added `state_color = null`
+/proc/get_airlock_overlay(icon_state, icon_file, atom/offset_spokesman, em_block)
 	var/static/list/airlock_overlays = list()
 
-	var/base_icon_key = "[icon_state][REF(icon_file)][state_color]" // NOVA EDIT - Airlock accent greyscale color support - ORIGINAL: var/base_icon_key = "[icon_state][REF(icon_file)]"
+	var/base_icon_key = "[icon_state][REF(icon_file)]"
 	if(!(. = airlock_overlays[base_icon_key]))
-		/* NOVA EDIT - Airlock accent greyscale color support - ORIGINAL:
 		. = airlock_overlays[base_icon_key] = mutable_appearance(icon_file, icon_state)
-		*/ // NOVA EDIT START
-		var/mutable_appearance/airlock_overlay = mutable_appearance(icon_file, icon_state)
-		if(state_color)
-			airlock_overlay.color = state_color
-
-		. = airlock_overlays[base_icon_key] = airlock_overlay
-		// NOVA EDIT END
-
 	if(isnull(em_block))
 		return
 
@@ -54,8 +45,7 @@
 // "Would this be better with a global var"
 
 // Wires for the airlock are located in the datum folder, inside the wires datum folder.
-// NOVA EDIT REMOVAL START - moved to code/__DEFINES/~nova_defines/airlock.dm
-/*
+
 #define AIRLOCK_FRAME_CLOSED "closed"
 #define AIRLOCK_FRAME_CLOSING "closing"
 #define AIRLOCK_FRAME_OPEN "open"
@@ -81,8 +71,6 @@
 #define DOOR_CLOSE_WAIT 60 /// Time before a door closes, if not overridden
 
 #define DOOR_VISION_DISTANCE 11 ///The maximum distance a door will see out to
-*/
-// NOVA EDIT REMOVAL END - moved to code/__DEFINES/~nova_defines/airlock.dm
 
 /obj/machinery/door/airlock
 	name = "Airlock"
@@ -147,9 +135,9 @@
 	var/previous_airlock = /obj/structure/door_assembly
 	/// Material of inner filling; if its an airlock with glass, this should be set to "glass"
 	var/airlock_material
-	var/overlays_file = 'icons/obj/doors/airlocks/station/overlays.dmi' //NOVA EDIT - ICON OVERRIDDEN IN AESTHETICS MODULE
+	var/overlays_file = 'icons/obj/doors/airlocks/station/overlays.dmi'
 	/// Used for papers and photos pinned to the airlock
-	var/note_overlay_file = 'icons/obj/doors/airlocks/station/overlays.dmi' //NOVA EDIT - ICON OVERRIDDEN IN AESTHETICS MODULE
+	var/note_overlay_file = 'icons/obj/doors/airlocks/station/overlays.dmi'
 
 	/// Airlock pump that overrides airlock controlls when set up for cycling
 	var/obj/machinery/atmospherics/components/unary/airlock_pump/cycle_pump
@@ -574,7 +562,6 @@
 	else
 		icon_state = "[base_icon_state]closed"
 
-/* NOVA EDIT REMOVAL - AESTHETICS - OVERWRITTEN IN modular_nova/modules/aesthetics/airlock/code/airlock.dm
 /obj/machinery/door/airlock/update_overlays()
 	. = ..()
 
@@ -657,7 +644,6 @@
 					floorlight.pixel_w = -32
 					floorlight.pixel_z = 0
 			. += floorlight
-*/
 
 /obj/machinery/door/airlock/run_animation(animation, force_type = DEFAULT_DOOR_CHECKS)
 	if(animation == DOOR_DENY_ANIMATION)
@@ -669,7 +655,7 @@
 
 /obj/machinery/door/airlock/animation_effects(animation, force_type = DEFAULT_DOOR_CHECKS)
 	if(force_type == BYPASS_DOOR_CHECKS)
-		playsound(src, forcedOpen, 30, TRUE) //NOVA EDIT CHANGE - AESTHETICS - ORIGINAL: playsound(src, soundin = 'sound/machines/airlock/airlockforced.ogg', vol = 30, vary = TRUE)
+		playsound(src, soundin = 'sound/machines/airlock/airlockforced.ogg', vol = 30, vary = TRUE)
 		return
 
 	switch(animation)
@@ -913,8 +899,7 @@
 			if(!istype(H.head, /obj/item/clothing/head/helmet))
 				H.visible_message(span_danger("[user] headbutts the airlock."), \
 									span_userdanger("You headbutt the airlock!"))
-				//H.Paralyze(100) - NOVA EDIT REMOVAL - COMBAT
-				H.StaminaKnockdown(10, TRUE, TRUE)
+				H.Paralyze(100)
 				H.apply_damage(10, BRUTE, BODY_ZONE_HEAD)
 			else
 				visible_message(span_danger("[user] headbutts the airlock. Good thing [user.p_theyre()] wearing a helmet."))
@@ -2634,8 +2619,6 @@
 	opacity = FALSE
 	glass = TRUE
 
-// NOVA EDIT REMOVAL START - moved to code/__DEFINES/~nova_defines/airlock.dm
-/*
 #undef AIRLOCK_SECURITY_NONE
 #undef AIRLOCK_SECURITY_IRON
 #undef AIRLOCK_SECURITY_PLASTEEL_I_S
@@ -2660,5 +2643,3 @@
 #undef AIRLOCK_FRAME_CLOSING
 #undef AIRLOCK_FRAME_OPEN
 #undef AIRLOCK_FRAME_OPENING
-*/
-// NOVA EDIT REMOVAL END - moved to code/__DEFINES/~nova_defines/airlock.dm

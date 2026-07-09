@@ -34,21 +34,21 @@ function PriorityButton(props: PriorityButtonProps) {
   const className = `PreferencesMenu__Jobs__departments__priority`;
 
   return (
-    // NOVA EDIT START
-    <Button
-      className={classes([
-        className,
-        props.modifier && `${className}--${props.modifier}`,
-      ])}
-      color={props.enabled ? props.color : 'white'}
-      circular
-      onClick={props.onClick}
-      tooltip={props.name}
-      tooltipPosition="bottom"
-      height={PRIORITY_BUTTON_SIZE}
-      width={PRIORITY_BUTTON_SIZE}
-    />
-    // NOVA EDIT END
+    <Stack.Item height={PRIORITY_BUTTON_SIZE}>
+      <Button
+        className={classes([
+          className,
+          props.modifier && `${className}--${props.modifier}`,
+        ])}
+        color={props.enabled ? props.color : 'white'}
+        circular
+        onClick={props.onClick}
+        tooltip={props.name}
+        tooltipPosition="bottom"
+        height={PRIORITY_BUTTON_SIZE}
+        width={PRIORITY_BUTTON_SIZE}
+      />
+    </Stack.Item>
   );
 }
 
@@ -115,14 +115,12 @@ function PriorityButtons(props: PriorityButtonsProps) {
   const { createSetPriority, isOverflow, priority } = props;
 
   return (
-    <Box // NOVA EDIT - Originally a stack
+    <Stack
       style={{
         alignItems: 'center',
         height: '100%',
         justifyContent: 'flex-end',
         paddingLeft: '0.3em',
-        paddingTop: '0.12em', // NOVA EDIT ADDITION - Add some vertical padding
-        paddingBottom: '0.12em', // NOVA EDIT ADDITION - To make this look nicer
       }}
     >
       {isOverflow ? (
@@ -174,7 +172,7 @@ function PriorityButtons(props: PriorityButtonsProps) {
           />
         </>
       )}
-    </Box> // NOVA EDIT - Originally a stack
+    </Stack>
   );
 }
 
@@ -185,7 +183,7 @@ type JobRowProps = {
 };
 
 function JobRow(props: JobRowProps) {
-  const { data, act } = useBackend<PreferencesMenuData>(); // NOVA EDIT CHANGE - Adds act param
+  const { data } = useBackend<PreferencesMenuData>();
   const { className, job, name } = props;
 
   const isOverflow = data.overflow_role === name;
@@ -195,12 +193,6 @@ function JobRow(props: JobRowProps) {
 
   const experienceNeeded = data.job_required_experience?.[name];
   const daysLeft = data.job_days_left ? data.job_days_left[name] : 0;
-
-  // NOVA EDIT ADDITION START
-  const alt_title_selected = data.job_alt_titles[name]
-    ? data.job_alt_titles[name]
-    : name;
-  // NOVA EDIT ADDITION END
 
   let rightSide: ReactNode;
 
@@ -231,31 +223,6 @@ function JobRow(props: JobRowProps) {
         </Stack.Item>
       </Stack>
     );
-    // NOVA EDIT START
-  } else if (
-    data.nova_star_restrictions &&
-    job.nova_star &&
-    !data.is_nova_star
-  ) {
-    rightSide = (
-      <Stack align="center" height="100%" pr={1}>
-        <Stack.Item grow textAlign="right">
-          <b>Nova Stars Only</b>
-        </Stack.Item>
-      </Stack>
-    );
-  } else if (
-    data.species_restricted_jobs &&
-    data.species_restricted_jobs.indexOf(name) !== -1
-  ) {
-    rightSide = (
-      <Stack align="center" height="100%" pr={1}>
-        <Stack.Item grow textAlign="right">
-          <b>Bad species</b>
-        </Stack.Item>
-      </Stack>
-    );
-    // NOVA EDIT END
   } else {
     rightSide = (
       <PriorityButtons
@@ -277,22 +244,7 @@ function JobRow(props: JobRowProps) {
               paddingLeft: '0.3em',
             }}
           >
-            {
-              // NOVA EDIT CHANGE START - ORIGINAL: {name}
-              !job.alt_titles ? (
-                name
-              ) : (
-                <Dropdown
-                  width="100%"
-                  options={job.alt_titles}
-                  selected={alt_title_selected}
-                  onSelected={(value) =>
-                    act('set_job_title', { job: name, new_title: value })
-                  }
-                />
-              )
-              // NOVA EDIT CHANGE END
-            }
+            {name}
           </Stack.Item>
         </Tooltip>
 

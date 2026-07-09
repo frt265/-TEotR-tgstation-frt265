@@ -14,7 +14,7 @@
 	reqs = list(/obj/item/grown/log = 5)
 	parts = list(/obj/item/grown/log = 5) //Will be returned if the bonfire is dismantled
 	blacklist = list(/obj/item/grown/log/steel)
-	result = /obj/structure/bonfire/player_made // NOVA EDIT - Pollution - ORIGINAL: result = /obj/structure/bonfire
+	result = /obj/structure/bonfire
 	category = CAT_TOOLS
 	crafting_flags = parent_type::crafting_flags | CRAFT_SKIP_MATERIALS_PARITY
 
@@ -130,10 +130,6 @@
 		/obj/item/bonesetter = 1,
 	)
 	category = CAT_TOOLS
-
-/datum/crafting_recipe/jaws_of_recovery/New()
-	LAZYADD(blacklist, typecacheof(/obj/item/crowbar/power/paramedic, ignore_root_path = TRUE))
-	return ..()
 
 /datum/crafting_recipe/lantern
 	name = "Lantern"

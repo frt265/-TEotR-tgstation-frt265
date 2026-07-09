@@ -168,8 +168,7 @@
 	keyword = "News_Report"
 
 /datum/world_topic/news_report/Run(list/input)
-
-	priority_announce(input["message"], "Breaking Update From [input["message_sender"]]") //NOVA EDIT CHANGE
+	minor_announce(input["message"], "Breaking Update From [input["message_sender"]]")
 
 /datum/world_topic/adminmsg
 	keyword = "adminmsg"

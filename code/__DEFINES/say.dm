@@ -11,9 +11,6 @@
 #define LANGUAGE_MUTUAL_BONUS "language mutual bonus"
 #define SAY_MOD_VERB "say_mod_verb"
 
-#define HEAR_HEARD (1<<0)
-#define HEAR_UNDERSTOOD (1<<1)
-
 //Message modes. Each one defines a radio channel, more or less.
 //if you use ! as a mode key for some ungodly reason, change the first character for ion_num() so get_message_mode() doesn't freak out with state law prompts - shiz.
 #define MODE_HEADSET "headset"
@@ -36,10 +33,6 @@
 #define WHISPER_MODE "the type of whisper"
 #define MODE_WHISPER "whisper"
 #define MODE_WHISPER_CRIT "whispercrit"
-
-//NOVA custom verb
-#define MODE_CUSTOM_SAY "custom_say"
-//NOVA custom sayverb end.
 
 #define MODE_DEPARTMENT "department"
 #define MODE_KEY_DEPARTMENT "h"
@@ -80,8 +73,6 @@
 #define MODE_CUSTOM_SAY_ERASE_INPUT "erase_input"
 /// Message is being relayed through another object
 #define MODE_RELAY "relayed"
-/// Message has a TTS identifier attached to it
-#define MODE_TTS_IDENTIFIER "tts_identifier"
 /// Override the mob's name
 #define MODE_SPEAKER_NAME_OVERRIDE "speaker_name_override"
 
@@ -98,8 +89,6 @@
 #define SPAN_TAPE_RECORDER "tape_recorder"
 #define SPAN_SMALL_VOICE "small"
 #define SPAN_SOAPBOX "soapbox"
-#define SPAN_COLOSSUS "colossus"
-#define SPAN_DANGER "danger"
 //bitflag #defines for return value of the radio() proc.
 /// Makes the message use italics
 #define ITALICS (1<<0)
@@ -124,7 +113,7 @@
 #define FOLLOW_OR_TURF_LINK(alice, bob, turfy) "<a href=byond://?src=[REF(alice)];follow=[REF(bob)];x=[turfy.x];y=[turfy.y];z=[turfy.z]>(F)</a>"
 
 //Don't set this very much higher then 1024 unless you like inviting people in to dos your server with message spam
-#define MAX_MESSAGE_LEN 2048 //NOVA EDIT CHANGE - ORIGINAL 1024 - I SAID DOUBLE IT!! FUCK THE WARNING!
+#define MAX_MESSAGE_LEN 1024
 #define MAX_NAME_LEN 42
 #define MAX_BROADCAST_LEN 512
 #define MAX_CHARTER_LEN 80

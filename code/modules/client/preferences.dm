@@ -9,7 +9,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	/// Ensures that we always load the last used save, QOL
 	var/default_slot = 1
 	/// The maximum number of slots we're allowed to contain
-	var/max_save_slots = 30 //NOVA EDIT - ORIGINAL 3
+	var/max_save_slots = 3
 
 	/// Bitflags for communications that are muted
 	var/muted = NONE
@@ -124,11 +124,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/loaded_preferences_successfully = load_preferences()
 	if(loaded_preferences_successfully)
 		if(load_character())
-			// NOVA EDIT ADDITION START - Sanitizing preferences
-			sanitize_languages()
-			sanitize_quirks()
-			// NOVA EDIT ADDITION END - Sanitizing preferences
-			return // Don't remove this. Just don't. Nothing is worth forced random characters. // NOVA EDIT CHANGE - Just adds comment - Original: return
+			return
 	//we couldn't load character data so just randomize the character appearance + name
 	randomise_appearance_prefs() //let's create a random character then - rather than a fat, bald and naked man.
 	if(parent)
@@ -170,12 +166,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	if (tainted_character_profiles)
 		data["character_profiles"] = create_character_profiles()
 		tainted_character_profiles = FALSE
-	//NOVA EDIT ADDITION BEGIN
-	data["preview_selection"] = preview_pref
-	data["quirk_points_enabled"] = !CONFIG_GET(flag/disable_quirk_points)
-	data["quirks_balance"] = GetQuirkBalance()
-	data["positive_quirk_count"] = GetPositiveQuirkCount()
-	//NOVA EDIT ADDITION END
 
 	data["character_preferences"] = compile_character_preferences(user)
 
@@ -218,12 +208,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	if (.)
 		return
 
-	if(SSlag_switch.measures[DISABLE_CREATOR] && action != "change_slot")
-		to_chat(usr, "The creator has been disabled. Please do not ahelp.")
-		return
-
-	log_creator("[key_name(usr)] ACTED [action] | PREFERENCE: [params["preference"]] | VALUE: [params["value"]]")
-
 	switch (action)
 		if ("change_slot")
 			// Save existing character
@@ -235,12 +219,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 			remove_current_slot()
 			return TRUE
 		if ("rotate")
-			/* NOVA EDIT - Bi-directional prefs menu rotation - ORIGINAL:
 			character_preview_view.setDir(turn(character_preview_view.dir, -90))
-			*/ // ORIGINAL END - NOVA EDIT START:
-			var/backwards = params["backwards"]
-			character_preview_view.setDir(turn(character_preview_view.dir, backwards ? 90 : -90))
-			// NOVA EDIT END
 			return TRUE
 		if ("set_preference")
 			var/requested_preference_key = params["preference"]
@@ -291,59 +270,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 				return FALSE
 
 			return TRUE
-		// NOVA EDIT ADDITION START
-		if("update_preview")
-			preview_pref = params["updated_preview"]
-			character_preview_view.update_body()
-			return TRUE
-
-		if ("open_food")
-			GLOB.food_prefs_menu.ui_interact(usr)
-			return TRUE
-		// NOVA EDIT ADDITION START: Background Selection
-		if("update_background")
-			update_preference(GLOB.preference_entries[/datum/preference/choiced/background_state], params["new_background"])
-			return TRUE
-		// NOVA EDIT ADDITION END
-
-		if ("set_tricolor_preference")
-			var/requested_preference_key = params["preference"]
-			var/index_key = params["value"]
-
-			var/datum/preference/requested_preference = GLOB.preference_entries_by_key[requested_preference_key]
-			if (isnull(requested_preference))
-				return FALSE
-
-			if (!istype(requested_preference, /datum/preference/tri_color))
-				return FALSE
-
-			var/default_value_list = read_preference(requested_preference.type)
-			if (!islist(default_value_list))
-				return FALSE
-			var/default_value = default_value_list[index_key]
-
-			// Yielding
-			var/new_color = tgui_color_picker(
-				usr,
-				"Select new color",
-				null,
-				default_value || COLOR_WHITE,
-			)
-
-			if (!new_color)
-				return FALSE
-
-			default_value_list[index_key] = new_color
-
-			if (!update_preference(requested_preference, default_value_list))
-				return FALSE
-
-			return TRUE
-
-		// For the quirks in the prefs menu.
-		if ("get_quirks_balance")
-			return TRUE
-		//NOVA EDIT ADDITION END
 
 	for (var/datum/preference_middleware/preference_middleware as anything in middleware)
 		var/delegation = preference_middleware.action_delegations[action]
@@ -421,21 +347,12 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	var/datum/preferences/preferences
 	/// Whether we show current job clothes or nude/loadout only
 	var/show_job_clothes = TRUE
-	// NOVA EDIT ADDITION START: Better character preview: Rescales between 32x32, 64x64 and 96x96.
-	var/image/canvas
-	var/last_canvas_size
-	var/last_canvas_state
-	// NOVA EDIT ADDITION END
 
 /atom/movable/screen/map_view/char_preview/Initialize(mapload, datum/hud/hud_owner, datum/preferences/preferences)
 	. = ..()
 	src.preferences = preferences
 
 /atom/movable/screen/map_view/char_preview/Destroy()
-	// NOVA EDIT ADDITION START: Better character preview
-	canvas?.cut_overlays()
-	canvas = null
-	// NOVA EDIT ADDITION END
 	QDEL_NULL(body)
 	preferences?.character_preview_view = null
 	preferences = null
@@ -450,37 +367,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 
 	appearance = preferences.render_new_preview_appearance(body, show_job_clothes)
 
-	// NOVA EDIT ADDITION BEGIN: Better character preview
-	var/canvas_size = 0
-	var/canvas_state = preferences.read_preference(/datum/preference/choiced/background_state)
-
-	// if oversized trait (fixes size at 2.0) or over 1.1, scales up
-	if ((/datum/quirk/oversized::name in preferences.all_quirks) || (body.dna.features["body_size"] > 1.1))
-		canvas_size += 1
-	if (body.dna.mutant_bodyparts["taur"])
-		// taurs can be extra wide, so scale up in attempt to see their tails
-		canvas_size += 1
-	body.pixel_x = canvas_size * 16
-
-	if (isnull(canvas) || last_canvas_size != canvas_size || last_canvas_state != canvas_state)
-		switch (canvas_size)
-			if (0)
-				canvas = image('modular_nova/modules/character_preview_background/icons/background_32x32.dmi', icon_state = canvas_state)
-			if (1)
-				canvas = image('modular_nova/modules/character_preview_background/icons/background_64x64.dmi', icon_state = canvas_state)
-			if (2)
-				canvas = image('modular_nova/modules/character_preview_background/icons/background_96x96.dmi', icon_state = canvas_state)
-
-	// Update the map view bounds when canvas size changes to properly display the scaled preview
-	set_position(1, 1)
-	last_canvas_size = canvas_size
-	last_canvas_state = canvas_state
-
-	canvas.cut_overlays()
-	canvas.add_overlay(body.appearance)
-
-	appearance = canvas.appearance
-	// NOVA EDIT ADDITION END
 /atom/movable/screen/map_view/char_preview/proc/create_body()
 	QDEL_NULL(body)
 
@@ -535,11 +421,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	for(var/V in all_quirks)
 		var/datum/quirk/T = SSquirks.quirks[V]
 		bal -= initial(T.value)
-	//NOVA EDIT ADDITION
-	for(var/key in augments)
-		var/datum/augment_item/aug = GLOB.augment_items[augments[key]]
-		bal -= aug.cost
-	//NOVA EDIT END
 	return bal
 
 /datum/preferences/proc/GetPositiveQuirkCount()
@@ -631,8 +512,8 @@ GLOBAL_LIST_EMPTY(preferences_datums)
  * Is often skipped to save processing when an update will happen later anyway.
  * * do_not_apply - A list of preference types to skip when applying preferences.
  */
-/datum/preferences/proc/apply_prefs_to(mob/living/carbon/human/character, icon_updates = TRUE, list/do_not_apply, visuals_only = FALSE) // NOVA EDIT CHANGE - ORIGINAL: /datum/preferences/proc/apply_prefs_to(mob/living/carbon/human/character, icon_updates = TRUE, list/do_not_apply)
-	character.dna.features = MANDATORY_FEATURE_LIST // NOVA EDIT CHANGE - We need to instansiate the list with the basic features. - ORIGINAL: character.dna.features = list()
+/datum/preferences/proc/apply_prefs_to(mob/living/carbon/human/character, icon_updates = TRUE, list/do_not_apply)
+	character.dna.features = list()
 
 	for (var/datum/preference/preference as anything in get_preferences_in_priority_order())
 		if (preference.savefile_identifier != PREFERENCE_CHARACTER)
@@ -640,12 +521,7 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		if (preference.type in do_not_apply)
 			continue
 
-		preference.apply_to_human(character, read_preference(preference.type), src) // NOVA EDIT CHANGE - ORIGINAL: preference.apply_to_human(character, read_preference(preference.type))
-
-	// NOVA EDIT ADDITION START - middleware apply human prefs
-	for (var/datum/preference_middleware/preference_middleware as anything in middleware)
-		preference_middleware.apply_to_human(character, src, visuals_only = visuals_only)
-	// NOVA EDIT ADDITION END
+		preference.apply_to_human(character, read_preference(preference.type))
 
 	character.dna.real_name = character.real_name
 
@@ -704,6 +580,5 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 		to_chat(parent, span_warning("There's been a connection failure while trying to check the status of your BYOND membership. Reconnecting may fix the issue, or BYOND could be experiencing downtime."))
 
 	unlock_content = !!byond_member
-	donator_status = !!GLOB.donator_list[parent.ckey] // NOVA EDIT ADDITION - DONATOR CHECK
-	if(unlock_content || donator_status) // NOVA EDIT CHANGE - ORIGINAL: if(unlock_content)
-		max_save_slots = 50 //NOVA EDIT - ORIGINAL: max_save_slots = 8
+	if(unlock_content)
+		max_save_slots = 8

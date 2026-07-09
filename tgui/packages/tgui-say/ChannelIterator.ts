@@ -1,4 +1,4 @@
-export type Channel = 'Say' | 'Radio' | 'Me' | 'Whis' | 'LOOC' | 'Do' | 'OOC' | 'Admin' | 'Pray'; // NOVA EDIT CHANGE - ORIGINAL: export type Channel = 'Say' | 'Radio' | 'Me' | 'OOC' | 'Admin' | 'Pray';
+export type Channel = 'Say' | 'Radio' | 'Me' | 'OOC' | 'Admin' | 'Pray';
 
 /**
  * ### ChannelIterator
@@ -8,9 +8,9 @@ export type Channel = 'Say' | 'Radio' | 'Me' | 'Whis' | 'LOOC' | 'Do' | 'OOC' | 
  */
 export class ChannelIterator {
   private index: number = 0;
-  private readonly channels: Channel[] = ['Say', 'Radio', 'Me', 'Whis', 'LOOC', 'Do', 'OOC', 'Admin', 'Pray']; // NOVA EDIT CHANGE - ORIGINAL: private readonly channels: Channel[] = ['Say', 'Radio', 'Me', 'OOC', 'Admin', 'Pray'];
+  private readonly channels: Channel[] = ['Say', 'Radio', 'Me', 'OOC', 'Admin', 'Pray'];
   private readonly blacklist: Channel[] = ['Admin'];
-  private readonly quiet: Channel[] = ['OOC', 'LOOC', 'Admin', 'Pray']; // NOVA EDIT CHANGE - ORIGINAL: private readonly quiet: Channel[] = ['OOC', 'Admin', 'Pray'];
+  private readonly quiet: Channel[] = ['OOC', 'Admin', 'Pray'];
 
   public next(): Channel {
     if (this.blacklist.includes(this.channels[this.index])) {

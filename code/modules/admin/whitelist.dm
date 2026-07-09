@@ -1,4 +1,3 @@
-/** NOVA EDIT REMOVAL - Moved to modular for SQL implementation.
 #define WHITELISTFILE "[global.config.directory]/whitelist.txt"
 
 GLOBAL_LIST(whitelist)
@@ -40,4 +39,3 @@ ADMIN_VERB_CUSTOM_EXIST_CHECK(whitelist_player)
 	return CONFIG_GET(flag/usewhitelist)
 
 #undef WHITELISTFILE
-*/ // NOVA EDIT END

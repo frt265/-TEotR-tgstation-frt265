@@ -11,7 +11,6 @@ import {
   Tooltip,
 } from 'tgui-core/components';
 import { createSearch } from 'tgui-core/string';
-import { CharacterPreview } from '../../common/CharacterPreview'; // NOVA EDIT ADDITION
 
 import {
   type PreferencesMenuData,
@@ -29,10 +28,6 @@ function getColorValueClass(quirk: Quirk) {
     return 'positive';
   } else if (quirk.value < 0) {
     return 'negative';
-    // NOVA EDIT ADDITION BEGIN - Purple ERP quirks
-  } else if (quirk.erp_quirk) {
-    return 'erp_quirk';
-    // NOVA EDIT ADDITION END
   } else {
     return 'neutral';
   }
@@ -103,7 +98,6 @@ function QuirkDisplay(props: QuirkDisplayProps) {
   const { icon, value, name, description, customizable, failTooltip } = quirk;
 
   const [customizationExpanded, setCustomizationExpanded] = useState(false);
-  const { data } = useBackend<PreferencesMenuData>(); // NOVA EDIT ADDITION
 
   const className = 'PreferencesMenu__Quirks__QuirkList__quirk';
 
@@ -247,8 +241,7 @@ function QuirkPopper(props: QuirkPopperProps) {
               boxShadow: '0px 4px 8px 3px rgba(0, 0, 0, 0.7)',
             }}
           >
-            {/* NOVA EDIT CHANGE - ORIGINAL: <Stack maxWidth="325px" backgroundColor="black" px="5px" py="3px"> */}
-            <Stack maxWidth="400px" backgroundColor="black" px="5px" py="3px">
+            <Stack maxWidth="300px" backgroundColor="black" px="5px" py="3px">
               <Stack.Item>
                 <PreferenceList
                   preferences={getCorrespondingPreferences(
@@ -263,7 +256,7 @@ function QuirkPopper(props: QuirkPopperProps) {
                     serverData,
                     randomBodyEnabled,
                   )}
-                  maxHeight="250px" // NOVA EDIT CHANGE - ORIGINAL: 100px
+                  maxHeight="100px"
                 />
               </Stack.Item>
             </Stack>
@@ -351,7 +344,7 @@ function QuirkPage() {
     }
   });
 
-  const balance = -data.quirks_balance; // NOVA EDIT CHANGE - ORIGINAL: let balance = -data.default_quirk_balance;
+  let balance = -data.default_quirk_balance;
   let positiveQuirks = 0;
 
   for (const selectedQuirkName of selectedQuirks) {
@@ -364,7 +357,7 @@ function QuirkPage() {
       positiveQuirks += 1;
     }
 
-    // balance += selectedQuirk.value; // NOVA EDIT REMOVAL - use DM data.quirks_balance
+    balance += selectedQuirk.value;
   }
 
   function getReasonToNotAdd(quirkName: string) {
@@ -377,15 +370,7 @@ function QuirkPage() {
         return 'You need a negative quirk to balance this out!';
       }
     }
-    // NOVA EDIT START - Nova star quirks
-    if (
-      data.nova_star_restrictions &&
-      quirk.nova_stars_only &&
-      !data.is_nova_star
-    ) {
-      return 'You need to be a Nova star to select this quirk, apply today!';
-    }
-    // NOVA EDIT END
+
     const selectedQuirkNames = selectedQuirks.map((quirkKey) => {
       return quirkInfo[quirkKey].name;
     });
@@ -493,29 +478,7 @@ function QuirkPage() {
       </Stack.Item>
 
       <Stack.Item align="center">
-        {/* <Icon name="exchange-alt" size={1.5} ml={2} mr={2} /> // NOVA EDIT REMOVAL - moved down */}
-        {/* NOVA EDIT ADDITION START */}
-        <Stack vertical fill align="center">
-          {/* Keep the CharacterPreview alive but "hidden", so that traits that affect appearance (e.g. Oversized) refresh rendering calculations immediately. */}
-          <Stack.Item
-            style={{
-              position: 'absolute',
-              left: '-10000px',
-              top: '-10000px',
-              width: '1px',
-              height: '1px',
-              pointerEvents: 'none',
-            }}
-          >
-            <CharacterPreview
-              id={data.character_preview_view}
-              height="1px"
-              width="1px"
-            />
-          </Stack.Item>
-          <Icon name="exchange-alt" size={1.5} ml={2} mr={2} />
-        </Stack>
-        {/* NOVA EDIT ADDITION END */}
+        <Icon name="exchange-alt" size={1.5} ml={2} mr={2} />
       </Stack.Item>
 
       <Stack.Item basis="50%">

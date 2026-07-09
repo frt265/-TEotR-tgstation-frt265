@@ -85,9 +85,6 @@ GLOBAL_LIST_INIT(common_loot, list( //common: basic items
 		/obj/item/weldingtool = 1,
 		/obj/item/wirecutters = 1,
 		/obj/item/wrench = 1,
-		/obj/item/multitool/fock = 1, // NOVA EDIT ADDITION
-		/obj/item/weldingtool/electric/arc_welder = 1, // NOVA EDIT ADDITION
-		/obj/item/crowbar/large/doorforcer = 1, // NOVA EDIT ADDITION
 		) = 1,
 
 	list(//equipment
@@ -105,10 +102,6 @@ GLOBAL_LIST_INIT(common_loot, list( //common: basic items
 		/obj/item/storage/backpack = 1,
 		/obj/item/storage/belt/fannypack = 1,
 		/obj/item/storage/wallet/random = 1,
-		/obj/item/clothing/mask/gas/atmos/frontier_colonist = 1, // NOVA EDIT ADDITION
-		/obj/item/radio/headset/headset_frontier_colonist = 1, // NOVA EDIT ADDITION
-		/obj/item/clothing/suit/frontier_colonist_flak = 1, // NOVA EDIT ADDITION
-		/obj/item/clothing/head/frontier_colonist_helmet = 1, // NOVA EDIT ADDITION
 		) = 1,
 
 	list(//construction and crafting
@@ -142,14 +135,6 @@ GLOBAL_LIST_INIT(common_loot, list( //common: basic items
 		/obj/item/stock_parts/power_store/cell/lead = 1,
 		/obj/item/storage/box/matches = 1,
 		/obj/item/storage/fancy/cigarettes/dromedaryco = 1,
-		/obj/item/disk/neuroware/pumpup = 1, // NOVA EDIT ADDITION
-		/obj/item/storage/medkit/civil_defense/stocked = 1, // NOVA EDIT ADDITION
-		/obj/item/storage/medkit/frontier/stocked = 1, // NOVA EDIT ADDITION
-		/obj/item/storage/medkit/combat_surgeon/stocked = 1, // NOVA EDIT ADDITION
-		/obj/item/stack/medical/suture = 1, // NOVA EDIT ADDITION
-		/obj/item/stack/medical/ointment/red_sun = 1, // NOVA EDIT ADDITION
-		/obj/item/reagent_containers/hypospray/medipen/deforest/morpital = 1, // NOVA EDIT ADDITION
-		/obj/item/reagent_containers/hypospray/medipen/deforest/aranepaine = 1, // NOVA EDIT ADDITION
 		) = 1,
 
 	list(//food
@@ -190,11 +175,6 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/spear = 1,
 		/obj/item/weldingtool/largetank = 1,
 		/obj/item/market_uplink/blackmarket = 1,
-		/obj/item/circuitboard/machine/ltsrbt = 1, //NOVA EDIT ADDITION - More widespread Black Market
-		/obj/item/melee/baton/security/stun_gun/stun_knife = 1, // NOVA EDIT ADDITION
-		/obj/item/melee/baton/security/stun_gun = 1, // NOVA EDIT ADDITION
-		/obj/item/gun/energy/taser/crank = 1, // NOVA EDIT ADDITION
-		/obj/item/gun/ballistic/automatic/pistol/doohickey = 1, // NOVA EDIT ADDITION, yes it's lower in the code too, but it should be alot more common now
 		) = 8,
 
 	list(//equipment
@@ -266,8 +246,6 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 		/obj/item/food/canned/peaches/maint = 1,
 		/obj/item/storage/box/donkpockets = 1,
 		/obj/item/storage/box/gum/happiness = 1,
-		/obj/item/storage/box/ramen_beef = 1,
-		/obj/item/pizzavoucher/free = 1, //NOVA EDIT ADDITION
 		list(//Donk Varieties
 			/obj/item/storage/box/donkpockets/donkpocketberry = 1,
 			/obj/item/storage/box/donkpockets/donkpockethonk = 1,
@@ -289,7 +267,7 @@ GLOBAL_LIST_INIT(uncommon_loot, list(//uncommon: useful items
 
 	list(//computer disks
 		/obj/item/disk/computer/maintenance/scanner = 1,
-		///obj/item/disk/computer/maintenance/camera = 1, // NOVA EDIT REMOVAL - Available To Crew Now
+		/obj/item/disk/computer/maintenance/camera = 1,
 		/obj/item/disk/computer/maintenance/modsuit_control = 1,
 		/obj/item/disk/computer/maintenance/spectre_meter = 1,
 		/obj/item/disk/computer/maintenance/arcade = 1,
@@ -341,7 +319,7 @@ GLOBAL_LIST_INIT(rarity_loot, list(//rare: really good items
 		/obj/item/weldingtool/hugetank = 1,
 		/obj/item/fishing_rod/telescopic/master = 1,
 		/obj/item/spess_knife = 1,
-		/obj/item/gun/ballistic/automatic/pistol/doohickey = 1,
+		/obj/item/gun/ballistic/automatic/pistol/doorhickey = 1,
 		) = 1,
 
 	list(//equipment
@@ -422,8 +400,8 @@ GLOBAL_LIST_INIT(oddity_loot, list(//oddity: strange or crazy items
 	))
 
 //Maintenance loot spawner pools
-#define maint_trash_weight 1200 // NOVA EDIT CHANGE - Made these two alot less common so you get more varied items, does make oddities alot more common aswell - Original: maint_trash_weight 4500
-#define maint_common_weight 1200 // NOVA EDIT CHANGE - Made these two alot less common so you get more varied items does make oddities alot more common aswell - Original: maint_common_weight 4500
+#define maint_trash_weight 4500
+#define maint_common_weight 4500
 #define maint_uncommon_weight 900
 #define maint_rarity_weight 99
 #define maint_oddity_weight 1 //1 out of 10,000 would give metastation (180 spawns) a 2 in 111 chance of spawning an oddity per round, similar to xeno egg

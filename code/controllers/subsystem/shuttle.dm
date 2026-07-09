@@ -290,7 +290,7 @@ SUBSYSTEM_DEF(shuttle)
 		priority_announce(
 			text = "Emergency shuttle uplink interference detected, shuttle call disabled while the system reinitializes. Estimated restore in [DisplayTimeText(lockout_timer, round_seconds_to = 60)].",
 			title = "Uplink Interference",
-			sound = ANNOUNCER_SHUTTLE, // NOVA EDIT CHANGE - Announcer Sounds - ORIGINAL: sound = 'sound/announcer/announcement/announce_dig.ogg',
+			sound = 'sound/announcer/announcement/announce_dig.ogg',
 			sender_override = "Emergency Shuttle Uplink Alert",
 			color_override = "grey",
 		)
@@ -304,7 +304,7 @@ SUBSYSTEM_DEF(shuttle)
 		priority_announce(
 			text= "Emergency shuttle uplink services are now back online.",
 			title = "Uplink Restored",
-			sound = ANNOUNCER_SHUTTLE, // NOVA EDIT CHANGE - Announcer Sounds - ORIGINAL: sound = 'sound/announcer/announcement/announce_dig.ogg',
+			sound = 'sound/announcer/announcement/announce_dig.ogg',
 			sender_override = "Emergency Shuttle Uplink Alert",
 			color_override = "green",
 		)
@@ -489,19 +489,8 @@ SUBSYSTEM_DEF(shuttle)
 			if(emergency.timeLeft(1) < emergency_call_time)
 				return FALSE
 		if(SEC_LEVEL_BLUE)
-			if(emergency.timeLeft(1) < emergency_call_time * 0.6) // NOVA EDIT CHANGE - ALERTS - ORIGINAL: if(emergency.timeLeft(1) < emergency_call_time * 0.5)
+			if(emergency.timeLeft(1) < emergency_call_time * 0.5)
 				return FALSE
-		// NOVA EDIT ADDITION START - ALERTS
-		if(SEC_LEVEL_ORANGE)
-			if(emergency.timeLeft(1) < emergency_call_time * 0.4)
-				return
-		if(SEC_LEVEL_VIOLET)
-			if(emergency.timeLeft(1) < emergency_call_time * 0.4)
-				return
-		if(SEC_LEVEL_AMBER)
-			if(emergency.timeLeft(1) < emergency_call_time * 0.4)
-				return
-		// NOVA EDIT ADDITION END
 		else
 			if(emergency.timeLeft(1) < emergency_call_time * 0.25)
 				return FALSE
@@ -622,7 +611,7 @@ SUBSYSTEM_DEF(shuttle)
 		priority_announce(
 			text = "You have [DisplayTimeText(emergency_dock_time)] to board the emergency shuttle.",
 			title = "Hostile Environment Resolved",
-			sound = ANNOUNCER_SHUTTLE, // NOVA EDIT CHANGE - Announcer Sounds - ORIGINAL: sound = 'sound/announcer/announcement/announce_dig.ogg',
+			sound = 'sound/announcer/announcement/announce_dig.ogg',
 			sender_override = "Emergency Shuttle Uplink Alert",
 			color_override = "green",
 		)

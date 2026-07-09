@@ -61,7 +61,7 @@
 	zone = BODY_ZONE_HEAD
 	slot = ORGAN_SLOT_EXTERNAL_POD_HAIR
 
-	//dna_block = /datum/dna_block/feature/accessory/mush_cap // NOVA EDIT REMOVAL - Customization - We have our own system to handle DNA.
+	dna_block = /datum/dna_block/feature/accessory/mush_cap
 	restyle_flags = EXTERNAL_RESTYLE_PLANT
 
 	bodypart_overlay = /datum/bodypart_overlay/mutant/mushroom_cap

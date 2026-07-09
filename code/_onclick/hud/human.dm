@@ -33,7 +33,6 @@
 	add_screen_object(/atom/movable/screen/stamina, HUD_MOB_STAMINA, HUD_GROUP_INFO)
 	add_screen_object(/atom/movable/screen/healths, HUD_MOB_HEALTH, HUD_GROUP_INFO)
 	add_screen_object(/atom/movable/screen/hunger, HUD_MOB_HUNGER, HUD_GROUP_INFO)
-	add_screen_object(/atom/movable/screen/ammo_counter, HUD_MOB_AMMO, HUD_GROUP_INFO) // NOVA EDIT ADDITION
 
 /datum/hud/human/update_locked_slots()
 	if(!mymob)
@@ -155,7 +154,6 @@
 			if(H.r_store)
 				H.r_store.screen_loc = ui_storage2
 				screenmob.client.screen += H.r_store
-
 		else
 			if(H.s_store)
 				screenmob.client.screen -= H.s_store

@@ -5,13 +5,6 @@
 #define STATE_CHANGING_STATUS "changing_status"
 #define STATE_MAIN "main"
 #define STATE_MESSAGES "messages"
-//NOVA EDIT ADDITION
-GLOBAL_VAR_INIT(cops_arrived, FALSE)
-#define EMERGENCY_RESPONSE_POLICE "WOOP WOOP THAT'S THE SOUND OF THE POLICE"
-#define EMERGENCY_RESPONSE_ATMOS "DISCO INFERNO"
-#define EMERGENCY_RESPONSE_EMT "AAAAAUGH, I'M DYING, I NEEEEEEEEEED A MEDIC BAG"
-#define EMERGENCY_RESPONSE_EMAG "AYO THE PIZZA HERE"
-//NOVA EDIT END
 
 // The communications computer
 /obj/machinery/computer/communications
@@ -138,7 +131,6 @@ GLOBAL_VAR_INIT(cops_arrived, FALSE)
 		caller_card.use_charge(user)
 		addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(summon_battlecruiser), caller_card.team), rand(20 SECONDS, 1 MINUTES))
 		playsound(src, 'sound/machines/terminal/terminal_alert.ogg', 50, FALSE)
-		priority_announce("Attention crew: deep-space sensors detect a Syndicate battlecruiser-class signature subspace rift forming near your station. Estimated time until arrival: three to five minutes.", "[command_name()] High-Priority Update") //NOVA EDIT ADDITION: announcement on battlecruiser call
 		return TRUE
 
 	if(obj_flags & EMAGGED)
@@ -209,7 +201,7 @@ GLOBAL_VAR_INIT(cops_arrived, FALSE)
 					return
 
 			var/new_sec_level = SSsecurity_level.text_level_to_number(params["newSecurityLevel"])
-			if (new_sec_level < SEC_LEVEL_GREEN || new_sec_level > SEC_LEVEL_AMBER) //NOVA EDIT CHANGE - ALERTS
+			if (new_sec_level != SEC_LEVEL_GREEN && new_sec_level != SEC_LEVEL_BLUE)
 				return
 			if (SSsecurity_level.get_current_level_as_number() >= SEC_LEVEL_DELTA)
 				to_chat(user, span_warning("Central Command has placed a lock on the alert level due to a doomsday!"))
@@ -240,7 +232,7 @@ GLOBAL_VAR_INIT(cops_arrived, FALSE)
 				return
 			make_announcement(user)
 		if ("messageAssociates")
-			if (!authenticated_as_ai_or_captain(user)) // NOVA EDIT CHANGE - Allows AI and Captain to send messages - ORIGINAL: if (!authenticated_as_non_silicon_captain(user))
+			if (!authenticated_as_non_silicon_captain(user))
 				return
 			if (!COOLDOWN_FINISHED(src, important_action_cooldown))
 				return
@@ -463,53 +455,7 @@ GLOBAL_VAR_INIT(cops_arrived, FALSE)
 			SSjob.safe_code_requested = TRUE
 			SSjob.safe_code_timer_id = addtimer(CALLBACK(SSjob, TYPE_PROC_REF(/datum/controller/subsystem/job, send_spare_id_safe_code), pod_location), 120 SECONDS, TIMER_UNIQUE | TIMER_STOPPABLE)
 			minor_announce("Due to staff shortages, your station has been approved for delivery of access codes to secure the Captain's Spare ID. Delivery via drop pod at [get_area(pod_location)]. ETA 120 seconds.")
-		// NOVA EDIT ADDITION START
-		if ("messagethefeds")
-			if(!message_federation(usr))
-				return
-			if(!COOLDOWN_FINISHED(src, important_action_cooldown))
-				return
-			finalizing_solfedmessage(usr)
-			COOLDOWN_START(src, important_action_cooldown, IMPORTANT_ACTION_COOLDOWN)
-		if ("callThePolice")
-			if(!pre_911_check(usr))
-				return
-			calling_911(usr, "Marshals", EMERGENCY_RESPONSE_POLICE)
-		if ("callTheCatmos")
-			if(!pre_911_check(usr))
-				return
-			calling_911(usr, "Advanced Atmospherics", EMERGENCY_RESPONSE_ATMOS)
-		if ("callTheParameds")
-			if(!pre_911_check(usr))
-				return
-			calling_911(usr, "EMTs", EMERGENCY_RESPONSE_EMT)
-		if("callThePizza")
-			if(!(obj_flags & EMAGGED))
-				return
-			if(!pre_911_check(usr))
-				return
-			GLOB.cops_arrived = TRUE
-			log_game("[key_name(usr)] has dialed for a pizza order from Dogginos using an emagged communications console.")
-			message_admins("[ADMIN_LOOKUPFLW(usr)] has dialed for a pizza order from Dogginos using an emagged communications console.")
-			deadchat_broadcast(" has dialed for a pizza order from Dogginos using an emagged communications console.", span_name("[usr.real_name]"), usr, message_type=DEADCHAT_ANNOUNCEMENT)
-			GLOB.pizza_order = pick(GLOB.pizza_names)
-			call_911(EMERGENCY_RESPONSE_EMAG)
-			to_chat(usr, span_notice("Thank you for choosing Dogginos, [GLOB.pizza_order]!"))
-			playsound(src, 'sound/machines/terminal/terminal_prompt_confirm.ogg', 50, FALSE)
-		if("toggleEngOverride")
-			if(emergency_access_cooldown(usr)) //if were in cooldown, dont allow the following code
-				return
-			if (!authenticated_as_silicon_or_captain(usr))
-				return
-			if (GLOB.force_eng_override)
-				toggle_eng_override()
-				usr.log_message("disabled airlock engineering override.", LOG_GAME)
-				deadchat_broadcast(" disabled airlock engineering override at [span_name("[get_area_name(usr, TRUE)]")].", span_name("[usr.real_name]"), usr, message_type = DEADCHAT_ANNOUNCEMENT)
-			else
-				toggle_eng_override()
-				usr.log_message("enabled airlock engineering override.", LOG_GAME)
-				deadchat_broadcast(" enabled airlock engineering override at [span_name("[get_area_name(usr, TRUE)]")].", span_name("[usr.real_name]"), usr, message_type = DEADCHAT_ANNOUNCEMENT)
-		// NOVA EDIT ADDITION END
+
 /obj/machinery/computer/communications/proc/emergency_access_cooldown(mob/user)
 	if(toggle_uses == toggle_max_uses) //you have used up free uses already, do it one more time and start a cooldown
 		to_chat(user, span_warning("This was your last free use without cooldown, you will not be able to use this again for [DisplayTimeText(EMERGENCY_ACCESS_COOLDOWN)]."))
@@ -540,9 +486,7 @@ GLOBAL_VAR_INIT(cops_arrived, FALSE)
 	if(GLOB.communications_controller.soft_filtering)
 		payload["is_filtered"] = TRUE
 
-	var/name_to_send = "[CONFIG_GET(string/cross_comms_name)]([station_name()])" //NOVA EDIT ADDITION
-
-	send2otherserver(html_decode(name_to_send), message, "Comms_Console", destination == "all" ? null : list(destination), additional_data = payload) //NOVA EDIT END
+	send2otherserver(html_decode(station_name()), message, "Comms_Console", destination == "all" ? null : list(destination), additional_data = payload)
 	minor_announce(message, title = "Outgoing message to allied station")
 	user.log_talk(message, LOG_SAY, tag = "message to the other server")
 	message_admins("[ADMIN_LOOKUPFLW(user)] has sent a message to the other server\[s].")
@@ -591,7 +535,6 @@ GLOBAL_VAR_INIT(cops_arrived, FALSE)
 				data["canSendToSectors"] = FALSE
 				data["canSetAlertLevel"] = FALSE
 				data["canToggleEmergencyAccess"] = FALSE
-				data["canToggleEngineeringOverride"] = FALSE // NOVA EDIT ADDITION - Engineering Override
 				data["importantActionReady"] = COOLDOWN_FINISHED(src, important_action_cooldown)
 				data["shuttleCalled"] = FALSE
 				data["shuttleLastCalled"] = FALSE
@@ -623,16 +566,12 @@ GLOBAL_VAR_INIT(cops_arrived, FALSE)
 				if (authenticated_as_silicon_or_captain(user))
 					data["canToggleEmergencyAccess"] = TRUE
 					data["emergencyAccess"] = GLOB.emergency_access
-					data["canToggleEngineeringOverride"] = TRUE // NOVA EDIT ADDITION - Engineering Override Toggle
-					data["engineeringOverride"] = GLOB.force_eng_override // NOVA EDIT ADDITION - Engineering Override Toggle
+
 					data["alertLevelTick"] = alert_level_tick
 					data["canMakeAnnouncement"] = TRUE
 					data["canSetAlertLevel"] = HAS_SILICON_ACCESS(user) ? "NO_SWIPE_NEEDED" : "SWIPE_NEEDED"
 				else if(syndicate)
 					data["canMakeAnnouncement"] = TRUE
-
-				if (authenticated_as_ai_or_captain(user)) // NOVA EDIT CHANGE - Allows AI to report to CC in the event of there being no command alive/to begin with - ORIGINAL: if (authenticated_as_non_silicon_captain(user))
-					data["canMessageAssociates"] = TRUE
 
 				if (SSshuttle.emergency.mode != SHUTTLE_IDLE && SSshuttle.emergency.mode != SHUTTLE_RECALL)
 					data["shuttleCalled"] = TRUE
@@ -971,10 +910,3 @@ GLOBAL_VAR_INIT(cops_arrived, FALSE)
 #undef STATE_CHANGING_STATUS
 #undef STATE_MAIN
 #undef STATE_MESSAGES
-
-//NOVA EDIT ADDITION
-#undef EMERGENCY_RESPONSE_POLICE
-#undef EMERGENCY_RESPONSE_ATMOS
-#undef EMERGENCY_RESPONSE_EMT
-#undef EMERGENCY_RESPONSE_EMAG
-//NOVA EDIT END

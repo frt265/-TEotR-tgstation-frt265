@@ -317,12 +317,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		if(!HAS_TRAIT(src, TRAIT_CORPSELOCKED)) //corpse-locked have to confirm with the alert below
 			ghostize(TRUE)
 			return TRUE
-	// NOVA EDIT ADDITION -- Free Ghost Cafe Ghosting
-	if(HAS_TRAIT(src, TRAIT_FREE_GHOST))
-		ghostize(TRUE) // Can return with TRUE
-		return TRUE
-	// NOVA EDIT ADDITION END
-	var/response = tgui_alert(usr, "Are you sure you want to ghost? If you ghost whilst still alive you cannot re-enter your body!", "Confirm Ghost Observe", list("Ghost", "Stay in Body"))
+	var/response = tgui_alert(usr, "Are you sure you want to ghost? You won't be able to re-enter your body!", "Confirm Ghost Observe", list("Ghost", "Stay in Body"))
 	if(response != "Ghost")
 		return FALSE//didn't want to ghost after-all
 	ghostize(FALSE) // FALSE parameter is so we can never re-enter our body. U ded.
@@ -381,7 +376,7 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 	if(!mind || QDELETED(mind.current))
 		to_chat(src, span_warning("You have no body."))
 		return
-	if(!can_reenter_corpse && !mind.has_antag_datum(/datum/antagonist/changeling)) //NOVA EDIT
+	if(!can_reenter_corpse)
 		to_chat(src, span_warning("You cannot re-enter your body."))
 		return
 	if(mind.current.key && !IS_FAKE_KEY(mind.current.key)) //makes sure we don't accidentally kick any clients
@@ -417,13 +412,6 @@ This is the proc mobs get to turn into a ghost. Forked from ghostize due to comp
 		// Update med huds
 		current_mob.med_hud_set_status()
 		current_mob.log_message("had their player ([key_name(src)]) do-not-resuscitate / DNR", LOG_GAME, color = COLOR_GREEN, log_globally = FALSE)
-		// NOVA EDIT ADDITION START - DNR TRAIT (Fixes ghost-DNR'ing not actually DNR'ing)
-		if(ishuman(current_mob) && !current_mob.has_quirk(/datum/quirk/dnr))
-			current_mob.add_quirk(/datum/quirk/dnr)
-		var/datum/job/job_to_free = SSjob.get_job(current_mob.mind.assigned_role.title)
-		if(job_to_free)
-			job_to_free.current_positions = max(0, job_to_free.current_positions - 1)
-		// NOVA EDIT ADDITION END
 		SEND_SIGNAL(current_mob, COMSIG_LIVING_DNR, src)
 
 	log_message("has opted to do-not-resuscitate / DNR from their body ([current_mob])", LOG_GAME, color = COLOR_GREEN)

@@ -667,11 +667,7 @@ GLOBAL_LIST_INIT(wire_node_generating_types, typecacheof(list(
 
 	var/use_delay = repeating ? 1 SECONDS : 0
 	if(user == attacked_humanoid)
-		use_delay = self_delay // NOVA EDIT CHANGE - ORIGINAL: use_delay = 5 SECONDS
-	// NOVA EDIT ADDITION START
-	else
-		use_delay = other_delay
-	// NOVA EDIT ADDITION END
+		use_delay = 5 SECONDS
 
 	if(!do_after(user, use_delay, attacked_humanoid))
 		return ITEM_INTERACT_BLOCKING

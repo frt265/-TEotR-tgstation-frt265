@@ -1,9 +1,6 @@
 /datum/preference_middleware/jobs
 	action_delegations = list(
 		"set_job_preference" = PROC_REF(set_job_preference),
-		// NOVA EDIT
-		"set_job_title" = PROC_REF(set_job_title),
-		// NOVA EDIT END
 	)
 
 /datum/preference_middleware/jobs/proc/set_job_preference(list/params, mob/user)
@@ -25,32 +22,8 @@
 		return FALSE
 
 	preferences.character_preview_view?.update_body()
-	// NOVA EDIT ADDITION START
-	if(!SSticker.HasRoundStarted())
-		SEND_SIGNAL(user, COMSIG_JOB_PREF_UPDATED)
-	// NOVA EDIT ADDITION END
 
 	return TRUE
-
-// NOVA EDIT ADDITION START
-/datum/preference_middleware/jobs/proc/set_job_title(list/params, mob/user)
-	var/job_title = params["job"]
-	var/new_job_title = params["new_title"]
-
-	var/datum/job/job = SSjob.get_job(job_title)
-
-	if (isnull(job))
-		return FALSE
-
-	if (!(new_job_title in job.alt_titles))
-		return FALSE
-
-	preferences.alt_job_titles[job_title] = new_job_title
-	if(!SSticker.HasRoundStarted())
-		SEND_SIGNAL(user, COMSIG_JOB_PREF_UPDATED)
-
-	return TRUE
-// NOVA EDIT ADDITION END
 
 /datum/preference_middleware/jobs/get_constant_data()
 	var/list/data = list()
@@ -81,8 +54,6 @@
 		jobs[job.title] = list(
 			"description" = job.description,
 			"department" = department_name,
-			"nova_star" = job.nova_stars_only, // NOVA EDIT ADDITION
-			"alt_titles" = job.alt_titles, // NOVA EDIT ADDITION
 		)
 
 	data["departments"] = departments
@@ -92,25 +63,14 @@
 
 /datum/preference_middleware/jobs/get_ui_data(mob/user)
 	var/list/data = list()
-	// NOVA EDIT
-	if(isnull(preferences.alt_job_titles))
-		preferences.alt_job_titles = list()
-	// NOVA EDIT END
+
 	data["job_preferences"] = preferences.job_preferences
-	// NOVA EDIT
-	data["job_alt_titles"] = preferences.alt_job_titles
-	data["species_restricted_jobs"] = get_unavailable_jobs_for_species()
-	// NOVA EDIT END
 
 	return data
 
 /datum/preference_middleware/jobs/get_ui_static_data(mob/user)
 	var/list/data = list()
-	// NOVA EDIT
-	if(SSplayer_ranks.is_nova_star(user.client))
-		data["is_nova_star"] = TRUE
-	data["nova_star_restrictions"] = GLOB.nova_star_restrictions
-	// NOVA EDIT END
+
 	var/list/required_job_playtime = get_required_job_playtime(user)
 	if (!isnull(required_job_playtime))
 		data += required_job_playtime
@@ -118,6 +78,7 @@
 	var/list/job_bans = get_job_bans(user)
 	if (job_bans.len)
 		data["job_bans"] = job_bans
+
 	return data.len > 0 ? data : null
 
 /datum/preference_middleware/jobs/proc/get_required_job_playtime(mob/user)
@@ -157,23 +118,3 @@
 			data += job.title
 
 	return data
-
-//NOVA EDIT ADDITION BEGIN - CHECKING FOR INCOMPATIBLE SPECIES
-//This returns a list of jobs that are unavailable for the player's current species
-/datum/preference_middleware/jobs/proc/get_unavailable_jobs_for_species()
-	var/static/list/cached_unavailable_jobs = list()
-	var/datum/species/species = preferences.read_preference(/datum/preference/choiced/species)
-	var/species_id = species::id
-
-	if (cached_unavailable_jobs[species_id])
-		return cached_unavailable_jobs[species_id]
-
-	// Build the full list once and remember for future runs
-	var/list/unavailable = list()
-	for (var/datum/job/job as anything in SSjob.all_occupations)
-		if (job.has_banned_species(preferences, species_id))
-			unavailable += job.title
-
-	cached_unavailable_jobs[species_id] = unavailable
-	return unavailable
-//NOVA EDIT ADDITION END

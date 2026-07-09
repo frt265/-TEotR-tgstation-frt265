@@ -438,8 +438,7 @@ GLOBAL_VAR_INIT(disposals_animals_spawned, 0)
 	var/obj/item/dest_tagger/mounted_tagger
 	///a weighted list of all the possible animals we can have
 	var/static/list/weighted_animal_list = list(
-		/mob/living/basic/stoat = 5,
-		/mob/living/basic/stoat/kit = 1,
+		/mob/living/basic/stoat = 1,
 	)
 	/// do we contain an animal?
 	var/contained_animal
@@ -600,7 +599,7 @@ GLOBAL_VAR_INIT(disposals_animals_spawned, 0)
 		. += "dispover-handle"
 
 	if(mounted_tagger)
-		. += mutable_appearance('icons/obj/pipes_n_cables/disposal.dmi', "tagger_mount") //NOVA EDIT: Overriding Icon file. += "tagger_mount"
+		. += "tagger_mount"
 
 	//only handle is shown if no power
 	if(machine_stat & NOPOWER || panel_open)

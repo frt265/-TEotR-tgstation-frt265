@@ -61,18 +61,12 @@
 	var/cooldown = 0.8 SECONDS
 	/// Does this message have a message that can be modified by the user?
 	var/can_message_change = FALSE
-	/// How long is the shared emote cooldown triggered by this emote when used intentionally?
-	var/manual_general_emote_audio_cooldown = 2 SECONDS
-	/// How long is the specific emote cooldown triggered by this emote when used intentionally?
-	var/manual_specific_emote_audio_cooldown = 5 SECONDS
-	/// How long is the shared emote cooldown triggered by this emote when forced?
-	var/forced_general_emote_audio_cooldown = 2 SECONDS
-	/// How long is the specific emote cooldown triggered by this emote when forced?
-	var/forced_specific_emote_audio_cooldown = 2 SECONDS
+	/// How long is the shared emote cooldown triggered by this emote?
+	var/general_emote_audio_cooldown = 2 SECONDS
+	/// How long is the specific emote cooldown triggered by this emote?
+	var/specific_emote_audio_cooldown = 5 SECONDS
 	/// Does this emote's sound ignore walls?
 	var/sound_wall_ignore = FALSE
-	///Does this emote use sound tokens? this means it also ignores walls.
-	var/use_sound_tokens = FALSE
 
 /datum/emote/New()
 	switch(mob_type_allowed_typecache)
@@ -118,33 +112,20 @@
 		user.log_message(msg, LOG_EMOTE)
 
 	var/tmp_sound = get_sound(user)
-	if(tmp_sound && should_play_sound(user, intentional))
-		if(intentional)
-			if(!TIMER_COOLDOWN_FINISHED(user, MANUAL_GENERAL_EMOTE_AUDIO_COOLDOWN) || !TIMER_COOLDOWN_FINISHED(user, MANUAL_SPECIFIC_EMOTE_AUDIO_COOLDOWN(type)) || !TIMER_COOLDOWN_FINISHED(user, FORCED_GENERAL_EMOTE_AUDIO_COOLDOWN) || !TIMER_COOLDOWN_FINISHED(user, FORCED_SPECIFIC_EMOTE_AUDIO_COOLDOWN(type)))
-				return FALSE
-		else
-			if(!TIMER_COOLDOWN_FINISHED(user, FORCED_GENERAL_EMOTE_AUDIO_COOLDOWN) || !TIMER_COOLDOWN_FINISHED(user, FORCED_SPECIFIC_EMOTE_AUDIO_COOLDOWN(type)))
-				return FALSE
-		TIMER_COOLDOWN_START(user, MANUAL_SPECIFIC_EMOTE_AUDIO_COOLDOWN(type), manual_specific_emote_audio_cooldown)
-		TIMER_COOLDOWN_START(user, MANUAL_GENERAL_EMOTE_AUDIO_COOLDOWN, manual_general_emote_audio_cooldown)
-		TIMER_COOLDOWN_START(user, FORCED_SPECIFIC_EMOTE_AUDIO_COOLDOWN(type), forced_specific_emote_audio_cooldown)
-		TIMER_COOLDOWN_START(user, FORCED_GENERAL_EMOTE_AUDIO_COOLDOWN, forced_general_emote_audio_cooldown)
-
+	if(tmp_sound && should_play_sound(user, intentional) && TIMER_COOLDOWN_FINISHED(user, "general_emote_audio_cooldown") && TIMER_COOLDOWN_FINISHED(user, type))
+		TIMER_COOLDOWN_START(user, type, specific_emote_audio_cooldown)
+		TIMER_COOLDOWN_START(user, "general_emote_audio_cooldown", general_emote_audio_cooldown)
 		var/frequency = null
 		if (affected_by_pitch && SStts.tts_enabled && SStts.pitch_enabled)
 			frequency = rand(MIN_EMOTE_PITCH, MAX_EMOTE_PITCH) * (1 + sqrt(abs(user.pitch)) * sign(user.pitch) * EMOTE_TTS_PITCH_MULTIPLIER)
 		else if(vary)
 			frequency = rand(MIN_EMOTE_PITCH, MAX_EMOTE_PITCH)
-		if(use_sound_tokens && sound_wall_ignore)
-			playsoundtoken(source = user, soundin = tmp_sound, range = SOUND_RANGE, volume = 50)
-		else
-			playsound(source = user,soundin = tmp_sound,vol = 50, vary = FALSE, ignore_walls = sound_wall_ignore, frequency = frequency)
+		playsound(source = user,soundin = tmp_sound,vol = 50, vary = FALSE, ignore_walls = sound_wall_ignore, frequency = frequency)
 
 
 	var/is_important = running_emote_type & EMOTE_IMPORTANT
 	var/is_visual = running_emote_type & EMOTE_VISIBLE
 	var/is_audible = running_emote_type & EMOTE_AUDIBLE
-	var/space = should_have_space_before_emote(html_decode(msg)[1]) ? " " : "" // NOVA EDIT ADDITION
 	var/additional_message_flags = get_message_flags(intentional)
 
 	// Emote doesn't get printed to chat, runechat only
@@ -194,7 +175,6 @@
 			deaf_message = span_emote("You see how <b>[user]</b> [msg]"),
 			self_message = msg,
 			audible_message_flags = EMOTE_MESSAGE|ALWAYS_SHOW_SELF_MESSAGE|additional_message_flags,
-			separation = space, // NOVA EDIT ADDITION
 		)
 	// Emote is entirely audible, no visible component
 	else if(is_audible)
@@ -202,7 +182,6 @@
 			message = msg,
 			self_message = msg,
 			audible_message_flags = EMOTE_MESSAGE|additional_message_flags,
-			separation = space, // NOVA EDIT ADDITION
 		)
 	// Emote is entirely visible, no audible component
 	else if(is_visual)
@@ -210,13 +189,12 @@
 			message = msg,
 			self_message = msg,
 			visible_message_flags = EMOTE_MESSAGE|ALWAYS_SHOW_SELF_MESSAGE|additional_message_flags,
-			separation = space, // NOVA EDIT ADDITION
 		)
 	else
 		CRASH("Emote [type] has no valid emote type set!")
 
 	if(!isnull(user.client))
-		var/dchatmsg = "<b>[user]</b>[space][msg]" // NOVA EDIT CHANGE - ORIGINAL: var/dchatmsg = "<b>[user]</b> [msg]"
+		var/dchatmsg = "<b>[user]</b> [msg]"
 		for(var/mob/ghost as anything in GLOB.dead_mob_list - viewers(get_turf(user)))
 			if(isnull(ghost.client) || isnewplayer(ghost))
 				continue
@@ -245,16 +223,14 @@
 	if(!intentional)
 		return TRUE
 
-	if(user.nextsoundemote > world.time) // NOVA EDIT CHANGE - ORIGINAL: if(user.emotes_used && user.emotes_used[src] + cooldown > world.time)
+	if(user.emotes_used && user.emotes_used[src] + cooldown > world.time)
 		var/datum/emote/default_emote = /datum/emote
 		if(cooldown > initial(default_emote.cooldown)) // only worry about longer-than-normal emotes
-			to_chat(user, span_danger("You must wait another [DisplayTimeText(user.nextsoundemote - world.time)] before using that emote."))
+			to_chat(user, span_danger("You must wait another [DisplayTimeText(user.emotes_used[src] - world.time + cooldown)] before using that emote."))
 		return FALSE
-	//if(!user.emotes_used)
-	//	user.emotes_used = list()
-	//user.emotes_used[src] = world.time - NOVA EDIT - ORIGINAL
-	user.nextsoundemote = world.time + cooldown
-	//NOVA EDIT CHANGE END
+	if(!user.emotes_used)
+		user.emotes_used = list()
+	user.emotes_used[src] = world.time
 	return TRUE
 
 /**
@@ -384,15 +360,6 @@
 
 	if(HAS_TRAIT(user, TRAIT_EMOTEMUTE))
 		return FALSE
-
-	//NOVA EDIT BEGIN
-	if(allowed_species && ishuman(user))
-		var/mob/living/carbon/human/sender = user
-		if(sender.dna.species.type in allowed_species)
-			return TRUE
-		else
-			return FALSE
-	//NOVA EDIT END
 
 	return TRUE
 

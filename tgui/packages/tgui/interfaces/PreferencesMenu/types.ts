@@ -12,7 +12,6 @@ export enum Food {
   Alcohol = 'ALCOHOL',
   Breakfast = 'BREAKFAST',
   Bugs = 'BUGS',
-  Bloody = 'BLOODY', // NOVA EDIT ADDITION - Hemophage Food
   Cloth = 'CLOTH',
   Dairy = 'DAIRY',
   Fried = 'FRIED',
@@ -44,7 +43,6 @@ export type Name = {
   can_randomize: BooleanLike;
   explanation: string;
   group: string;
-  prefixes?: string[]; // NOVA EDIT ADDITION - Drone Prefixes
 };
 
 export type Species = {
@@ -57,8 +55,6 @@ export type Species = {
   sexes: BooleanLike;
 
   enabled_features: string[];
-
-  nova_stars_only: boolean; // NOVA EDIT - Nova star quirks
 
   perks: {
     positive: Perk[];
@@ -86,10 +82,6 @@ export type Department = {
 export type Job = {
   description: string;
   department: string;
-  // NOVA EDIT
-  nova_star?: boolean;
-  alt_titles?: string[];
-  // NOVA EDIT END
 };
 
 export type Quirk = {
@@ -99,72 +91,8 @@ export type Quirk = {
   value: number;
   customizable: boolean;
   customization_options?: string[];
-  nova_stars_only: boolean; // NOVA EDIT ADDITION - Nova star quirks
-  erp_quirk: boolean; // NOVA EDIT ADDITION - Purple ERP quirks
 };
 
-// NOVA EDIT ADDITION START
-export type Language = {
-  description: string;
-  name: string;
-  icon: string;
-  speaking: boolean;
-};
-
-export type Marking = {
-  name: string;
-  color: string;
-  marking_id: string;
-  emissive: boolean;
-};
-
-// Augment data types (from get_constant_data)
-
-/** One selectable augment option which models /datum/augment_item */
-export type AugmentItem = {
-  path: string | null;
-  name: string;
-  cost: number;
-  extra_info: string;
-  has_digi: BooleanLike;
-  allows_styles: BooleanLike;
-  allows_implants: BooleanLike;
-  species_blacklist: Record<string, number> | null;
-  species_whitelist: Record<string, number> | null;
-  ckey_whitelist: string[] | null;
-};
-
-/** One marking option with optional species restriction */
-export type MarkingChoice = {
-  name: string;
-  recommended_species: string | null;
-};
-
-/** One preset with optional species restriction */
-export type MarkingPreset = {
-  name: string;
-  recommended_species: string | null;
-};
-
-/** Models /datum/robotic_style */
-export type RoboticStyle = {
-  name: string;
-  supported_slots: number; // Bitflag
-  has_digi: BooleanLike;
-};
-
-export type AugmentSlot = {
-  slot: string;
-  body_zone?: string;
-  slot_flag?: number;
-  is_bodypart: boolean;
-  icon?: string;
-  aug_options: AugmentItem[];
-  has_implant?: boolean;
-  implant_options?: AugmentItem[] | null;
-};
-
-// NOVA EDIT ADDITION END
 export type QuirkInfo = {
   max_positive_quirks: number;
   quirk_info: Record<string, Quirk>;
@@ -214,7 +142,6 @@ export enum PrefsWindow {
 }
 
 export type CharacterPreferencesData = {
-
   clothing: Record<string, string>;
   features: Record<string, string>;
   game_preferences: Record<string, unknown>;
@@ -227,16 +154,13 @@ export type CharacterPreferencesData = {
   manually_rendered_features: Record<string, string>;
 
   names: Record<string, string>;
-  vocals: Record<string, string>; // NOVA EDIT ADDITION
 
   misc: {
     gender: Gender;
     joblessrole: JoblessRole;
     species: string;
-    loadout_lists: LoadoutList; // NOVA EDIT CHANGE - Multiple loadout presets
+    loadout_list: LoadoutList;
     job_clothes: BooleanLike;
-    loadout_index: string; // NOVA EDIT ADDITION: Multiple loadout presets
-    background_state: string; // NOVA EDIT ADDITION: Swappable character editor backgrounds
   };
 
   randomization: Record<string, RandomSetting>;
@@ -261,34 +185,6 @@ export type PreferencesMenuData = {
   >;
   job_preferences: Record<string, JobPriority>;
 
-  // NOVA EDIT ADDITION START
-  preview_options: string[];
-  preview_selection: string;
-
-  erp_pref: BooleanLike;
-
-  job_alt_titles: Record<string, string>;
-
-  markings: Record<string, Marking[]>;
-  augments: Record<string, string>;
-  augment_styles: Record<string, string>;
-
-  allow_mismatched_parts: BooleanLike;
-  digi_legs: BooleanLike;
-  taur_legs: BooleanLike;
-
-  selected_languages: Language[];
-  unselected_languages: Language[];
-  total_language_points: number;
-  quirk_points_enabled: number;
-  quirks_balance: number;
-  positive_quirk_count: number;
-  species_restricted_jobs?: string[];
-  ckey: string;
-  is_donator: BooleanLike;
-  is_nova_star: BooleanLike;
-
-  // NOVA EDIT ADDITION END
   keybindings: Record<string, string[]>;
   overflow_role: string;
   default_quirk_balance: number;
@@ -328,14 +224,5 @@ export type ServerData = {
     loadout_tabs: LoadoutCategory[];
   };
   species: Record<string, Species>;
-  // NOVA EDIT ADDITION START
-  background_state: { choices: string[] };
-  limbs_and_markings?: {
-    robotic_styles: RoboticStyle[];
-    augment_items: AugmentSlot[];
-    marking_choices: Record<string, MarkingChoice[]>;
-    marking_presets: MarkingPreset[];
-  };
-  // NOVA EDIT ADDITION END
   [otherKey: string]: unknown;
 };

@@ -7,9 +7,8 @@
 	circuit = /obj/item/circuitboard/machine/cell_charger
 	pass_flags = PASSTABLE
 	var/obj/item/stock_parts/power_store/cell/charging = null
-	var/charge_rate = STANDARD_CELL_RATE //NOVA EDIT CHANGE - ORIGINAL: 0.25 * STANDARD_CELL_RATE
+	var/charge_rate = 0.25 * STANDARD_CELL_RATE
 
-/* NOVA EDIT REMOVAL - AESTHETICS - OVERWRITTEN IN modular_nova/modules/aesthetics/cells/icons/cell.dm
 /obj/machinery/cell_charger/update_overlays()
 	. = ..()
 
@@ -25,7 +24,6 @@
 	. += "ccharger-[charging.connector_type]-on"
 	if((charging.charge > 0.01) && charging.charge_light_type)
 		. += mutable_appearance('icons/obj/machines/cell_charger.dmi', "cell-[charging.charge_light_type]-o[(charging.percent() >= 99.5) ? 2 : 1]")
-NOVA EDIT END */
 
 /obj/machinery/cell_charger/examine(mob/user)
 	. = ..()
@@ -64,12 +62,6 @@ NOVA EDIT END */
 	if(charging)
 		to_chat(user, span_warning("There is already a cell in the charger!"))
 		return ITEM_INTERACT_BLOCKING
-	// NOVA EDIT ADDITION START
-	var/obj/item/stock_parts/power_store/cell/inserting_cell = tool
-	if(inserting_cell.chargerate <= 0)
-		to_chat(user, span_warning("[inserting_cell] cannot be recharged!"))
-		return
-	// NOVA EDIT ADDITION END
 
 	var/area/charge_area = get_area(src)
 	if(!isarea(charge_area))
@@ -138,7 +130,7 @@ NOVA EDIT END */
 
 /obj/machinery/cell_charger/RefreshParts()
 	. = ..()
-	charge_rate = STANDARD_CELL_RATE //NOVA EDIT CHANGE - ORIGINAL: 0.25 * STANDARD_CELL_RATE
+	charge_rate = 0.25 * STANDARD_CELL_RATE
 	for(var/datum/stock_part/capacitor/capacitor in component_parts)
 		charge_rate *= capacitor.tier
 

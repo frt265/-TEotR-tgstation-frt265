@@ -41,7 +41,6 @@
 	belt = /obj/item/gun/magic/midas_hand
 	l_pocket = /obj/item/coin/gold/doubloon
 
-
 /datum/outfit/pirate/space
 	name = "Space Pirate (EVA)"
 
@@ -199,5 +198,6 @@
 	belt = /obj/item/gun/magic/hook
 	l_pocket = /obj/item/tank/internals/emergency_oxygen
 	r_pocket = /obj/item/flashlight/lantern
+
 
 	skillchips = list(/obj/item/skillchip/big_pointer) //they don't have an id, so this is needed

@@ -129,51 +129,23 @@ DEFINE_BITFIELD(smoothing_junction, list(
 #define SMOOTH_GROUP_CARPET_SIMPLE_NEON_PINK_NODOTS S_TURF(51) //![turf/open/floor/carpet/neon/simple/pink/nodots]
 #define SMOOTH_GROUP_BAMBOO_FLOOR S_TURF(52) //![/turf/open/floor/bamboo]
 #define SMOOTH_GROUP_FLOOR_WATER_LAVALAND S_TURF(53) //![/turf/open/water/lavaland_atmos/basalt]
-#define SMOOTH_GROUP_FLOOR_SIDERITE S_TURF(54) //![/turf/open/misc/asteroid/basalt/smooth/siderite]
-#define SMOOTH_GROUP_FLOOR_SHALE S_TURF(55) //![/turf/open/misc/asteroid/basalt/smooth/shale]
-#define SMOOTH_GROUP_FLOOR_BASALT S_TURF(56) //![/turf/open/misc/asteroid/basalt]
+#define SMOOTH_GROUP_FLOOR_SIDERITE S_TURF(54) ///turf/open/misc/grass
+#define SMOOTH_GROUP_FLOOR_SHALE S_TURF(55) ///turf/open/misc/grass
 
-#define SMOOTH_GROUP_CLOSED_TURFS S_TURF(57) ///turf/closed
-#define SMOOTH_GROUP_MATERIAL_WALLS S_TURF(58) ///turf/closed/wall/material
-#define SMOOTH_GROUP_SYNDICATE_WALLS S_TURF(59) ///turf/closed/wall/r_wall/plastitanium/syndicate, /turf/closed/indestructible/syndicate
-#define SMOOTH_GROUP_HOTEL_WALLS S_TURF(60) ///turf/closed/indestructible/hotelwall
-#define SMOOTH_GROUP_MINERAL_WALLS S_TURF(61) ///turf/closed/mineral, /turf/closed/indestructible
-#define SMOOTH_GROUP_RED_ROCK_WALLS S_TURF(62) ///turf/closed/mineral/asteroid, /turf/closed/mineral/random/stationside/asteroid
-#define SMOOTH_GROUP_SHALE_WALLS S_TURF(63) ///turf/closed/mineral/random/volcanic/shale
-#define SMOOTH_GROUP_BOSS_WALLS S_TURF(64) ///turf/closed/indestructible/riveted/boss
-#define SMOOTH_GROUP_SURVIVAL_TITANIUM_WALLS S_TURF(65) ///turf/closed/wall/mineral/titanium/survival
-#define SMOOTH_GROUP_TURF_OPEN_CLIFF S_TURF(66) ///turf/open/cliff
-#define SMOOTH_GROUP_HIEROPHANT S_TURF(67) ///turf/closed/indestructible/riveted/hierophant
-#define SMOOTH_GROUP_PLASTINUM_WALLS S_TURF(68) ///turf/closed/indestructible/riveted/plastinum
-// NOVA EDIT ADDITION START
-#define SMOOTH_GROUP_ELEVATED_PLASTEEL S_TURF(69)
-#define SMOOTH_GROUP_LOWERED_PLASTEEL S_TURF(70)
-#define SMOOTH_GROUP_FISSURE S_TURF(71)
-#define SMOOTH_GROUP_MUSHROOM S_TURF(72)
-#define SMOOTH_GROUP_CARPET_KINARIS S_TURF(73)
-#define SMOOTH_GROUP_CARPET_KINARIS_RED S_TURF(74)
-#define SMOOTH_GROUP_CARPET_KINARIS_ORANGE S_TURF(75)
-#define SMOOTH_GROUP_CARPET_KINARIS_YELLOW S_TURF(76)
-#define SMOOTH_GROUP_CARPET_KINARIS_GREEN S_TURF(77)
-#define SMOOTH_GROUP_CARPET_KINARIS_PURPLE S_TURF(78)
-#define SMOOTH_GROUP_CARPET_KINARIS_BLACKTRIM S_TURF(79)
-#define SMOOTH_GROUP_CARPET_KINARIS_BLACK S_TURF(80)
-#define SMOOTH_GROUP_CARPET_KINARIS_BLACK_RED S_TURF(81)
-#define SMOOTH_GROUP_CARPET_KINARIS_BLACK_ORANGE S_TURF(82)
-#define SMOOTH_GROUP_CARPET_KINARIS_BLACK_YELLOW S_TURF(83)
-#define SMOOTH_GROUP_CARPET_KINARIS_BLACK_GREEN S_TURF(84)
-#define SMOOTH_GROUP_CARPET_KINARIS_BLACK_PURPLE S_TURF(85)
-#define SMOOTH_GROUP_CARPET_KINARIS_BLACK_WHITETRIM S_TURF(86)
-#define SMOOTH_GROUP_CARPET_POLITE_BLACK S_TURF(87)
-#define SMOOTH_GROUP_CARPET_POLITE_RED S_TURF(88)
-#define SMOOTH_GROUP_CARPET_POLITE_ORANGE S_TURF(89)
-#define SMOOTH_GROUP_CARPET_POLITE_YELLOW S_TURF(90)
-#define SMOOTH_GROUP_CARPET_POLITE_GREEN S_TURF(91)
-#define SMOOTH_GROUP_CARPET_POLITE_BLUE S_TURF(92)
-#define SMOOTH_GROUP_CARPET_POLITE_PURPLE S_TURF(93)
-//NOVA EDIT ADDITION END
+#define SMOOTH_GROUP_CLOSED_TURFS S_TURF(56) ///turf/closed
+#define SMOOTH_GROUP_MATERIAL_WALLS S_TURF(57) ///turf/closed/wall/material
+#define SMOOTH_GROUP_SYNDICATE_WALLS S_TURF(58) ///turf/closed/wall/r_wall/plastitanium/syndicate, /turf/closed/indestructible/syndicate
+#define SMOOTH_GROUP_HOTEL_WALLS S_TURF(59) ///turf/closed/indestructible/hotelwall
+#define SMOOTH_GROUP_MINERAL_WALLS S_TURF(60) ///turf/closed/mineral, /turf/closed/indestructible
+#define SMOOTH_GROUP_RED_ROCK_WALLS S_TURF(61) ///turf/closed/mineral/asteroid, /turf/closed/mineral/random/stationside/asteroid
+#define SMOOTH_GROUP_SHALE_WALLS S_TURF(62) ///turf/closed/mineral/random/volcanic/shale
+#define SMOOTH_GROUP_BOSS_WALLS S_TURF(63) ///turf/closed/indestructible/riveted/boss
+#define SMOOTH_GROUP_SURVIVAL_TITANIUM_WALLS S_TURF(64) ///turf/closed/wall/mineral/titanium/survival
+#define SMOOTH_GROUP_TURF_OPEN_CLIFF S_TURF(65) ///turf/open/cliff
+#define SMOOTH_GROUP_HIEROPHANT S_TURF(66) ///turf/closed/indestructible/riveted/hierophant
+#define SMOOTH_GROUP_PLASTINUM_WALLS S_TURF(67) ///turf/closed/indestructible/riveted/plastinum
 
-#define MAX_S_TURF 93 //Always match this value with the one above it. // NOVA EDIT CHANGE - ORIGINAL: #define MAX_S_TURF 68 //Always match this value with the one above it.
+#define MAX_S_TURF 67 //Always match this value with the one above it.
 
 #define S_OBJ(num) ("-" + #num + ",")
 /* /obj included */
@@ -194,11 +166,6 @@ DEFINE_BITFIELD(smoothing_junction, list(
 #define SMOOTH_GROUP_SURVIVAL_TITANIUM_POD S_OBJ(15) ///turf/closed/wall/mineral/titanium/survival/pod, /obj/machinery/door/airlock/survival_pod, /obj/structure/window/reinforced/shuttle/survival_pod
 #define SMOOTH_GROUP_HIERO_WALL S_OBJ(16) ///obj/effect/temp_visual/elite_tumor_wall, /obj/effect/temp_visual/hierophant/wall
 #define SMOOTH_GROUP_BAMBOO_WALLS S_OBJ(17) //![/turf/closed/wall/mineral/bamboo, /obj/structure/falsewall/bamboo]
-
-//NOVA EDIT ADDITION
-#define SMOOTH_GROUP_SHIPWALLS S_OBJ(19)	///turf/closed/wall/mineral/titanium/spaceship
-#define SMOOTH_GROUP_STONE_WALLS S_OBJ(20) ///turf/closed/wall/mineral/stone, /obj/structure/falsewall/stone
-//NOVA EDIT END
 
 #define SMOOTH_GROUP_PAPERFRAME S_OBJ(21) ///obj/structure/window/paperframe, /obj/structure/mineral_door/paperframe
 
@@ -243,12 +210,6 @@ DEFINE_BITFIELD(smoothing_junction, list(
 #define SMOOTH_GROUP_SPIDER_WEB_ROOF S_OBJ(72) // /obj/structure/spider/passage
 #define SMOOTH_GROUP_SPIDER_WEB_WALL_TOUGH S_OBJ(73) // /obj/structure/spider/stickyweb/sealed/thick
 #define SMOOTH_GROUP_SPIDER_WEB_WALL_MIRROR S_OBJ(74) // /obj/structure/spider/stickyweb/sealed/reflector
-//NOVA EDIT ADDITION
-
-#define SMOOTH_GROUP_SHUTTERS S_OBJ(75)
-
-#define SMOOTH_GROUP_WATER S_OBJ(76) ///obj/effect/abstract/liquid_turf
-//NOVA EDIT END
 
 #define SMOOTH_GROUP_GRAV_FIELD S_OBJ(75)
 #define SMOOTH_GROUP_GIRDER S_OBJ(76)

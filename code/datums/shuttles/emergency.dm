@@ -1,9 +1,8 @@
 #define EMAG_LOCKED_SHUTTLE_COST (CARGO_CRATE_VALUE * 50)
 
-/datum/map_template/shuttle/emergency // NOVA EDIT OVERRIDE - OVERRIDDEN IN ADVANCED_SHUTTLES - shuttles.dm
+/datum/map_template/shuttle/emergency
 	port_id = "emergency"
 	name = "Base Shuttle Template (Emergency)"
-	prefix = "_maps/shuttles/emergency/"
 	///assoc list of shuttle events to add to this shuttle on spawn (typepath = weight)
 	var/list/events
 	///pick all events instead of random
@@ -133,7 +132,6 @@
 	credit_cost = EMAG_LOCKED_SHUTTLE_COST * 1.8
 	movement_force = list("KNOCKDOWN" = 3, "THROW" = 5)
 	occupancy_limit = "70"
-	who_can_purchase = null //NOVA EDIT ADDITION
 
 /datum/map_template/shuttle/emergency/luxury
 	suffix = "luxury"

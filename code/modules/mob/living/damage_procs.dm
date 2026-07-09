@@ -307,10 +307,6 @@
 	if(!forced)
 		if(HAS_TRAIT(src, TRAIT_GODMODE))
 			return FALSE
-		// NOVA EDIT ADDITION START
-		if(HAS_TRAIT(src, TRAIT_OXYIMMUNE)) //Prevents oxygen damage
-			return FALSE
-		// NOVA EDIT ADDITION END
 		if (required_respiration_type)
 			var/obj/item/organ/lungs/affected_lungs = get_organ_slot(ORGAN_SLOT_LUNGS)
 			if(isnull(affected_lungs))

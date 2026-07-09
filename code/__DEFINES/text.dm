@@ -84,6 +84,8 @@
 #define ARCADE_FILE "arcade.json"
 /// File location for boomer meme catchphrases
 #define BOOMER_FILE "boomer.json"
+/// File location for locations on the station
+#define LOCATIONS_FILE "locations.json"
 /// File location for wanted posters messages
 #define WANTED_FILE "wanted_message.json"
 /// File location for really dumb suggestions memes
@@ -92,10 +94,6 @@
 #define FLESH_SCAR_FILE "wounds/flesh_scar_desc.json"
 /// File location for bone wound descriptions
 #define BONE_SCAR_FILE "wounds/bone_scar_desc.json"
-// NOVA EDIT ADDITION BEGIN - SYNTH WOUNDS
-/// File location for metalic wound descriptions
-#define METAL_SCAR_FILE "wounds/metal_scar_desc.json"
-// NOVA EDIT ADDITION END
 /// File location for scar wound descriptions
 #define SCAR_LOC_FILE "wounds/scar_loc.json"
 /// File location for exodrone descriptions

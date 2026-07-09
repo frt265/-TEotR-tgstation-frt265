@@ -54,12 +54,10 @@ const RecordInfo = (props) => {
   const { available_statuses } = data;
   const [open, setOpen] = useLocalState<boolean>('printOpen', false);
 
-  // const { min_age, max_age } = data; // ORIGINAL
-  const { min_age, max_age, max_chrono_age } = data; // NOVA EDIT CHANGE - Chronological age
+  const { min_age, max_age } = data;
 
   const {
     age,
-    chrono_age, // NOVA EDIT ADDITION - Chronological age
     crew_ref,
     crimes,
     fingerprint,
@@ -70,10 +68,6 @@ const RecordInfo = (props) => {
     species,
     wanted_status,
     voice,
-    // NOVA EDIT START - RP Records
-    past_general_records,
-    past_security_records,
-    // NOVA EDIT END
   } = foundRecord;
 
   const [isValid, setIsValid] = useState(true);
@@ -156,10 +150,7 @@ const RecordInfo = (props) => {
             <LabeledList.Item label="Job">
               <EditableText field="rank" target_ref={crew_ref} text={rank} />
             </LabeledList.Item>
-            {/* <LabeledList.Item label="Age"> // ORIGINAL */}
-            {/* NOVA EDIT CHANGE BEGIN - Chronological age */}
-            <LabeledList.Item label="Physical Age">
-              {/* NOVA EDIT CHANGE END */}
+            <LabeledList.Item label="Age">
               <RestrictedInput
                 minValue={min_age}
                 maxValue={max_age}
@@ -175,22 +166,6 @@ const RecordInfo = (props) => {
                 value={age}
               />
             </LabeledList.Item>
-            {/* NOVA EDIT ADDITION BEGIN - Chronological age */}
-            <LabeledList.Item label="Chronological Age">
-              <RestrictedInput
-                minValue={min_age}
-                maxValue={max_chrono_age}
-                onEnter={(value) =>
-                  act('edit_field', {
-                    crew_ref: crew_ref,
-                    field: 'chrono_age',
-                    value: value,
-                  })
-                }
-                value={chrono_age}
-              />
-            </LabeledList.Item>
-            {/* NOVA EDIT ADDITION END */}
             <LabeledList.Item label="Species">
               <EditableText
                 field="species"
@@ -223,18 +198,6 @@ const RecordInfo = (props) => {
                 text={note}
               />
             </LabeledList.Item>
-            {/* NOVA EDIT START - RP Records (Not pretty but it's there) */}
-            <LabeledList.Item label="General Records">
-              <Box maxWidth="100%" preserveWhitespace>
-                {past_general_records || 'N/A'}
-              </Box>
-            </LabeledList.Item>
-            <LabeledList.Item label="Past Security Records">
-              <Box maxWidth="100%" preserveWhitespace>
-                {past_security_records || 'N/A'}
-              </Box>
-            </LabeledList.Item>
-            {/* NOVA EDIT END */}
           </LabeledList>
         </Section>
       </Stack.Item>

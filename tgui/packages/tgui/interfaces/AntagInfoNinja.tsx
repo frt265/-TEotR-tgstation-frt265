@@ -3,7 +3,6 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { Window } from '../layouts';
-import { Rules } from './AntagInfoRules'; // NOVA EDIT ADDITION
 import {
   type Objective,
   ObjectivePrintout,
@@ -36,21 +35,12 @@ export const AntagInfoNinja = (props) => {
         <Section scrollable fill>
           <Stack vertical textColor="green">
             <Stack.Item textAlign="center" fontSize="20px">
-              {/* NOVA EDIT ADDITION START */}I am an elite operative executing
-              a co-ordinated strike for the benefit of
-              <br />
-              <span style={ninja_emphasis}>Cybersun Industries</span>!
-              {/*  I am an elite mercenary of the Spider Clan.
-              <br />A <span style={ninja_emphasis}> SPACE NINJA</span>! */}
-              {/* NOVA EDIT ADDITION END */}
+              I am an elite mercenary of the Spider Clan.
+              <br />A <span style={ninja_emphasis}> SPACE NINJA</span>!
             </Stack.Item>
             <Stack.Item textAlign="center" italic>
-              {/* NOVA EDIT ADDITION START */}
-              Precision is my weapon. Shadows are my armor. Without them, I am
+              Surprise is my weapon. Shadows are my armor. Without them, I am
               nothing.
-              {/*  Surprise is my weapon. Shadows are my armor. Without them, I am
-              nothing. */}
-              {/* NOVA EDIT ADDITION END */}
             </Stack.Item>
             <Stack.Item>
               <Section fill>
@@ -63,11 +53,6 @@ export const AntagInfoNinja = (props) => {
                 what you can do!
               </Section>
             </Stack.Item>
-            {/* NOVA EDIT ADDITION START */}
-            <Stack.Item>
-              <Rules />
-            </Stack.Item>
-            {/* NOVA EDIT ADDITION END */}
             <Stack.Item>
               <ObjectivePrintout
                 objectives={objectives}

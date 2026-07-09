@@ -24,17 +24,22 @@
 	if (wounding_type)
 		LAZYSET(limb_owner.body_zone_dismembered_by, body_zone, wounding_type)
 
+	if (can_bleed())
+		limb_owner.bleed(rand(20, 40))
+
 	drop_limb(dismembered = TRUE)
+
 	limb_owner.update_equipment_speed_mods() // Update in case speed affecting item unequipped by dismemberment
+	var/turf/owner_location = limb_owner.loc
+	if(wounding_type != WOUND_BURN && istype(owner_location) && can_bleed())
+		limb_owner.add_splatter_floor(owner_location)
 
 	if(QDELETED(src)) //Could have dropped into lava/explosion/chasm/whatever
 		return TRUE
 	if(dam_type == BURN)
 		burn()
 		return TRUE
-
-	// Assume we had our limb sliced/punched off by this point
-	if(can_bleed())
+	if (can_bleed())
 		limb_owner.bleed(rand(20, 40))
 
 	var/direction = pick(GLOB.cardinals)
@@ -66,10 +71,6 @@
 	playsound(get_turf(chest_owner), 'sound/misc/splort.ogg', 80, TRUE)
 
 	for(var/obj/item/organ/organ in contents)
-		// NOVA EDIT START - Non-spillable organs
-		if(!organ.drop_when_organ_spilling)
-			continue
-		// NOVA EDIT END
 		var/org_zone = check_zone(organ.zone)
 		if(org_zone != BODY_ZONE_CHEST)
 			continue
@@ -266,7 +267,7 @@
 		return FALSE
 
 	var/obj/item/bodypart/chest/mob_chest = new_limb_owner.get_bodypart(BODY_ZONE_CHEST)
-	if(mob_chest && !(mob_chest.acceptable_bodytype & bodytype) && !(mob_chest.acceptable_bodyshape & bodyshape) && !(mob_chest.acceptable_bodyshape & bodyshape) && !special)
+	if(mob_chest && !(mob_chest.acceptable_bodytype & bodytype) && !(mob_chest.acceptable_bodyshape & bodyshape) && !special)
 		return FALSE
 	return TRUE
 

@@ -5,7 +5,6 @@
 	abstract_type = /obj/item/organ/cyberimp
 	organ_flags = ORGAN_ROBOTIC
 	failing_desc = "seems to be broken."
-	visual = FALSE
 	/// icon of the bodypart overlay we're going to be applying to our owner
 	var/aug_icon = 'icons/mob/human/species/misc/bodypart_overlay_augmentations.dmi'
 	/// icon_state of the bodypart overlay we're going to be applying to our owner
@@ -18,12 +17,11 @@
 /obj/item/organ/cyberimp/Initialize(mapload)
 	. = ..()
 	if (aug_overlay)
-		visual = TRUE
 		bodypart_aug = new(src)
 
 /obj/item/organ/cyberimp/Destroy()
-	. = ..()
-	QDEL_NULL(bodypart_aug) // Do this after Remove() has done its thing, otherwise on_bodypart_remove() will not properly remove the overlay
+	QDEL_NULL(bodypart_aug)
+	return ..()
 
 /obj/item/organ/cyberimp/proc/get_overlay_state()
 	return aug_overlay
@@ -36,10 +34,6 @@
 
 /obj/item/organ/cyberimp/on_bodypart_insert(obj/item/bodypart/limb)
 	. = ..()
-	// NOVA EDIT ADDITION START
-	if(isteshari(owner))
-		return
-	// NOVA EDIT ADDITION END
 	if (bodypart_aug)
 		limb.add_bodypart_overlay(bodypart_aug)
 
@@ -333,7 +327,6 @@
 	addtimer(CALLBACK(src, PROC_REF(reboot)), 90 / severity)
 
 /obj/item/organ/cyberimp/brain/connector/proc/remove_brain(obj/item/organ/brain/chippy_brain, severity = 1)
-	/* // NOVA EDIT REMOVAL START - blocks the brain damage and brain removal from the positive quirk.
 	playsound(owner, 'sound/effects/meatslap.ogg', 25, TRUE)
 	if(!chippy_brain)
 		return
@@ -349,7 +342,6 @@
 		gib_type = /obj/effect/decal/cleanable/blood/gibs/robot_debris/up
 	new gib_type(get_turf(owner), owner.get_static_viruses(), owner.get_blood_dna_list())
 	return FALSE
-	*/ // NOVA EDIT REMOVAL END
 
 /obj/item/organ/cyberimp/brain/connector/proc/reboot()
 	organ_flags &= ~ORGAN_FAILING

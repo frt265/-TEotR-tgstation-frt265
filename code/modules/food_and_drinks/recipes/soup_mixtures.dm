@@ -706,7 +706,7 @@
 
 /datum/chemical_reaction/food/soup/bloodsoup
 	required_reagents = list(
-		/datum/reagent/water/salt = 10, // NOVA EDIT CHANGE - ORIGINAL: /datum/reagent/water = 10,
+		/datum/reagent/water = 10,
 		/datum/reagent/blood = 10,
 	)
 	required_ingredients = list(
@@ -1863,17 +1863,6 @@
 		/datum/reagent/water/salt = 10,
 	)
 	resulting_food_path = /obj/item/food/spaghetti/boilednoodles
-	ingredient_reagent_multiplier = 0
-
-// Space Ramen
-/datum/chemical_reaction/food/soup/beef_ramen
-	required_reagents = list(
-		/datum/reagent/consumable/beef_flavour = 5
-	)
-	required_ingredients = list(
-		/obj/item/food/spaghetti/ramen_dry = 1
-	)
-	resulting_food_path = /obj/item/food/spaghetti/ramen_beef
 	ingredient_reagent_multiplier = 0
 
 // Dashi Broth

@@ -50,7 +50,7 @@ GLOBAL_DATUM_INIT(communications_controller, /datum/communciations_controller, n
 		if(syndicate)
 			priority_announce(html_decode(message_data["message"]), null, 'sound/announcer/announcement/announce_syndi.ogg', ANNOUNCEMENT_TYPE_SYNDICATE, has_important_message = TRUE, players = players, color_override = "red")
 		else
-			priority_announce(html_decode(message_data["message"]), null, ANNOUNCER_CAPTAIN, ANNOUNCEMENT_TYPE_CAPTAIN, has_important_message = TRUE, players = players) // NOVA EDIT CHANGE - ORIGINAL: priority_announce(html_decode(message_data["message"]), null, 'sound/announcer/announcement/announce.ogg', ANNOUNCEMENT_TYPE_CAPTAIN, has_important_message = TRUE, players = players)
+			priority_announce(html_decode(message_data["message"]), null, 'sound/announcer/announcement/announce.ogg', ANNOUNCEMENT_TYPE_CAPTAIN, has_important_message = TRUE, players = players)
 		COOLDOWN_START(src, nonsilicon_message_cooldown, COMMUNICATION_COOLDOWN)
 	user.log_talk(input, LOG_SAY, tag="priority announcement")
 	message_admins("[ADMIN_LOOKUPFLW(user)] has made a priority announcement.")
@@ -72,14 +72,7 @@ GLOBAL_DATUM_INIT(communications_controller, /datum/communciations_controller, n
 
 // Called AFTER everyone is equipped with their job
 /datum/communciations_controller/proc/queue_roundstart_report()
-	// addtimer(CALLBACK(src, PROC_REF(send_roundstart_report)), rand(waittime_l, waittime_h)) // NOVA EDIT REMOVAL
-	// NOVA EDIT ADDITION START
-	var/wait_time = rand(waittime_l, waittime_h)
-	if(!CONFIG_GET(flag/no_intercept_report))
-		addtimer(CALLBACK(src, PROC_REF(send_roundstart_report)), wait_time)
-	else
-		addtimer(CALLBACK(src, PROC_REF(send_trait_report)), wait_time)
-	// NOVA EDIT ADDITION END
+	addtimer(CALLBACK(src, PROC_REF(send_roundstart_report)), rand(waittime_l, waittime_h))
 
 /datum/communciations_controller/proc/send_roundstart_report(greenshift)
 	if(block_command_report) //If we don't want the report to be printed just yet, we put it off until it's ready

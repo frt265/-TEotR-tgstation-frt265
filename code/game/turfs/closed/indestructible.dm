@@ -61,12 +61,12 @@
 	baseturfs = /turf/cordon
 	icon = 'icons/blanks/blank_title.png'
 	icon_state = ""
-	pixel_x = 0 // NOVA EDIT - Re-centering the title screen - ORIGINAL: pixel_x = -64
+	pixel_x = -64
 	plane = SPLASHSCREEN_PLANE
 	bullet_bounce_sound = null
 
 INITIALIZE_IMMEDIATE(/turf/closed/indestructible/splashscreen)
-/* NOVA EDIT REMOVAL
+
 /turf/closed/indestructible/splashscreen/Initialize(mapload)
 	. = ..()
 	SStitle.splash_turf = src
@@ -82,10 +82,6 @@ INITIALIZE_IMMEDIATE(/turf/closed/indestructible/splashscreen)
 		pixel_x = 0
 	else if(width == 608) // 608x480 is widescreen
 		pixel_x = -64
-	// NOVA EDIT START - Wider widescreen
-	else if(width == 672) // Nova's widescreen is slightly wider than /tg/'s, so we need to accomodate that too.
-		pixel_x = -96
-	// NOVA EDIT END
 
 /turf/closed/indestructible/splashscreen/vv_edit_var(var_name, var_value)
 	. = ..()
@@ -98,7 +94,6 @@ INITIALIZE_IMMEDIATE(/turf/closed/indestructible/splashscreen)
 /turf/closed/indestructible/splashscreen/examine()
 	desc = pick(strings(SPLASH_FILE, "splashes"))
 	return ..()
-NOVA EDIT REMOVAL END */
 
 /turf/closed/indestructible/reinforced
 	name = "reinforced wall"

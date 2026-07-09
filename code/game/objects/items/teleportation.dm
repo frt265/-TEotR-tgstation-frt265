@@ -146,12 +146,7 @@
 /obj/item/hand_tele/attack_self(mob/user)
 	if (!can_teleport_notifies(user))
 		return
-	//NOVA EDIT BEGIN
-	var/turf/my_turf = get_turf(src)
-	if(is_away_level(my_turf.z))
-		to_chat(user, "<span class='warning'>[src] cannot be used here!</span>")
-		return
-	//NOVA EDIT END
+
 	var/list/locations = list()
 	for(var/obj/machinery/computer/teleporter/computer as anything in SSmachines.get_machines_by_type_and_subtypes(/obj/machinery/computer/teleporter))
 		var/atom/target = computer.target_ref?.resolve()
@@ -406,9 +401,11 @@
 	var/teleport_distance = rand(minimum_teleport_distance, maximum_teleport_distance)
 	var/turf/destination = get_teleport_loc(current_location, user, teleport_distance)
 	var/bagholdingcheck = FALSE
-	for(var/obj/item/check as anything in user.get_all_contents_type(/obj/item))
-		if(check.item_flags & BLUESPACE_INTERFERENCE)
+	if(iscarbon(user))
+		var/mob/living/carbon/teleporting_guy = user
+		if(locate(/obj/item/storage/backpack/holding) in teleporting_guy.get_all_gear(INCLUDE_PROSTHETICS|INCLUDE_ABSTRACT|INCLUDE_ACCESSORIES))
 			bagholdingcheck = TRUE
+
 	if(isclosedturf(destination))
 		if(!triggered_by_emp && !bagholdingcheck)
 			panic_teleport(user, destination) //We're in a wall, engage emergency parallel teleport.

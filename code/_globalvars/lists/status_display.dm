@@ -7,14 +7,6 @@ GLOBAL_LIST_INIT(status_display_approved_pictures, list(
 	"lockdown",
 	"greenalert",
 	"bluealert",
-	"violetalert", // NOVA EDIT ADDITION - Alert Levels
-	"orangealert", // NOVA EDIT ADDITION - Alert Levels
-	"amberalert", // NOVA EDIT ADDITION - Alert Levels
-	"redalert",
-	"deltaalert",
-	"gammaalert", // NOVA EDIT ADDITION - Alert Levels
-	"epsilonalert", // NOVA EDIT ADDITION - Alert Levels
-	"federalalert", // NOVA EDIT ADDITION - Alert Levels
 	"redalert",
 	"deltaalert",
 	"radiation",

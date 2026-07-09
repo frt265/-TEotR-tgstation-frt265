@@ -239,11 +239,8 @@
 	var/exhaustion_limit = new_owner.mind?.get_skill_modifier(/datum/skill/athletics, SKILL_VALUE_MODIFIER)
 	if(duration + bonus_time >= exhaustion_limit)
 		duration = exhaustion_limit
-	//	NOVA EDIT ADDITION START - squelch workout notificiation, swimming really spams this - hope this gets changes upstream sometime
-		to_chat(new_owner, span_warning("You can feel your muscles burn from exhaustion!"))
-	/*	to_chat(new_owner, span_userdanger("Your muscles are exhausted! Might be a good idea to sleep..."))
+		to_chat(new_owner, span_userdanger("Your muscles are exhausted! Might be a good idea to sleep..."))
 		new_owner.emote("scream")
-		NOVA EDIT ADDITION END	*/
 		return // exhaustion_limit
 
 	return bonus_time
@@ -396,7 +393,6 @@
 	owner.add_movespeed_mod_immunities(id, /datum/movespeed_modifier/damage_slowdown)
 	owner.adjust_brute_loss(-25)
 	owner.adjust_fire_loss(-25)
-	owner.adjust_stamina_loss(-40) // NOVA EDIT ADDITION - Removes stamina on usage of regen core.
 	owner.fully_heal(HEAL_CC_STATUS)
 	owner.bodytemperature = owner.get_body_temp_normal()
 	if(ishuman(owner))
@@ -736,24 +732,3 @@
 /datum/status_effect/rev_resilience/on_remove()
 	to_chat(owner, span_notice("You feel your surge of revolutionary zeal fade. You hope you don't get shot in the foot..."))
 	owner.remove_traits(list(TRAIT_HARDLY_WOUNDED,TRAIT_ANALGESIA,TRAIT_FEARLESS), TRAIT_STATUS_EFFECT(id))
-
-//status effect granted when taking attack damage while metabolizing synthpax
-/datum/status_effect/synthpax_immunity
-	id = "synthpax_immune"
-	duration = 5 SECONDS
-	status_type = STATUS_EFFECT_REFRESH
-	alert_type = null
-
-/datum/status_effect/synthpax_immunity/on_creation(mob/living/new_owner, duration = 5 SECONDS)
-	src.duration = duration
-	return ..()
-
-/datum/status_effect/synthpax_immunity/on_apply()
-	ADD_TRAIT(owner, TRAIT_SYNTHPAX_IMMUNE, TRAIT_STATUS_EFFECT(id))
-	REMOVE_TRAIT(owner, TRAIT_PACIFISM, METABOLIZATION_TRAIT(/datum/reagent/pax/peaceborg))
-	return TRUE
-
-/datum/status_effect/synthpax_immunity/on_remove()
-	REMOVE_TRAIT(owner, TRAIT_SYNTHPAX_IMMUNE, TRAIT_STATUS_EFFECT(id))
-	if(owner.reagents.has_reagent(/datum/reagent/pax/peaceborg))
-		ADD_TRAIT(owner, TRAIT_PACIFISM, METABOLIZATION_TRAIT(/datum/reagent/pax/peaceborg))

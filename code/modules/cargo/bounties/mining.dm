@@ -18,15 +18,11 @@
 	required_count = 2
 	wanted_types = list(/obj/item/oar = TRUE)
 
-//NOVA EDIT REMOVAL
-/*
 /datum/bounty/item/mining/bone_axe
 	name = "Bone Axe"
 	description = "Station 12 has had their fire axes stolen by marauding clowns. Ship them a bone axe as a replacement."
 	reward = CARGO_CRATE_VALUE * 15
 	wanted_types = list(/obj/item/fireaxe/boneaxe = TRUE)
-*/
-//END NOVA EDIT REMOVAL
 
 /datum/bounty/item/mining/bone_armor
 	name = "Bone Armor"
@@ -62,16 +58,12 @@
 	required_count = 1
 	wanted_types = list(/obj/item/clothing/neck/wreath/icewing = TRUE)
 
-//NOVA EDIT REMOVAL
-/*
 /datum/bounty/item/mining/bone_dagger
 	name = "Bone Daggers"
 	description = "Central Command's canteen is undergoing budget cuts. Ship over some bone daggers so our chef can keep working."
 	reward = CARGO_CRATE_VALUE * 10
 	required_count = 3
 	wanted_types = list(/obj/item/knife/combat/bone = TRUE)
-*/
-//END NOVA EDIT REMOVAL
 
 /datum/bounty/item/mining/polypore_mushroom
 	name = "Mushroom Bowl"

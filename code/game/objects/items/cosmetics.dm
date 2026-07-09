@@ -186,7 +186,6 @@
 		span_notice("You wipe off [target]'s lipstick."))
 	target.update_lips(null)
 
-/* NOVA EDIT REMOVAL
 /obj/item/razor
 	name = "electric razor"
 	desc = "The latest and greatest power razor born from the science of shaving."
@@ -336,7 +335,6 @@
 					shave(human_target, location)
 				return
 	return ..()
-*/
 
 /obj/item/razor/surgery
 	name = "surgical razor"

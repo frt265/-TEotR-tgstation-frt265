@@ -132,7 +132,7 @@
 		return // tick deleted us, no need to continue
 
 	if(duration != STATUS_EFFECT_PERMANENT)
-		if((duration <= 0) && !pause_expiry) // NOVA EDIT: Enhanced sleep - ORIGINAL: if(duration <= 0)
+		if(duration <= 0)
 			qdel(src)
 			return
 		update_shown_duration()
@@ -212,7 +212,7 @@
 		return FALSE
 
 	duration -= (seconds SECONDS)
-	if((duration <= 0) && !pause_expiry) // NOVA EDIT: Enhanced sleep - ORIGINAL: if(duration <= 0)
+	if(duration <= 0)
 		qdel(src)
 		return TRUE
 

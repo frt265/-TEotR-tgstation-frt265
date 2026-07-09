@@ -12,8 +12,6 @@
 	block_length = DNA_BLOCK_SIZE_COLOR
 	feature_key = FEATURE_ETHEREAL_COLOR
 
-// NOVA EDIT REMOVAL START - Customization
-/*
 /datum/dna_block/feature/ethereal_color/create_unique_block(mob/living/carbon/human/target)
 	return sanitize_hexcolor(target.dna.features[FEATURE_ETHEREAL_COLOR], include_crunch = FALSE)
 
@@ -46,10 +44,8 @@
 /datum/dna_block/feature/accessory/tail_lizard
 	feature_key = FEATURE_TAIL_LIZARD
 
-*/ // NOVA EDIT REMOVAL END
 /datum/dna_block/feature/accessory/tail_fish
 	feature_key = FEATURE_TAIL_FISH
-/* // NOVA EDIT REMOVAL START - Customization
 
 /datum/dna_block/feature/accessory/snout
 	feature_key = FEATURE_SNOUT
@@ -90,4 +86,3 @@
 
 /datum/dna_block/feature/accessory/pod_hair
 	feature_key = FEATURE_POD_HAIR
-*/ // NOVA EDIT REMOVAL END

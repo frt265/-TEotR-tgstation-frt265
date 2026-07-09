@@ -65,36 +65,3 @@ endmap
 
 map runtimestation
 endmap
-
-#Metastation, but with a json set to no space ruins.
-map meta_event
-endmap
-
-##NOVA SECTOR MAPS##
-
-map voidraptor
-	maxplayers 100
-	votable
-endmap
-
-map blueshift
-	minplayers 70
-	votable
-endmap
-
-map ouroboros
-	maxplayers 80
-	votable
-endmap
-
-map serenitystation
-	votable
-endmap
-
-map snowglobe
-	votable
-endmap
-
-map oceanpubby
-    votable
-endmap

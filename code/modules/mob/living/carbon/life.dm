@@ -2,13 +2,6 @@
 	if(HAS_TRAIT(src, TRAIT_NO_TRANSFORM))
 		return
 
-	//NOVA EDIT ADDITION
-	if(isopenturf(loc))
-		var/turf/open/my_our_turf = loc
-		if(my_our_turf.pollution)
-			my_our_turf.pollution.touch_act(src)
-	//NOVA EDIT END
-
 	if(damageoverlaytemp)
 		damageoverlaytemp = 0
 		update_damage_hud()
@@ -20,9 +13,6 @@
 
 	if(HAS_TRAIT(src, TRAIT_STASIS))
 		. = ..()
-		if(QDELETED(src))
-			return
-
 		reagents?.handle_stasis_chems(src, seconds_per_tick)
 	else
 		//Reagent processing needs to come before breathing, to prevent edge cases.
@@ -40,6 +30,9 @@
 			for(var/key in mind?.addiction_points)
 				GLOB.addictions[key].process_addiction(src, seconds_per_tick)
 			handle_brain_damage(seconds_per_tick)
+
+	if(stat != DEAD)
+		handle_bodyparts(seconds_per_tick)
 
 	if(stat != DEAD)
 		return TRUE
@@ -115,35 +108,6 @@
 				breath = loc_as_obj.handle_internal_lifeform(src, BREATH_VOLUME)
 
 			else if(isturf(loc)) //Breathe from loc as turf
-				//NOVA EDIT ADDITION
-				//Underwater breathing
-				var/turf/our_turf = loc
-				if(our_turf.liquids && !HAS_TRAIT(src, TRAIT_NOBREATH) && ((body_position == LYING_DOWN && our_turf.liquids.liquid_state >= LIQUID_STATE_WAIST) || (body_position == STANDING_UP && our_turf.liquids.liquid_state >= LIQUID_STATE_FULLTILE)))
-					//Officially trying to breathe underwater
-					if(HAS_TRAIT(src, TRAIT_WATER_BREATHING))
-						failed_last_breath = FALSE
-						clear_alert("not_enough_oxy")
-						return FALSE
-					breath = null // uh oh where'd the air go
-					check_breath(breath)
-					if(oxyloss <= OXYGEN_DAMAGE_CHOKING_THRESHOLD && stat == CONSCIOUS)
-						to_chat(src, "<span class='userdanger'>You hold in your breath!</span>")
-					else
-						//Try and drink water
-						var/datum/reagents/tempr = our_turf.liquids.take_reagents_flat(CHOKE_REAGENTS_INGEST_ON_BREATH_AMOUNT)
-						tempr.trans_to(src, tempr.total_volume, methods = INGEST)
-						qdel(tempr)
-						visible_message("<span class='warning'>[src] chokes on [our_turf.liquids.reagents_to_text()]!</span>", \
-									"<span class='userdanger'>You're choking on [our_turf.liquids.reagents_to_text()]!</span>")
-					return FALSE
-				if(isopenturf(our_turf))
-					var/turf/open/open_turf = our_turf
-					if(open_turf.pollution)
-						if(next_smell <= world.time)
-							next_smell = world.time + SMELL_COOLDOWN
-							open_turf.pollution.smell_act(src)
-						open_turf.pollution.breathe_act(src)
-				//NOVA EDIT END
 				var/breath_moles = 0
 				if(environment)
 					breath_moles = environment.total_moles()*BREATH_PERCENTAGE
@@ -518,8 +482,8 @@
 
 	var/cached_blood_volume = get_blood_volume()
 
-	var/blood_transfusion_cap = (MONKEY_ORIGINS in chem.data) && chem.data[MONKEY_ORIGINS] ? BLOOD_VOLUME_NORMAL : BLOOD_VOLUME_MAXIMUM // NOVA EDIT ADDITION - Clamp the value so that being injected with monkey blood when you're past 560u doesn't do anything
-	var/blood_added = adjust_blood_volume(round(reac_volume, CHEMICAL_VOLUME_ROUNDING), maximum = blood_transfusion_cap) // NOVA EDIT CHANGE - ORIGINAL: var/blood_added = adjust_blood_volume(round(reac_volume, CHEMICAL_VOLUME_ROUNDING))
+	var/blood_added = adjust_blood_volume(round(reac_volume, CHEMICAL_VOLUME_ROUNDING))
+	reagents.remove_reagent(chem.type, blood_added)
 
 	if(chem.data?[BLOOD_DATA_SYNTH_CONTENT] && !IS_BLOOD_ALWAYS_SYNTHETIC(src))
 		var/added_synth_volume = blood_added * chem.data[BLOOD_DATA_SYNTH_CONTENT]
@@ -536,6 +500,10 @@
 			return COMPONENT_NO_EXPOSE_REAGENTS
 
 	return COMPONENT_NO_EXPOSE_REAGENTS
+
+/mob/living/carbon/proc/handle_bodyparts(seconds_per_tick)
+	for(var/obj/item/bodypart/limb as anything in get_bodyparts(include_stumps = TRUE))
+		. |= limb.on_life(seconds_per_tick)
 
 /mob/living/carbon/proc/handle_organs(seconds_per_tick)
 	if(stat == DEAD)
@@ -558,20 +526,48 @@
 		if(organ?.owner) // This exist mostly because reagent metabolization can cause organ reshuffling
 			organ.on_life(seconds_per_tick)
 
-/**
- * Returns a multiplier representing how effectively this mob can regenerate blood
- *
- * A return value of 0 means the mob cannot regenerate blood at all. (missing heart or the heart has stopped or is failing)
- * Mobs that do not require a heart always return 1, as their blood regeneration is unaffected by heart status.
- */
-/mob/living/carbon/proc/get_heart_blood_regeneration_multiplier()
-	if(!needs_heart())
-		return 1
-	var/obj/item/organ/heart/heart = get_organ_slot(ORGAN_SLOT_HEART)
-	if(isnull(heart))
-		return 0
+/mob/living/carbon/handle_diseases(seconds_per_tick)
+	for(var/datum/disease/disease as anything in diseases)
+		if(QDELETED(disease)) //Got cured/deleted while the loop was still going.
+			continue
+		if(stat != DEAD || disease.process_dead)
+			disease.stage_act(seconds_per_tick)
 
-	return heart.get_blood_regeneration_multiplier()
+/mob/living/carbon/handle_mutations(time_since_irradiated, seconds_per_tick)
+	if(!LAZYLEN(dna?.temporary_mutations))
+		return
+
+	for(var/mut, mut_data in dna.temporary_mutations)
+		if(mut_data < world.time)
+			if(!LAZYLEN(dna.previous))
+				continue
+			if(mut == UI_CHANGED)
+				if(dna.previous["UI"])
+					dna.unique_identity = merge_text(dna.unique_identity,dna.previous["UI"])
+					updateappearance(mutations_overlay_update=1)
+					dna.previous.Remove("UI")
+				LAZYREMOVE(dna.temporary_mutations, mut)
+				continue
+			if(mut == UF_CHANGED)
+				if(dna.previous["UF"])
+					dna.unique_features = merge_text(dna.unique_features,dna.previous["UF"])
+					updateappearance(mutcolor_update=1, mutations_overlay_update=1)
+					dna.previous.Remove("UF")
+				LAZYREMOVE(dna.temporary_mutations, mut)
+				continue
+			if(mut == UE_CHANGED)
+				if(dna.previous["name"])
+					real_name = dna.previous["name"]
+					name = real_name
+					dna.previous.Remove("name")
+				if(dna.previous["UE"])
+					dna.unique_enzymes = dna.previous["UE"]
+					dna.previous.Remove("UE")
+				if(dna.previous["blood_type"])
+					set_blood_type(dna.previous["blood_type"])
+					dna.previous.Remove("blood_type")
+				LAZYREMOVE(dna.temporary_mutations, mut)
+				continue
 
 /**
  * Handles calling metabolization for dead people.

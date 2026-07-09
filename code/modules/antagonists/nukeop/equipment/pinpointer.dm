@@ -12,10 +12,6 @@
 			msg += "\"01000001 01001001\"."
 		if(TRACK_INFILTRATOR)
 			msg += "\"vasvygengbefuvc\"."
-		/// NOVA EDIT BEGIN
-		if(TRACK_GOLDENEYE)
-			msg += "\"goldeneye_key\"."
-		/// NOVA EDIT END
 		else
 			msg = "Its tracking indicator is blank."
 	. += msg

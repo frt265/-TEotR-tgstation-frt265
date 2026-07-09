@@ -29,11 +29,9 @@
 	name = "Jamjar Glasses"
 	item_path = /obj/item/clothing/glasses/regular/jamjar
 
-/* NOVA EDIT REMOVAL - Already exists in our loadout
 /datum/loadout_item/glasses/black_blindfold
 	name = "Black Blindfold"
 	item_path = /obj/item/clothing/glasses/blindfold
-*/ // NOVA REMOVAL END
 
 /datum/loadout_item/glasses/cold_glasses
 	name = "Cold Glasses"
@@ -55,11 +53,9 @@
 	name = "Eyepatch"
 	item_path = /obj/item/clothing/glasses/eyepatch
 
-/** NOVA EDIT REMOVAL - We already have it in the loadout.
 /datum/loadout_item/glasses/eyepatch/medical
 	name = "Medical Eyepatch"
 	item_path = /obj/item/clothing/glasses/eyepatch/medical
-*/ // NOVA EDIT REMOVAL END
 
 /datum/loadout_item/glasses/kim
 	name = "Thin Glasses"

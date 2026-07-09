@@ -173,7 +173,6 @@
 		/obj/item/cautery,
 		/obj/item/circular_saw,
 		/obj/item/clothing/mask/surgical,
-		/obj/item/clothing/suit/toggle/labcoat/nova/surgical_gown, // NOVA EDIT ADDITION
 		/obj/item/hemostat,
 		/obj/item/razor/surgery,
 		/obj/item/retractor,
@@ -197,7 +196,6 @@
 		/obj/item/cautery/cruel,
 		/obj/item/circular_saw/cruel,
 		/obj/item/clothing/mask/surgical,
-		/obj/item/clothing/suit/toggle/labcoat/nova/surgical_gown, // NOVA EDIT ADDITION
 		/obj/item/hemostat/cruel,
 		/obj/item/razor/surgery,
 		/obj/item/retractor/cruel,
@@ -225,7 +223,6 @@
 		/obj/item/stack/medical/bone_gel,
 		/obj/item/stack/medical/wrap/sticky_tape/surgical,
 		/obj/item/clothing/mask/surgical,
-		/obj/item/clothing/suit/toggle/labcoat/nova/surgical_gown, // NOVA EDIT ADDITION
 	)
 
 /obj/effect/spawner/surgery_tray

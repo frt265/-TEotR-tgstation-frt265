@@ -100,7 +100,7 @@
  *
  * * clear_from: The atom to clear the skin from
  */
-/datum/atom_skin/proc/clear_skin(atom/clear_from, mob/user)
+/datum/atom_skin/proc/clear_skin(atom/clear_from)
 	SHOULD_CALL_PARENT(TRUE)
 	RESET_INITIAL_IF_SET(clear_from, name, new_name)
 	RESET_INITIAL_IF_SET(clear_from, desc, new_desc)
@@ -197,7 +197,7 @@
 
 /datum/component/reskinable_item/proc/get_skins_by_name()
 	var/list/reskin_options = list()
-	for(var/datum/atom_skin/reskin_option as anything in valid_subtypesof(base_reskin_type) - (blacklisted_subtypes || list()))
+	for(var/datum/atom_skin/reskin_option as anything in valid_subtypesof(base_reskin_type) - blacklisted_subtypes)
 		reskin_options[reskin_option::preview_name] = reskin_option
 
 	return reskin_options

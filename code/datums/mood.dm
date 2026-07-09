@@ -345,12 +345,6 @@
 			mood_screen_object.color = "#f15d36"
 
 	if (!conflicting_moodies.len) // there's no special icons, use the normal icon states
-		//NOVA EDIT ADDITION BEGIN - ALEXITHYMIA
-		if(HAS_TRAIT(mob_parent, TRAIT_MOOD_NOEXAMINE))
-			mood_screen_object.icon_state = "mood5"
-			mood_screen_object.color = "#4b96c4"
-			return
-		//NOVA EDIT ADDITION END
 		mood_screen_object.icon_state = "mood[mood_level]"
 		return
 
@@ -438,7 +432,7 @@
 
 	if (HAS_TRAIT(mob_parent, TRAIT_APATHETIC))
 		msg += span_notice("My mood: [span_grey("I don't feel anything.")]<br>")
-	else if(!HAS_TRAIT(user, TRAIT_MOOD_NOEXAMINE))// NOVA EDIT CHANGE - ORIGINAL: else
+	else
 		msg += span_notice("My current sanity: ") //Long term
 		switch(sanity)
 			if(SANITY_GREAT to INFINITY)
@@ -474,11 +468,6 @@
 				msg += "[span_boldnicegreen("I feel amazing!")]<br>"
 			if(MOOD_LEVEL_HAPPY4)
 				msg += "[span_boldnicegreen("I love life!")]<br>"
-	// NOVA EDIT ADDITION START
-	else
-		msg += span_notice("My current mood: ") //Short term
-		msg += "[span_notice("No clue.")]\n"
-	// NOVA EDIT ADDITION END
 
 	var/list/additional_lines = list()
 	SEND_SIGNAL(user, COMSIG_CARBON_MOOD_CHECK, additional_lines)
@@ -486,9 +475,7 @@
 		msg += "[additional_lines.Join("<br>")]<br>"
 
 	msg += "[span_notice("Moodlets:")]<br>"//All moodlets
-	msg += get_alcohol_processing(user) // NOVA EDIT ADDITION
-	msg += get_drunk_mood(user) // NOVA EDIT ADDITION
-	if(mood_events.len && !HAS_TRAIT(user, TRAIT_MOOD_NOEXAMINE)) // NOVA EDIT CHANGE - ORIGINAL: if(mood_events.len)
+	if(mood_events.len)
 		for(var/category in mood_events)
 			var/datum/mood_event/event = mood_events[category]
 			msg += "&bull; "
@@ -507,9 +494,6 @@
 					msg += "[span_boldnicegreen(event.description)]<br>"
 	else
 		msg += "&bull; [span_grey("I don't have much of a reaction to anything right now.")]<br>"
-
-	if(LAZYLEN(mob_parent.personalities))
-		msg += span_notice("You know yourself to be [mob_parent.get_parsonality_string()].<br>")
 
 	if(LAZYLEN(mob_parent.quirks))
 		msg += span_notice("You have these quirks: [mob_parent.get_quirk_string(FALSE, CAT_QUIRK_ALL)].")
@@ -640,13 +624,11 @@
 			mob_parent.add_actionspeed_modifier(/datum/actionspeed_modifier/high_sanity)
 			sanity_level = SANITY_LEVEL_GREAT
 
-	/* // NOVA EDIT REMOVAL START - Removes low-sanity hallucinations for now. TODO: Rebalance them to be less annoying.
 	// Crazy or insane = add some uncommon hallucinations
 	if(sanity_level >= SANITY_LEVEL_CRAZY)
 		mob_parent.apply_status_effect(/datum/status_effect/hallucination/sanity)
 	else
 		mob_parent.remove_status_effect(/datum/status_effect/hallucination/sanity)
-	*/ // NOVA EDIT REMOVAL END
 
 	update_mood_icon()
 

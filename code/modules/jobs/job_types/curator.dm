@@ -44,7 +44,6 @@
 	backpack_contents = list(
 		/obj/item/barcodescanner = 1,
 		/obj/item/choice_beacon/hero = 1,
-		/obj/item/glassblowing/magnifying_glass, //NOVA EDIT: Magnifying Glass
 	)
 	belt = /obj/item/modular_computer/pda/curator
 	ears = /obj/item/radio/headset/headset_srvent

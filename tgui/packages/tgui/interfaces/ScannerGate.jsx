@@ -13,18 +13,6 @@ const DISEASE_THEASHOLD_LIST = [
   'Dangerous',
   'BIOHAZARD',
 ];
-// NOVA EDIT ADDITION START
-const TARGET_GENDER_LIST = [
-  {
-    name: 'Male',
-    value: 'male',
-  },
-  {
-    name: 'Female',
-    value: 'female',
-  },
-];
-// NOVA EDIT ADDITION END
 
 const TARGET_NUTRITION_LIST = [
   {
@@ -80,12 +68,6 @@ const SCANNER_GATE_ROUTES = {
     title: 'Scanner Mode: Nutrition',
     component: () => ScannerGateNutrition,
   },
-  //  NOVA EDIT START - MORE SCANNER GATE OPTIONS
-  Gender: {
-    title: 'Scanner Mode: Gender',
-    component: () => ScannerGateGender,
-  },
-  //  NOVA EDIT END - MORE SCANNER GATE OPTIONS
 };
 
 const ScannerGateControl = (props) => {
@@ -136,10 +118,6 @@ const ScannerGateOff = (props) => {
         <Button
           content="Species"
           onClick={() => act('set_mode', { new_mode: 'Species' })}
-        />
-        <Button //  NOVA EDIT START - MORE SCANNER GATE OPTIONS
-          content="Gender"
-          onClick={() => act('set_mode', { new_mode: 'Gender' })} //  NOVA EDIT END - MORE SCANNER GATE OPTIONS
         />
         <Button
           content="Nutrition"
@@ -286,37 +264,6 @@ const ScannerGateNutrition = (props) => {
   );
 };
 
-//  NOVA EDIT START - MORE SCANNER GATE OPTIONS
-const ScannerGateGender = (props) => {
-  const { act, data } = useBackend();
-  const { reverse, target_gender } = data;
-  const gender = TARGET_GENDER_LIST.find((gender) => {
-    return gender.value === target_gender;
-  });
-  return (
-    <>
-      <Box mb={2}>
-        Trigger if the person scanned is {reverse ? 'not' : ''} a {gender.name}.
-      </Box>
-      <Box mb={2}>
-        {TARGET_GENDER_LIST.map((gender) => (
-          <Button.Checkbox
-            key={gender.name}
-            checked={gender.value === target_gender}
-            content={gender.name}
-            onClick={() =>
-              act('set_target_gender', {
-                new_gender: gender.name,
-              })
-            }
-          />
-        ))}
-      </Box>
-      <ScannerGateMode />
-    </>
-  );
-};
-//  NOVA EDIT END - MORE SCANNER GATE OPTIONS
 const ScannerGateMode = (props) => {
   const { act, data } = useBackend();
   const { reverse } = data;

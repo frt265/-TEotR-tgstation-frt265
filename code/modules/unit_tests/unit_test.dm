@@ -362,19 +362,6 @@ GLOBAL_VAR_INIT(focused_tests, focused_tests())
 	returnable_list += typesof(/obj/item/robot_model) // These should never be spawned outside of a robot.
 	//A lot of these depend on a hud datum to function and should not be created in a vacuum
 	returnable_list += typesof(/atom/movable/screen)
-	//NOVA EDIT ADDITION START - OUR UNCREATABLES DOWN HERE
-	//Not designed to be spawned without a turf.
-	returnable_list += typesof(/obj/effect/abstract/liquid_turf)
-	//Not designed to be spawned individually.
-	returnable_list += typesof(/obj/structure/mold)
-	//Unused - not supposed to be spawned without SSliquids
-	returnable_list += typesof(/turf/open/openspace/ocean)
-	//Baseturf editors can only go up to ten, stop this.
-	returnable_list += typesof(/obj/effect/baseturf_helper)
-	// These two are locked to one type only, and shouldn't be widely available, hence why they runtime otherwise.
-	// Can't be bothered adding more to them.
-	returnable_list += list(/obj/item/organ/neck_accessory, /obj/item/organ/head_accessory)
-	//NOVA EDIT ADDITION END
 	return returnable_list
 
 /proc/RunUnitTests()

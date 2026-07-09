@@ -62,10 +62,7 @@
 	tracked_heretics |= heretic
 
 	// If our heretic's on station, generate some new influences
-	//NOVA EDIT START
-	var/area/heretic_area = get_area(heretic.current)
-	if(ishuman(heretic.current) && (!(is_centcom_level(heretic.current.z)) || istype(heretic_area, /area/centcom/interlink)) || istype(heretic_area, /area/shuttle/arrival))
-	//NOVA EDIT END
+	if(ishuman(heretic.current) && !is_centcom_level(heretic.current.z))
 		generate_new_influences()
 
 /**

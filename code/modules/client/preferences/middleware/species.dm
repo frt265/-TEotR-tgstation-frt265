@@ -11,7 +11,7 @@
 	early = TRUE
 
 /datum/asset/spritesheet_batched/species/create_spritesheets()
-	for (var/species_id in get_selectable_species() + get_customizable_races()) // NOVA EDIT CHANGE - ORIGINAL: for (var/species_id in get_selectable_species())
+	for (var/species_id in get_selectable_species())
 		var/datum/species/species_type = GLOB.species_list[species_id]
 
 		var/mob/living/carbon/human/dummy/consistent/dummy = new
@@ -23,7 +23,6 @@
 		dummy_icon.scale(64, 64)
 		dummy_icon.crop(15, 64 - 31, 15 + 31, 64)
 		dummy_icon.scale(64, 64)
-		dummy.dna.species.preview_icon_after_effects(dummy_icon, dummy) // NOVA EDIT ADDITION
 		insert_icon(sanitize_css_class_name(initial(species_type.name)), dummy_icon)
 
 		SSatoms.prepare_deletion(dummy)

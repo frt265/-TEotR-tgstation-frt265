@@ -36,13 +36,9 @@
 	var/speech_span
 	///Are we moving with inertia? Mostly used as an optimization
 	var/inertia_moving = FALSE
-	/// Multiplies speed the movable drifts when unaffected by gravity.
-	/// "Passive" is used for referring "base drift speed" - only the smaller of the two are used.
-	var/inertia_move_multiplier_passive = 1
-	/// Multiplies speed the movable drifts when unaffected by gravity.
-	/// "Active" is used for referring to things boosting our drift speed, like jetpacks - only the smaller of the two are used.
-	var/inertia_move_multiplier_active = 1
-	/// Object "weight", higher weight reduces acceleration applied to the object
+	///Multiplier for inertia based movement in space
+	var/inertia_move_multiplier = 1
+	///Object "weight", higher weight reduces acceleration applied to the object
 	var/inertia_force_weight = 1
 	///The last time we pushed off something
 	///This is a hack to get around dumb him him me scenarios
@@ -107,20 +103,11 @@
 	/// The degree of pressure protection that mobs in list/contents have from the external environment, between 0 and 1
 	var/contents_pressure_protection = 0
 
-	/// Whether a user will face atoms on entering them with a mouse. Despite being a mob variable, it is here for performances //NOVA EDIT ADDITION
-	var/face_mouse = FALSE //NOVA EDIT ADDITION
-
 	/// The voice that this movable makes when speaking
 	var/voice
 
 	/// The pitch adjustment that this movable uses when speaking.
 	var/pitch = 0
-
-	/// The base set of blips to use for blip calculation.
-	var/blip_base = "male"
-
-	/// The blip variant to use for blip calculation.
-	var/blip_number = "1"
 
 	/// Datum that keeps all data related to zero-g drifting and handles related code/comsigs
 	var/datum/drift_handler/drift_handler
@@ -254,6 +241,12 @@
 		SSspatial_grid.force_remove_from_grid(src)
 
 	LAZYNULL(client_mobs_in_contents)
+
+#ifndef DISABLE_DREAMLUAU
+	// These lists cease existing when src does, so we need to clear any lua refs to them that exist.
+	DREAMLUAU_CLEAR_REF_USERDATA(vis_contents)
+	DREAMLUAU_CLEAR_REF_USERDATA(vis_locs)
+#endif
 
 	. = ..()
 
@@ -520,12 +513,6 @@
 			set_glide_size(var_value)
 			. = TRUE
 
-		// NOVA EDIT ADDITION BEGIN - BLOOPER
-		if(NAMEOF(src, blooper))
-			if(isfile(var_value))
-				blooper = sound(var_value) //bark() expects vocal_bark to already be a sound datum, for performance reasons. adminbus QoL!
-			. = TRUE
-		// NOVA EDIT ADDITION END
 	if(!isnull(.))
 		datum_flags |= DF_VAR_EDITED
 		return
@@ -666,7 +653,7 @@
 	if(!direction)
 		direction = get_dir(src, newloc)
 
-	if(set_dir_on_move && dir != direction && update_dir && !face_mouse) // NOVA EDIT - && !face_mouse
+	if(set_dir_on_move && dir != direction && update_dir)
 		setDir(direction)
 
 	var/is_multi_tile_object = is_multi_tile_object(src)
@@ -792,7 +779,7 @@
 						moving_diagonally = SECOND_DIAG_STEP
 						. = step(src, SOUTH)
 			if(moving_diagonally == SECOND_DIAG_STEP)
-				if(!. && set_dir_on_move && update_dir && !face_mouse) // NOVA EDIT CHANGE - && !face_mouse
+				if(!. && set_dir_on_move && update_dir)
 					setDir(first_step_dir)
 				else if(!inertia_moving)
 					newtonian_move(dir2angle(direct))
@@ -839,7 +826,7 @@
 
 	last_move = direct
 
-	if(set_dir_on_move && dir != direct && update_dir && !face_mouse) // NOVA EDIT CHANGE - && !face_mouse)
+	if(set_dir_on_move && dir != direct && update_dir)
 		setDir(direct)
 	if(. && has_buckled_mobs() && !handle_buckled_mob_movement(loc, direct, glide_size_override)) //movement failed due to buckled mob(s)
 		. = FALSE
@@ -1288,9 +1275,6 @@
 		return TRUE
 
 	if (handle_spacemove_grabbing())
-		return TRUE
-
-	if(locate(/obj/structure/spacevine) in range(1, get_turf(src))) //NOVA EDIT: allow walking when vines are around
 		return TRUE
 
 	return FALSE
@@ -1750,8 +1734,6 @@
 	VV_DROPDOWN_OPTION(VV_HK_EDIT_PARTICLES, "Edit Particles")
 	VV_DROPDOWN_OPTION(VV_HK_DEADCHAT_PLAYS, "Start/Stop Deadchat Plays")
 	VV_DROPDOWN_OPTION(VV_HK_ADD_FANTASY_AFFIX, "Add Fantasy Affix")
-	if(SStts.tts_enabled)
-		VV_DROPDOWN_OPTION(VV_HK_SET_TTS_VOICE, "Modify TTS Voice")
 
 /atom/movable/vv_do_topic(list/href_list)
 	. = ..()
@@ -1807,14 +1789,6 @@
 		to_chat(usr, span_notice("Deadchat now control [src]."))
 		log_admin("[key_name(usr)] has added deadchat control to [src]")
 		message_admins(span_notice("[key_name(usr)] has added deadchat control to [src]"))
-
-	if(href_list[VV_HK_SET_TTS_VOICE])
-		var/chosen_voice = tgui_input_list(usr, "Choose a voice to use.", "Choose a voice.", SStts.available_speakers)
-		if(!chosen_voice)
-			return
-		voice = chosen_voice
-		log_admin("[key_name(usr)] has set [src]'s voice as [chosen_voice].")
-		message_admins(span_notice("[key_name(usr)] has set [src]'s voice as [chosen_voice]."))
 
 /**
 * A wrapper for setDir that should only be able to fail by living mobs.

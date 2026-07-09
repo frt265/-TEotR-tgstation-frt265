@@ -3,18 +3,17 @@ import type { BooleanLike } from 'tgui-core/react';
 export type SecurityRecordsData = {
   assigned_view: string;
   authenticated: BooleanLike;
+  station_z: BooleanLike;
   available_statuses: string[];
   current_user: string;
   higher_access: BooleanLike;
   records: SecurityRecord[];
   min_age: number;
   max_age: number;
-  max_chrono_age: number; // NOVA EDIT ADDITION - Chronological age
 };
 
 export type SecurityRecord = {
   age: number;
-  chrono_age: number; // NOVA EDIT ADDITION - Chronological age
   citations: Crime[];
   crew_ref: string;
   crimes: Crime[];
@@ -27,10 +26,6 @@ export type SecurityRecord = {
   trim: string;
   wanted_status: string;
   voice: string;
-  // NOVA EDIT START - RP Records
-  past_general_records: string;
-  past_security_records: string;
-  // NOVA EDIT END
 };
 
 export type Crime = {

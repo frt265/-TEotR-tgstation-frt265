@@ -256,7 +256,6 @@
 
 /mob/living/basic/bot/secbot/proc/add_arrest_component()
 	AddComponent(/datum/component/stun_n_cuff,\
-		stun_timer = 6 SECONDS, /* NOVA EDIT ADDITION */ \
 		stun_sound = stun_sound,\
 		post_stun_callback = CALLBACK(src, PROC_REF(post_stun)),\
 		post_arrest_callback = CALLBACK(src, PROC_REF(post_arrest)),\

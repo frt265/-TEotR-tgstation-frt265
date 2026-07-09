@@ -18,13 +18,33 @@
 
 #define MAX_INSTRUMENT_CHANNELS (128 * 6)
 
-// NOVA EDIT START - JUKEBOX
-#define CHANNEL_JUKEBOX_START 1006
-#define CHANNEL_HEV 1005
-//NOVA EDIT CHANGE END
+/// This is the lowest volume that can be used by playsound otherwise it gets ignored
+/// Most sounds around 10 volume can barely be heard. Almost all sounds at 5 volume or below are inaudible
+/// This is to prevent sound being spammed at really low volumes due to distance calculations
+/// Recommend setting this to anywhere from 10-3 (or 0 to disable any sound minimum volume restrictions)
+/// Ex. For a 70 volume sound, 17 tile range, 3 exponent, 2 falloff_distance:
+/// Setting SOUND_AUDIBLE_VOLUME_MIN to 0 for the above will result in 17x17 radius (289 turfs)
+/// Setting SOUND_AUDIBLE_VOLUME_MIN to 5 for the above will result in 14x14 radius (196 turfs)
+/// Setting SOUND_AUDIBLE_VOLUME_MIN to 10 for the above will result in 11x11 radius (121 turfs)
+#define SOUND_AUDIBLE_VOLUME_MIN 3
+
+/* Calculates the max distance of a sound based on audible volume
+ *
+ * Note - you should NEVER pass in a volume that is lower than SOUND_AUDIBLE_VOLUME_MIN otherwise distance will be insanely large (like +250,000)
+ *
+ * Arguments:
+ * * volume: The initial volume of the sound being played
+ * * max_distance: The range of the sound in tiles (technically not real max distance since the furthest areas gets pruned due to SOUND_AUDIBLE_VOLUME_MIN)
+ * * falloff_distance: Distance at which falloff begins. Sound is at peak volume (in regards to falloff) aslong as it is in this range.
+ * * falloff_exponent: Rate of falloff for the audio. Higher means quicker drop to low volume. Should generally be over 1 to indicate a quick dive to 0 rather than a slow dive.
+ * Returns: The max distance of a sound based on audible volume range
+ */
+#define CALCULATE_MAX_SOUND_AUDIBLE_DISTANCE(volume, max_distance, falloff_distance, falloff_exponent)\
+	floor(((((-(max(max_distance - falloff_distance, 0) ** (1 / falloff_exponent)) / volume) * (SOUND_AUDIBLE_VOLUME_MIN - volume)) ** falloff_exponent) + falloff_distance))
+
 /* Calculates the volume of a sound based on distance
  *
- * https://www.desmos.com/calculator/ing6lxgd0m Update this when changed please
+ * https://www.desmos.com/calculator/shjpmz3ck7
  *
  * Arguments:
  * * volume: The initial volume of the sound being played
@@ -33,20 +53,20 @@
  * * falloff_exponent: Rate of falloff for the audio. Higher means quicker drop to low volume. Should generally be over 1 to indicate a quick dive to 0 rather than a slow dive.
  * Returns: The max distance of a sound based on audible volume range
  */
-#define CALCULATE_SOUND_VOLUME_RATIO(volume, distance, max_distance, falloff_distance, falloff_exponent)\
-	((max(distance - falloff_distance, 0) / (max(max_distance, distance) - falloff_distance)) ** (1 / falloff_exponent))
+#define CALCULATE_SOUND_VOLUME(volume, distance, max_distance, falloff_distance, falloff_exponent)\
+	((max(distance - falloff_distance, 0) ** (1 / falloff_exponent)) / ((max(max_distance, distance) - falloff_distance) ** (1 / falloff_exponent)) * volume)
 
 ///Default range of a sound.
-#define SOUND_RANGE 15
-#define MEDIUM_RANGE_SOUND_EXTRARANGE -3
+#define SOUND_RANGE 17
+#define MEDIUM_RANGE_SOUND_EXTRARANGE -5
 ///default extra range for sounds considered to be quieter
-#define SHORT_RANGE_SOUND_EXTRARANGE -7
+#define SHORT_RANGE_SOUND_EXTRARANGE -9
 ///The range deducted from sound range for things that are considered silent / sneaky
-#define SILENCED_SOUND_EXTRARANGE -10
+#define SILENCED_SOUND_EXTRARANGE -11
 ///Percentage of sound's range where no falloff is applied
-#define SOUND_DEFAULT_FALLOFF_DISTANCE 0 //Disabled because it doesn't actually have a nice effect, it just makes the jump to fall-off more shocking. maybe delete
+#define SOUND_DEFAULT_FALLOFF_DISTANCE 1 //For a normal sound this would be 1 tile of no falloff
 ///The default exponent of sound falloff
-#define SOUND_FALLOFF_EXPONENT 2.5
+#define SOUND_FALLOFF_EXPONENT 6
 
 #define SOUND_MINIMUM_PRESSURE 10
 
@@ -139,35 +159,6 @@
 #define ANNOUNCER_SHUTTLERECALLED "announcer_shuttlerecalled"
 #define ANNOUNCER_SPANOMALIES "announcer_spanomalies"
 
-//NOVA EDIT ADDITION BEGIN
-#define ANNOUNCER_SHUTTLELEFT "announcer_shuttleleft"
-#define ANNOUNCER_CARP "announcer_carp"
-#define ANNOUNCER_VORTEXANOMALIES "announcer_vortexanomalies"
-#define ANNOUNCER_ANOMALIES "announcer_anomalies"
-#define ANNOUNCER_CAPTAIN "announcer_captain"
-#define ANNOUNCER_MASSIVEBSPACEANOMALIES "announcer_massivebspaceanomalies"
-#define ANNOUNCER_TRANSLOCATION "announcer_translocation"
-#define ANNOUNCER_PYROANOMALIES "announcer_pyroanomalies"
-#define ANNOUNCER_FLUXANOMALIES "announcer_fluxanomalies"
-#define ANNOUNCER_GRAVANOMALIES "announcer_gravanomalies"
-#define ANNOUNCER_GRAVGENON "announcer_gravgenon"
-#define ANNOUNCER_GRAVGENOFF "announcer_gravgenoff"
-#define ANNOUNCER_GREYTIDE "announcer_greytide"
-#define ANNOUNCER_COMMSBLACKOUT "announcer_commsblackout"
-#define ANNOUNCER_ELECTRICALSTORM "announcer_electricalstorm"
-#define ANNOUNCER_BRANDINTELLIGENCE "announcer_brandintelligence"
-#define ANNOUNCER_RADIATIONPASSED "announcer_radiationpasssed"
-#define ANNOUNCER_BLUESPACEARTY "announcer_bluespacearty"
-#define ANNOUNCER_SPOOKY "announcer_spooky"
-#define ANNOUNCER_ERTYES "announcer_ertyes"
-#define ANNOUNCER_MUTANTS "announcer_mutants"
-#define ANNOUNCER_HC_POLICE "announcer_hc_police"
-#define ANNOUNCER_OUTBREAK6 "announcer_outbreak6"
-#define ANNOUNCER_DEPARTMENTAL "announcer_departmental"
-#define ANNOUNCER_SHUTTLE "announcer_shuttle"
-//NOVA EDIT END
-
-
 /// Global list of all of our announcer keys.
 GLOBAL_LIST_INIT(announcer_keys, list(
 	ANNOUNCER_AIMALF,
@@ -186,30 +177,6 @@ GLOBAL_LIST_INIT(announcer_keys, list(
 	ANNOUNCER_SHUTTLEDOCK,
 	ANNOUNCER_SHUTTLERECALLED,
 	ANNOUNCER_SPANOMALIES,
-	//NOVA EDIT ADDITION BEGIN
-	ANNOUNCER_SHUTTLELEFT,
-	ANNOUNCER_CARP,
-	ANNOUNCER_VORTEXANOMALIES,
-	ANNOUNCER_CAPTAIN,
-	ANNOUNCER_MASSIVEBSPACEANOMALIES,
-	ANNOUNCER_TRANSLOCATION,
-	ANNOUNCER_PYROANOMALIES,
-	ANNOUNCER_FLUXANOMALIES,
-	ANNOUNCER_GRAVANOMALIES,
-	ANNOUNCER_GRAVGENON,
-	ANNOUNCER_GRAVGENOFF,
-	ANNOUNCER_GREYTIDE,
-	ANNOUNCER_COMMSBLACKOUT,
-	ANNOUNCER_ELECTRICALSTORM,
-	ANNOUNCER_BRANDINTELLIGENCE,
-	ANNOUNCER_RADIATIONPASSED,
-	ANNOUNCER_BLUESPACEARTY,
-	ANNOUNCER_SPOOKY,
-	ANNOUNCER_ERTYES,
-	ANNOUNCER_MUTANTS,
-	ANNOUNCER_HC_POLICE,
-	ANNOUNCER_OUTBREAK6,
-	//NOVA EDIT END
 ))
 
 /**

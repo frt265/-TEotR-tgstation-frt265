@@ -5,7 +5,7 @@
 
 /turf/closed/mineral //wall piece
 	name = "rock"
-	icon = MAP_SWITCH('modular_nova/modules/liquids/icons/turf/smoothrocks.dmi', 'icons/turf/mining.dmi') // NOVA EDIT CHANGE - ORIGINAL: icon = MAP_SWITCH('icons/turf/smoothrocks.dmi', 'icons/turf/mining.dmi')
+	icon = MAP_SWITCH('icons/turf/smoothrocks.dmi', 'icons/turf/mining.dmi')
 	icon_state = "rock"
 	smoothing_groups = SMOOTH_GROUP_CLOSED_TURFS + SMOOTH_GROUP_MINERAL_WALLS
 	canSmoothWith = SMOOTH_GROUP_MINERAL_WALLS
@@ -429,8 +429,8 @@
 		color = COLOR_BLUE
 	else
 		color = BlendRGB(COLOR_GREEN, COLOR_RED, clamp((open_turf_distance - 1) / 5, 0, 0.99))
-	maptext_x = -transform.c
-	maptext_y = -transform.f
+	maptext_x = 4
+	maptext_y = 4
 	maptext = MAPTEXT_TINY_UNICODE("[open_turf_distance]")
 #endif
 
@@ -692,7 +692,7 @@
 		/obj/item/stack/ore/silver = 8,
 		/obj/item/stack/ore/titanium = 11,
 		/obj/item/stack/ore/uranium = 5,
-		/turf/closed/mineral/gibtonite/ice/icemoon = 2,
+		/turf/closed/mineral/gibtonite/ice/icemoon = 4,
 	)
 
 /// Near exact same subtype as parent, just used in ruins to prevent other ruins/chasms from spawning on top of it.
@@ -702,6 +702,7 @@
 	turf_flags = NO_RUINS
 
 /turf/closed/mineral/random/snow/underground
+	baseturfs = /turf/open/misc/asteroid/snow/icemoon
 	// abundant ore
 	mineral_chance = 11
 
@@ -716,7 +717,7 @@
 		/obj/item/stack/ore/silver = 24,
 		/obj/item/stack/ore/titanium = 22,
 		/obj/item/stack/ore/uranium = 10,
-		/turf/closed/mineral/gibtonite/ice/icemoon = 2,
+		/turf/closed/mineral/gibtonite/ice/icemoon = 8,
 	)
 
 /turf/closed/mineral/random/snow/high_chance

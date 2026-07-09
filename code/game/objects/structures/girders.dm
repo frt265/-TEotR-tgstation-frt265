@@ -123,7 +123,6 @@
 	add_fingerprint(user)
 	tool.add_fingerprint(user)
 
-	delay *= user.mind?.get_skill_modifier(/datum/skill/construction, SKILL_SPEED_MODIFIER) // NOVA EDIT ADDITION: Construction Skill
 	return tool.use_tool(src, user, delay, amount, volume, CALLBACK(src, PROC_REF(check_state), user, req_state, req_floor))
 
 /obj/structure/girder/proc/check_state(mob/living/user, req_state, req_anchored, req_floor)

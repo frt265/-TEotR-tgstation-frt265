@@ -378,6 +378,8 @@ It's real simple, just a range of tiles that will be lit, respecting sight-lines
 - [Table of Contents](#table-of-contents)
 - [Reference Entry](https://www.byond.com/docs/ref/#/mob/var/see_in_dark)
 
+`/mob/var/see_in_dark` sets the radius of a square around the mob that cuts out BYOND darkness.
+
 This is why when you stand in darkness you can see yourself, and why you can see a line of objects appear when you use mesons (horrible effect btw).
 It's quite simple, but worth describing.
 

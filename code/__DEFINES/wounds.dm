@@ -49,11 +49,9 @@ GLOBAL_LIST_INIT(wound_severities_chronological, list(
 /// any concentrated burn attack (lasers really). rolls for burning wounds
 #define WOUND_BURN "wound_burn"
 
-// NOVA ADDITION: covers all brute-type damage sources, e.g. blunt/slash/pierce
-#define WOUND_BRUTE "wound_brute"
-
 /// Mainly a define used for wound_pregen_data, if a pregen data instance expects this, it will accept any and all wound types, even none at all
 #define WOUND_ALL "wound_all"
+
 
 // ~determination second wind defines
 // How much determination reagent to add each time someone gains a new wound in [/datum/wound/proc/second_wind]
@@ -129,6 +127,7 @@ GLOBAL_LIST_INIT(bio_state_anatomy, list(
 // Wound series
 // A "wound series" is just a family of wounds that logically follow eachother
 // Multiple wounds in a single series cannot be on a limb - the highest severity will always be prioritized, and lower ones will be skipped
+
 /// T1-T3 Bleeding slash wounds. Requires flesh. Can cause bleeding, but doesn't require it. From: slash.dm
 #define WOUND_SERIES_FLESH_SLASH_BLEED "wound_series_flesh_slash_bled"
 /// T1-T3 Basic blunt wounds. T1 requires jointed, but 2-3 require bone. From: bone.dm
@@ -141,17 +140,6 @@ GLOBAL_LIST_INIT(bio_state_anatomy, list(
 #define WOUND_SERIES_LOSS_BASIC "wound_series_loss_basic"
 /// Cranial fissure wound.
 #define WOUND_SERIES_CRANIAL_FISSURE "wound_series_cranial_fissure"
-
-// NOVA EDIT ADDITION BEGIN - MUSCLE AND SYNTH WOUNDS
-// Have to put it here so I can use it in the global list of wound series
-/// See muscle.dm and robotic_blunt.dm
-#define WOUND_SERIES_MUSCLE_DAMAGE "nova_wound_series_muscle_damage"
-
-#define WOUND_SERIES_METAL_BLUNT_BASIC "wound_series_metal_blunt_basic"
-#define WOUND_SERIES_METAL_BURN_OVERHEAT "wound_series_metal_burn_basic"
-#define WOUND_SERIES_WIRE_SLASH_ELECTRICAL_DAMAGE "wound_series_metal_slash_electrical_damage_basic"
-#define WOUND_SERIES_WIRE_PIERCE_ELECTRICAL_DAMAGE "wound_series_metal_pierce_electrical_damage_basic"
-// NOVA EDIT ADDITION END
 
 /// A assoc list of (wound typepath -> wound_pregen_data instance). Every wound should have a pregen data.
 GLOBAL_LIST_INIT_TYPED(all_wound_pregen_data, /datum/wound_pregen_data, generate_wound_static_data())
@@ -224,25 +212,16 @@ GLOBAL_LIST_INIT(wound_series_collections, generate_wound_series_collection())
 /// Allows for determining of which wound series are caused by what.
 GLOBAL_LIST_INIT(wounding_types_to_series, list(
 	WOUND_BLUNT = list(
-		WOUND_SERIES_BONE_BLUNT_BASIC,
-		WOUND_SERIES_MUSCLE_DAMAGE, // NOVA EDIT -- MUSCLE WOUNDS
-		WOUND_SERIES_METAL_BLUNT_BASIC, // NOVA EDIT ADDITION - SYNTH WOUNDS
-
+		WOUND_SERIES_BONE_BLUNT_BASIC
 	),
 	WOUND_SLASH = list(
 		WOUND_SERIES_FLESH_SLASH_BLEED,
-		WOUND_SERIES_MUSCLE_DAMAGE, // NOVA EDIT ADDITION - MUSCLE WOUNDS
-		WOUND_SERIES_WIRE_SLASH_ELECTRICAL_DAMAGE, // NOVA EDIT ADDITION - SYNTH WOUNDS
-
 	),
 	WOUND_BURN = list(
 		WOUND_SERIES_FLESH_BURN_BASIC,
-		WOUND_SERIES_METAL_BURN_OVERHEAT, // NOVA EDIT ADDITION - SYNTH WOUNDS
 	),
 	WOUND_PIERCE = list(
-		WOUND_SERIES_FLESH_PUNCTURE_BLEED,
-		WOUND_SERIES_MUSCLE_DAMAGE, // NOVA EDIT ADDITION - MUSCLE WOUNDS
-		WOUND_SERIES_WIRE_PIERCE_ELECTRICAL_DAMAGE, // NOVA EDIT ADDITION - SYNTH WOUNDS
+		WOUND_SERIES_FLESH_PUNCTURE_BLEED
 	),
 ))
 
@@ -311,8 +290,7 @@ GLOBAL_LIST_INIT(wounding_types_to_series, list(
 /// Assoc list of biotype -> ideal scar file to be used and grab stuff from.
 GLOBAL_LIST_INIT(biotypes_to_scar_file, list(
 	"[BIO_FLESH]" = FLESH_SCAR_FILE,
-	"[BIO_BONE]" = BONE_SCAR_FILE,
-	"[BIO_METAL]" = METAL_SCAR_FILE // NOVA EDIT ADDITION - METAL SCARS (see robotic_blunt.dm)
+	"[BIO_BONE]" = BONE_SCAR_FILE
 ))
 
 // ~burn wound infection defines

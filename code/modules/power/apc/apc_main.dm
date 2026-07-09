@@ -8,9 +8,9 @@
 ///Cap for how fast cells charge, as a percentage per second (.01 means cellcharge is capped to 1% per second)
 #define CHARGELEVEL 0.01
 ///Charge percentage at which the lights channel stops working
-#define APC_CHANNEL_LIGHT_TRESHOLD 10 // NOVA EDIT CHANGE - orig: 15
+#define APC_CHANNEL_LIGHT_TRESHOLD 15
 ///Charge percentage at which the equipment channel stops working
-#define APC_CHANNEL_EQUIP_TRESHOLD 20 // NOVA EDIT CHANGE - orig: 30
+#define APC_CHANNEL_EQUIP_TRESHOLD 30
 ///Charge percentage at which the APC icon indicates discharging
 #define APC_CHANNEL_ALARM_TRESHOLD 75
 
@@ -100,7 +100,7 @@
 	var/long_term_power = 10
 	///Automatically name the APC after the area is in
 	var/auto_name = FALSE
-	///Time to allow the APC to regain some power and to turn the channels back online in seconds
+	///Time to allow the APC to regain some power and to turn the channels back online
 	var/failure_timer = 0
 	///Forces an update on the power use to ensure that the apc has enough power
 	var/force_update = FALSE
@@ -282,8 +282,8 @@
 
 /obj/machinery/power/apc/on_saboteur(datum/source, disrupt_duration)
 	. = ..()
-	// failure timer is in seconds, not deciseconds, so we need to convert
-	energy_fail(disrupt_duration * 0.1)
+	disrupt_duration *= 0.1 // so, turns out, failure timer is in seconds, not deciseconds; without this, disruptions last 10 times as long as they probably should
+	energy_fail(disrupt_duration)
 	return TRUE
 
 /obj/machinery/power/apc/on_set_is_operational(old_value)
@@ -589,7 +589,7 @@
 	if(!area?.requires_power)
 		return
 	if(failure_timer)
-		failure_timer = max(0, failure_timer - seconds_per_tick)
+		failure_timer--
 		force_update = TRUE
 		return
 
@@ -649,8 +649,8 @@
 				low_power_nightshift_lights = TRUE
 				INVOKE_ASYNC(src, PROC_REF(set_nightshift), TRUE)
 		else if(cell_percent < APC_CHANNEL_EQUIP_TRESHOLD) // turn off equipment
-			equipment = autoset(equipment, AUTOSET_ON) // NOVA EDIT CHANGE - Turns off lighting instead. Original: equipment = autoset(equipment, AUTOSET_OFF)
-			lighting = autoset(lighting, AUTOSET_OFF) // NOVA EDIT CHANGE - Original: lighting = autoset(lighting, AUTOSET_ON)
+			equipment = autoset(equipment, AUTOSET_OFF)
+			lighting = autoset(lighting, AUTOSET_ON)
 			environ = autoset(environ, AUTOSET_ON)
 			alarm_manager.send_alarm(ALARM_POWER)
 			if(!nightshift_lights || (nightshift_lights && !low_power_nightshift_lights))
@@ -669,16 +669,6 @@
 			if(cell_percent > APC_CHANNEL_ALARM_TRESHOLD)
 				alarm_manager.clear_alarm(ALARM_POWER)
 
-		// NOVA EDIT ADDITION START - CLOCK CULT
-		if(integration_cog)
-			var/power_delta = clamp(cell.charge - 50, 0, 50)
-			GLOB.clock_power = min(round(GLOB.clock_power + (power_delta / 2.5)) , GLOB.max_clock_power) // Will continue to siphon even if full just so the APCs aren't completely silent about having an issue (since power will regularly be full)
-			cell.charge -= power_delta * (integration_cog.set_up ? 1 : 2)
-			add_load(power_delta * (integration_cog.set_up ? 1 : 2)) // Twice the drained power if not set up yet
-			charging = APC_NOT_CHARGING
-			if(cell.charge <= 50)
-				cell.charge = 0
-		// NOVA EDIT ADDITION END
 	else // no cell, switch everything off
 		charging = APC_NOT_CHARGING
 		equipment = autoset(equipment, AUTOSET_FORCE_OFF)

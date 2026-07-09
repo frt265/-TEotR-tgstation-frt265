@@ -7,12 +7,13 @@
 /mob/living/silicon/robot
 	name = "Cyborg"
 	real_name = "Cyborg"
-	icon = 'icons/mob/silicon/robots.dmi' //NOVA EDIT - Modified in modular_nova\modules\altborgs\code\robot_defines.dm (to allow for custom transformation animations)
+	icon = 'icons/mob/silicon/robots.dmi'
 	icon_state = "robot"
 	maxHealth = 100
 	health = 100
 	bubble_icon = "robot"
 	designation = "Default" //used for displaying the prefix & getting the current model of cyborg
+	has_limbs = TRUE
 	hud_type = /datum/hud/robot
 	unique_name = TRUE
 	mouse_drop_zone = TRUE
@@ -146,9 +147,7 @@
 
 /mob/living/silicon/robot/model/Initialize(mapload)
 	. = ..()
-#ifndef UNIT_TESTS // NOVA EDIT ADDITION - race condition
 	INVOKE_ASYNC(model, TYPE_PROC_REF(/obj/item/robot_model, transform_to), set_model, TRUE)
-#endif // NOVA EDIT ADDITION
 
 /mob/living/silicon/robot/model/clown
 	set_model = /obj/item/robot_model/clown

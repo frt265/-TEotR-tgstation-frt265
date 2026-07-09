@@ -38,10 +38,6 @@
 	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_RESTRAINED), PROC_REF(on_restrained_trait_gain))
 	RegisterSignal(src, SIGNAL_REMOVETRAIT(TRAIT_RESTRAINED), PROC_REF(on_restrained_trait_loss))
 
-	// NOVA EDIT ADDITION START - Numbed alert
-	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_ANALGESIA), PROC_REF(on_analgesia_trait_gain))
-	RegisterSignal(src, SIGNAL_REMOVETRAIT(TRAIT_ANALGESIA), PROC_REF(on_analgesia_trait_loss))
-	// NOVA EDIT ADDITION END - Numbed alert
 	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_DEAF), PROC_REF(on_hearing_loss))
 	RegisterSignal(src, SIGNAL_REMOVETRAIT(TRAIT_DEAF), PROC_REF(on_hearing_regain))
 	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_STASIS), PROC_REF(on_stasis_trait_gain))
@@ -190,13 +186,11 @@
 	mobility_flags &= ~(MOBILITY_PULL)
 	if(pulling)
 		stop_pulling()
-	pull_force_change()
 
 /// Called when [TRAIT_PULL_BLOCKED] is removed from the mob.
 /mob/living/proc/on_pull_blocked_trait_loss(datum/source)
 	SIGNAL_HANDLER
 	mobility_flags |= MOBILITY_PULL
-	pull_force_change()
 
 
 /// Called when [TRAIT_INCAPACITATED] is added to the mob.

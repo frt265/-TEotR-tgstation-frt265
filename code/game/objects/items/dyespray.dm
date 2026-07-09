@@ -19,7 +19,6 @@
  * * target - The mob who we will apply the gradient and gradient color to.
  */
 
-/* NOVA EDIT REMOVAL - MOVED TO MODULAR (modular_nova\master_files\code\game\objects\items\dyekit.dm)
 /obj/item/dyespray/proc/dye(mob/target, mob/user)
 	if(!ishuman(target))
 		return
@@ -73,7 +72,6 @@
 		human_target.set_facial_hair_gradient_style(new_grad_style, update = FALSE)
 		human_target.set_facial_hair_gradient_color(new_grad_color, update = TRUE)
 	playsound(src, 'sound/effects/spray.ogg', 10, vary = TRUE)
-*/
 
 /obj/item/dyespray/proc/dye_organ(mob/living/carbon/human/target, mob/user)
 	var/list/dyables = list()

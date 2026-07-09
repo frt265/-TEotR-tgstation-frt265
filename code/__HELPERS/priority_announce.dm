@@ -155,7 +155,7 @@
 	else
 		finalized_announcement = CHAT_ALERT_DEFAULT_SPAN(jointext(minor_announcement_strings, ""))
 
-	var/custom_sound = sound_override || (alert ? 'modular_nova/modules/alerts/sound/alerts/alert1.ogg' : 'sound/announcer/notice/notice2.ogg') // NOVA EDIT CHANGE - CUSTOM ANNOUNCEMENTS - Original: var/custom_sound = sound_override || (alert ? 'sound/announcer/notice/notice1.ogg' : 'sound/announcer/notice/notice2.ogg')
+	var/custom_sound = sound_override || (alert ? 'sound/announcer/notice/notice1.ogg' : 'sound/announcer/notice/notice2.ogg')
 	dispatch_announcement_to_players(finalized_announcement, players, custom_sound, should_play_sound)
 
 /// Sends an announcement about the level changing to players. Uses the passed in datum and the subsystem's previous security level to generate the message.
@@ -200,9 +200,6 @@
 /// Proc that just dispatches the announcement to our applicable audience. Only the announcement is a mandatory arg.
 /// `should_play_sound` can also be a callback, if you want to only play the sound to specific players.
 /proc/dispatch_announcement_to_players(announcement, list/players = GLOB.player_list, sound_override = null, should_play_sound = TRUE)
-	// NOVA EDIT CHANGE BEGIN - CUSTOM ANNOUNCEMENTS
-	/* Original:
-
 	var/sound_to_play = !isnull(sound_override) ? sound_override : 'sound/announcer/notice/notice2.ogg'
 
 	var/datum/callback/should_play_sound_callback = astype(should_play_sound)
@@ -216,25 +213,6 @@
 			continue
 		if(target.client?.prefs.read_preference(/datum/preference/toggle/sound_announcements))
 			SEND_SOUND(target, sound(sound_to_play))
-	*/
-	if(!sound_override)
-		sound_override = SSstation.announcer.get_rand_alert_sound()
-	else if(SSstation.announcer.event_sounds[sound_override])
-		var/list/announcer_key = SSstation.announcer.event_sounds[sound_override]
-		sound_override = pick(announcer_key)
-
-	if(!isnull(sound_override))
-		sound_override = sound(sound_override)
-
-	var/sound_to_play = !isnull(sound_override) ? sound_override : 'sound/announcer/notice/notice2.ogg'
-	alert_sound_to_playing(sound_to_play, players = players)
-
-	for(var/mob/target in players)
-		if(isnewplayer(target) || HAS_TRAIT(target, TRAIT_DEAF))
-			continue
-
-		to_chat(target, announcement)
-	// NOVA EDIT CHANGE END - CUSTOM ANNOUNCEMENTS
 
 #undef MAJOR_ANNOUNCEMENT_TITLE
 #undef MAJOR_ANNOUNCEMENT_TEXT

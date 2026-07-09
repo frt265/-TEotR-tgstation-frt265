@@ -12,11 +12,18 @@ jobs:
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so the job can access it
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v6
 
-     #Request reviews
-      - name: Request reviews
+      #Parse the Codeowner file on non draft PRs
+      - name: CodeOwnersParser
         if: github.event.pull_request.draft == false
-        uses: tgstation/code-reviewers@main
+        id: CodeOwnersParser
+        uses: tgstation/CodeOwnersParser@v1
+
+      #Request reviews
+      - name: Request reviews
+        if: steps.CodeOwnersParser.outputs.owners != ''
+        uses: tgstation/RequestReviewFromUser@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          separator: " "
+          users: ${{ steps.CodeOwnersParser.outputs.owners }}

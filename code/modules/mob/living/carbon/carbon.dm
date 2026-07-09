@@ -127,25 +127,6 @@
 		balloon_alert_to_viewers("tourniquet removed")
 		usr.put_in_hands(tourniquet)
 		return
-	// NOVA EDIT ADDITION START - Copy above tourniquet code for gauze
-	if(href_list["remove_gauze"])
-		var/obj/item/bodypart/limb = locate(href_list["remove_gauze"]) in bodyparts
-		var/mob/living/patient = limb?.owner
-		var/obj/item/stack/medical/wrap/gauze = LAZYACCESS(limb?.applied_items, LIMB_ITEM_GAUZE)
-		if(QDELETED(limb) || QDELETED(patient) || QDELETED(gauze))
-			return
-		balloon_alert_to_viewers("removing [gauze]...")
-		if(!do_after(usr, 4 SECONDS, target = src))
-			return
-		if(QDELETED(limb) || QDELETED(patient) || QDELETED(gauze) || limb.owner != patient || gauze.loc != limb)
-			return
-
-		balloon_alert_to_viewers("[gauze] removed")
-		var/obj/item/stack/medical/wrap/gotten = gauze.rip_off()
-		if(gotten && !usr.put_in_hands(gotten))
-			gotten.forceMove(get_turf(usr))
-		return
-	// NOVA EDIT ADDITION END
 
 	if(href_list["show_paper_note"])
 		var/obj/item/paper/paper_note = locate(href_list["show_paper_note"])
@@ -811,19 +792,10 @@
 		return FALSE
 	if(!HAS_TRAIT(src, TRAIT_BRAINLESS_CARBON) && !get_organ_by_type(/obj/item/organ/brain))
 		return FALSE
-//NOVA EDIT ADDITION - DNR TRAIT
-	if(HAS_TRAIT(src, TRAIT_DNR))
-		return FALSE
-//NOVA EDIT ADDITION END - DNR TRAIT
-
 	return ..()
 
 /mob/living/carbon/proc/can_defib()
 	SHOULD_BE_PURE(TRUE)
-	//NOVA EDIT ADDITION START - DNR TRAIT
-	if(HAS_TRAIT(src, TRAIT_DNR)) //This is also added when a ghost DNR's!
-		return DEFIB_FAIL_DNR
-	//NOVA EDIT ADDITION END - DNR TRAIT
 	if (HAS_TRAIT(src, TRAIT_SUICIDED))
 		return DEFIB_FAIL_SUICIDE
 
@@ -876,7 +848,7 @@
 	return NONE
 
 /mob/living/carbon/proc/can_defib_client()
-	return (HAS_TRAIT(src, TRAIT_MIND_TEMPORARILY_GONE) || client || get_ghost(FALSE, FALSE)) && (can_defib() & DEFIB_REVIVABLE_STATES) // NOVA EDIT CHANGE - ORIGINAL: return (HAS_TRAIT(src, TRAIT_MIND_TEMPORARILY_GONE) || client || get_ghost(FALSE, TRUE)) && (can_defib() & DEFIB_REVIVABLE_STATES)
+	return (HAS_TRAIT(src, TRAIT_MIND_TEMPORARILY_GONE) || client || get_ghost(FALSE, TRUE)) && (can_defib() & DEFIB_REVIVABLE_STATES)
 
 /mob/living/carbon/harvest(mob/living/user)
 	if(QDELETED(src))
@@ -1251,14 +1223,6 @@
 	else if (buckled && buckled.buckle_lying != NO_BUCKLE_LYING)
 		set_lying_angle(buckled.buckle_lying)
 	else
-		//NOVA EDIT ADDITION BEGIN
-		if(dir == WEST)
-			set_lying_angle(LYING_ANGLE_WEST)
-			return
-		else if(dir == EAST)
-			set_lying_angle(LYING_ANGLE_EAST)
-			return
-		//NOVA EDIT END
 		set_lying_angle(pick(LYING_ANGLE_EAST, LYING_ANGLE_WEST))
 
 /mob/living/carbon/vv_edit_var(var_name, var_value)

@@ -103,7 +103,7 @@
 	consumed_limb.drop_limb()
 	to_chat(H, span_userdanger("Your [consumed_limb] is drawn back into your body, unable to maintain its shape!"))
 	qdel(consumed_limb)
-	H.adjust_blood_volume(65 * H.physiology.blood_regen_mod) //NOVA EDIT CHANGE - This is because losing a limb now costs them 60 blood, so this refunds it with a pinch extra so it doesn't. Y'know. Kill you. - ORIGINAL: H.adjust_blood_volume(20 * H.physiology.blood_regen_mod)
+	H.adjust_blood_volume(20 * H.physiology.blood_regen_mod)
 
 /datum/species/jelly/get_species_description()
 	return "Jellypeople are a strange and alien species with three eyes, made entirely out of gel."
@@ -215,10 +215,7 @@
 	// so if someone mindswapped into them, they'd still be shared.
 	bodies = null
 	C.set_blood_volume(C.get_blood_volume(), maximum = BLOOD_VOLUME_NORMAL)
-	UnregisterSignal(C, list(
-		COMSIG_LIVING_DEATH,
-		COMSIG_LIVING_LIFE,
-	))
+	UnregisterSignal(C, COMSIG_LIVING_DEATH)
 	..()
 
 /datum/species/jelly/slime/on_species_gain(mob/living/carbon/C, datum/species/old_species, pref_load, regenerate_icons)
@@ -235,7 +232,6 @@
 			bodies |= C
 
 	RegisterSignal(C, COMSIG_LIVING_DEATH, PROC_REF(on_death_move_body))
-	// RegisterSignal(C, COMSIG_LIVING_LIFE, PROC_REF(on_life)) // NOVA EDIT REMOVAL - Handled by the base type
 
 /datum/species/jelly/slime/proc/on_death_move_body(mob/living/carbon/human/source, gibbed)
 	SIGNAL_HANDLER
@@ -259,16 +255,16 @@
 /datum/species/jelly/slime/copy_properties_from(datum/species/jelly/slime/old_species)
 	bodies = old_species.bodies
 
-/datum/species/jelly/slime/on_life(mob/living/carbon/human/source, seconds_per_tick) // NOVA EDIT CHANGE - Original: /datum/species/jelly/slime/proc/on_life(mob/living/carbon/human/source, seconds_per_tick) - Remove /proc to make this an override
-	. = ..() // NOVA EDIT CHANGE - ORIGINAL: SIGNAL_HANDLER
-	if(source.get_blood_volume() >= BLOOD_VOLUME_SLIME_SPLIT)
+/datum/species/jelly/slime/spec_life(mob/living/carbon/human/H, seconds_per_tick)
+	. = ..()
+	if(H.get_blood_volume() >= BLOOD_VOLUME_SLIME_SPLIT)
 		if(SPT_PROB(2.5, seconds_per_tick))
-			to_chat(source, span_notice("You feel very bloated!"))
+			to_chat(H, span_notice("You feel very bloated!"))
 
-	else if(source.nutrition >= NUTRITION_LEVEL_WELL_FED)
-		source.adjust_blood_volume(1.5 * seconds_per_tick)
-		if(source.get_blood_volume() <= BLOOD_VOLUME_LOSE_NUTRITION)
-			source.adjust_nutrition(-1.25 * seconds_per_tick)
+	else if(H.nutrition >= NUTRITION_LEVEL_WELL_FED)
+		H.adjust_blood_volume(1.5 * seconds_per_tick)
+		if(H.get_blood_volume() <= BLOOD_VOLUME_LOSE_NUTRITION)
+			H.adjust_nutrition(-1.25 * seconds_per_tick)
 
 /datum/action/innate/split_body
 	name = "Split Body"
@@ -743,11 +739,6 @@
 	if(recipient.can_block_magic(MAGIC_RESISTANCE_MIND, charge_cost = 0))
 		to_chat(telepath, span_warning("As you reach into [recipient]'s mind, you are stopped by a mental blockage. It seems you've been foiled."))
 		return
-	//NOVA EDIT ADDITION START -  Telepathy Block Quirk
-	if(HAS_TRAIT(recipient, TRAIT_PSIONIC_DAMPENER))
-		to_chat(telepath, span_warning("As you reach into [recipient]'s mind, you are stopped by a mental blockage."))
-		return
-	//NOVA EDIT ADDITION END
 	log_directed_talk(telepath, recipient, msg, LOG_SAY, "slime telepathy")
 	to_chat(recipient, "[span_notice("You hear an alien voice in your head... ")]<font color=#008CA2>[msg]</font>")
 	to_chat(telepath, span_notice("You telepathically said: \"[msg]\" to [recipient]"))

@@ -248,6 +248,7 @@
 	destination.socks = socks
 	destination.jumpsuit_style = jumpsuit_style
 
+
 /// Fully randomizes everything according to the given flags.
 /mob/living/carbon/human/proc/randomize_human_appearance(randomize_flags = ALL)
 	var/datum/preferences/preferences = new(new /datum/client_interface)
@@ -257,7 +258,7 @@
 			continue
 
 		if (preference.is_randomizable())
-			preference.apply_to_human(src, preference.create_random_value(preferences), preferences) // NOVA EDIT CHANGE - ORIGINAL: preference.apply_to_human(src, preference.create_random_value(preferences))
+			preference.apply_to_human(src, preference.create_random_value(preferences))
 
 	fully_replace_character_name(real_name, generate_random_mob_name())
 

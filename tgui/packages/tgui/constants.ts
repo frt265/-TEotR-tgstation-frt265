@@ -31,7 +31,6 @@ export const COLORS = {
     service: '#7cc46a',
     centcom: '#00c100',
     other: '#c38312',
-    prisoner: '#FFC2C2', // NOVA EDIT ADDITION
   },
   // Damage type colors
   damageType: {
@@ -314,15 +313,6 @@ const GASES = [
     label: 'Nitrium',
     color: 'brown',
   },
-  // NOVA EDIT ADDITION START
-  {
-    id: 'goblin',
-    path: '/datum/gas/goblin',
-    name: 'G-081-N',
-    label: 'G-081-N',
-    color: 'green',
-  },
-  // NOVA EDIT ADDITION END
 ] as const;
 
 // Returns gas label based on gasId

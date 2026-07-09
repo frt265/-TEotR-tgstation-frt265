@@ -8,7 +8,6 @@
 	attack_verb_continuous = list("licks", "slobbers", "slaps", "frenches", "tongues")
 	attack_verb_simple = list("lick", "slobber", "slap", "french", "tongue")
 	voice_filter = ""
-	visual = FALSE
 	/**
 	 * A cached list of paths of all the languages this tongue is capable of speaking
 	 *
@@ -88,7 +87,6 @@
 		/datum/language/draconic,
 		/datum/language/codespeak,
 		/datum/language/monkey,
-		/datum/language/kobold, // Nova Edit Addition: KOBORS
 		/datum/language/narsie,
 		/datum/language/beachbum,
 		/datum/language/aphasia,
@@ -182,7 +180,7 @@
 	say_mod = "hisses"
 	taste_sensitivity = 10 // combined nose + tongue, extra sensitive
 	modifies_speech = TRUE
-	languages_native = list(/datum/language/draconic, /datum/language/ashtongue) //NOVA EDIT: Ashtongue for Ashwalkers
+	languages_native = list(/datum/language/draconic)
 	liked_foodtypes = GORE | MEAT | SEAFOOD | NUTS | BUGS
 	disliked_foodtypes = GRAIN | DAIRY | CLOTH | GROSS
 	voice_filter = @{"[0:a] asplit [out0][out2]; [out0] asetrate=%SAMPLE_RATE%*0.9,aresample=%SAMPLE_RATE%,atempo=1/0.9,aformat=channel_layouts=mono,volume=0.2 [p0]; [out2] asetrate=%SAMPLE_RATE%*1.1,aresample=%SAMPLE_RATE%,atempo=1/1.1,aformat=channel_layouts=mono,volume=0.2[p2]; [p0][0][p2] amix=inputs=3"}
@@ -190,29 +188,14 @@
 		new /regex("s+", "g") = "sss",
 		new /regex("S+", "g") = "SSS",
 		new /regex(@"(\w)x", "g") = "$1kss",
-		//new /regex(@"(\w)X", "g") = "$1KSSS", // NOVA EDIT REMOVAL
+		new /regex(@"(\w)X", "g") = "$1KSSS",
 		new /regex(@"\bx([\-|r|R]|\b)", "g") = "ecks$1",
 		new /regex(@"\bX([\-|r|R]|\b)", "g") = "ECKS$1",
 	)
-	// NOVA EDIT ADDITION START - Russian version - yes copy pasted from above because static lists are great.
-	var/static/list/russian_speech_replacements = list(
-		new /regex("s+", "g") = "sss",
-		new /regex("S+", "g") = "SSS",
-		new /regex(@"(\w)x", "g") = "$1kss",
-		new /regex(@"\bx([\-|r|R]|\b)", "g") = "ecks$1",
-		new /regex(@"\bX([\-|r|R]|\b)", "g") = "ECKS$1",
-		new /regex("с+", "g") = "ссс",
-		new /regex("С+", "g") = "ССС",
-		"з" = "с",
-		"З" = "С",
-		"ж" = "ш",
-		"Ж" = "Ш",
-	)
-	// NOVA EDIT ADDITION END
 
 /obj/item/organ/tongue/lizard/Initialize(mapload)
 	. = ..()
-	AddComponent(/datum/component/speechmod, replacements = CONFIG_GET(flag/russian_text_formation) ? russian_speech_replacements : speech_replacements, should_modify_speech = CALLBACK(src, PROC_REF(should_modify_speech))) // NOVA EDIT CHANGE - ORIGINAL: AddComponent(/datum/component/speechmod, replacements = speech_replacements, should_modify_speech = CALLBACK(src, PROC_REF(should_modify_speech)))
+	AddComponent(/datum/component/speechmod, replacements = speech_replacements, should_modify_speech = CALLBACK(src, PROC_REF(should_modify_speech)))
 
 /obj/item/organ/tongue/lizard/silver
 	name = "silver tongue"
@@ -411,7 +394,7 @@
 	var/message = speech_args[SPEECH_MESSAGE]
 	var/mob/living/carbon/human/user = source
 	var/rendered = span_abductor("<b>[user.real_name]:</b> [message]")
-	user.log_talk(message, LOG_SAY, tag="abductor")
+	user.log_talk(message, LOG_SAY, tag=SPECIES_ABDUCTOR)
 	for(var/mob/living/carbon/human/living_mob in GLOB.alive_mob_list)
 		var/obj/item/organ/tongue/abductor/tongue = living_mob.get_organ_slot(ORGAN_SLOT_TONGUE)
 		if(!istype(tongue))
@@ -436,14 +419,6 @@
 	disliked_foodtypes = NONE
 	// List of english words that translate to zombie phrases
 	var/static/list/english_to_zombie = list()
-	/// Spooky growls we sometimes play while alive
-	var/static/list/spooks = list(
-		'sound/effects/hallucinations/growl1.ogg',
-		'sound/effects/hallucinations/growl2.ogg',
-		'sound/effects/hallucinations/growl3.ogg',
-		'sound/effects/hallucinations/veryfar_noise.ogg',
-		'sound/effects/hallucinations/wail.ogg',
-	)
 
 /obj/item/organ/tongue/zombie/proc/add_word_to_translations(english_word, zombie_word)
 	english_to_zombie[english_word] = zombie_word
@@ -498,11 +473,6 @@
 		message = new_words.Join(" ")
 		message = capitalize(message)
 		speech_args[SPEECH_MESSAGE] = message
-
-/obj/item/organ/tongue/zombie/on_life(seconds_per_tick)
-	. = ..()
-	if(owner.stat == CONSCIOUS && SPT_PROB(2, seconds_per_tick))
-		playsound(owner, pick(spooks), 50, TRUE, 10)
 
 /obj/item/organ/tongue/alien
 	name = "alien tongue"
@@ -609,10 +579,7 @@
 	color = "#96DB00" // TODO proper sprite, rather than recoloured pink tongue
 	modifies_speech = TRUE
 	voice_filter = "atempo=0.5" // makes them talk really slow
-	liked_foodtypes = VEGETABLES | FRUIT | GROSS | RAW //NOVA EDIT - Roundstart Snails - Food Prefs
-	disliked_foodtypes = DAIRY | ORANGES | SUGAR //NOVA EDIT: Roundstart Snails - As it turns out, you can't give a snail processed sugar or citrus.
 
-/* NOVA EDIT START - Roundstart Snails: Less annoying speech.
 /obj/item/organ/tongue/snail/modify_speech(datum/source, list/speech_args)
 	var/new_message
 	var/message = speech_args[SPEECH_MESSAGE]
@@ -622,7 +589,6 @@
 		else
 			new_message += message[i]
 	speech_args[SPEECH_MESSAGE] = new_message
-*/ // NOVA EDIT END
 
 /obj/item/organ/tongue/ethereal
 	name = "electric discharger"

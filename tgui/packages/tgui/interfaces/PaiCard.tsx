@@ -38,7 +38,6 @@ type Pai = {
   receive: BooleanLike;
   leashed: BooleanLike;
   range: number;
-  leash_enabled: BooleanLike; // NOVA EDIT ADDITION
 };
 
 export const PaiCard = (props) => {
@@ -166,7 +165,6 @@ const PaiOptions = (props) => {
       receive,
       leashed,
       range,
-      leash_enabled /* NOVA EDIT ADDITION */,
     },
   } = data;
   const suppliedLaws = laws[0] ? decodeHtmlEntities(laws[0]) : 'None';
@@ -213,8 +211,7 @@ const PaiOptions = (props) => {
               <Button
                 icon="fa-circle-minus"
                 onClick={() => act('decrease_range')}
-                /* NOVA EDIT CHANGE ORIGINAL: disabled={range === range_max} */
-                disabled={!leash_enabled || range === range_min}
+                disabled={range === range_min}
               />
             </Stack.Item>
             <Stack.Item mt={0.5}>{range}</Stack.Item>
@@ -222,8 +219,7 @@ const PaiOptions = (props) => {
               <Button
                 icon="fa-circle-plus"
                 onClick={() => act('increase_range')}
-                /* NOVA EDIT CHANGE ORIGINAL: disabled={range === range_max} */
-                disabled={!leash_enabled || range === range_max}
+                disabled={range === range_max}
               />
             </Stack.Item>
           </Stack>

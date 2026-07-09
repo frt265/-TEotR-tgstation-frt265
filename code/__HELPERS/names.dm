@@ -68,6 +68,9 @@
 /mob/living/basic/bot/generate_random_mob_name(unique)
 	return generate_random_name(gender, unique, list(/datum/language/machine = 1))
 
+/mob/living/simple_animal/bot/generate_random_mob_name(unique)
+	return generate_random_name(gender, unique, list(/datum/language/machine = 1))
+
 GLOBAL_VAR(command_name)
 /proc/command_name()
 	if (GLOB.command_name)
@@ -103,7 +106,7 @@ GLOBAL_VAR(command_name)
 
 	var/config_server_name = CONFIG_GET(string/servername)
 	if(config_server_name)
-		world.name = "[config_server_name][config_server_name == GLOB.station_name ? "" : ": [html_decode(GLOB.station_name)]"][GLOB.round_id ? " (Round: [GLOB.round_id])" : ""]" // NOVA EDIT CHANGE - ORIGINAL: world.name = "[config_server_name][config_server_name == GLOB.station_name ? "" : ": [html_decode(GLOB.station_name)]"]"
+		world.name = "[config_server_name][config_server_name == GLOB.station_name ? "" : ": [html_decode(GLOB.station_name)]"]"
 	else
 		world.name = html_decode(GLOB.station_name)
 
@@ -183,6 +186,15 @@ GLOBAL_VAR(command_name)
 
 	return name
 
+
+//Traitors and traitor silicons will get these. Revs will not.
+GLOBAL_VAR(syndicate_code_phrase) //Code phrase for traitors.
+GLOBAL_VAR(syndicate_code_response) //Code response for traitors.
+
+//Cached regex search - for checking if codewords are used.
+GLOBAL_DATUM(syndicate_code_phrase_regex, /regex)
+GLOBAL_DATUM(syndicate_code_response_regex, /regex)
+
 	/*
 	Should be expanded.
 	How this works:
@@ -211,16 +223,14 @@ GLOBAL_VAR(command_name)
 		25; 5
 	)
 
-	var/list/safety = list(1, 2, 3)//Tells the proc which options to remove later on.
-	var/list/nouns = strings(ION_FILE, "ionabstract")
-	var/list/objects = strings(ION_FILE, "ionobjects")
-	var/list/adjectives = strings(ION_FILE, "ionadjectives")
-	var/list/threats = strings(ION_FILE, "ionthreats")
-	var/list/foods = strings(ION_FILE, "ionfood")
-	var/list/drinks = strings(ION_FILE, "iondrinks")
-	var/list/locations = list()
-	for(var/area/area_type as anything in list(/area/space) | GLOB.the_station_areas)
-		locations |= format_text(area_type::name)
+	var/list/safety = list(1,2,3)//Tells the proc which options to remove later on.
+	var/nouns = strings(ION_FILE, "ionabstract")
+	var/objects = strings(ION_FILE, "ionobjects")
+	var/adjectives = strings(ION_FILE, "ionadjectives")
+	var/threats = strings(ION_FILE, "ionthreats")
+	var/foods = strings(ION_FILE, "ionfood")
+	var/drinks = strings(ION_FILE, "iondrinks")
+	var/locations = strings(LOCATIONS_FILE, "locations")
 
 	var/list/names = list()
 	for(var/datum/record/crew/target in GLOB.manifest.general)//Picks from crew manifest.

@@ -33,7 +33,7 @@
 	var/list/reagents_metabolized = list()
 	for(var/datum/reagent/reagent as anything in cached_reagents)
 		var/datum/reagent/toxin/toxin
-		if(istype(reagent, /datum/reagent/toxin)) // NOVA EDIT CHANGE - Early mirror of a fix, just remove this when it is merged
+		if(istype(reagent, /datum/reagent/toxin))
 			toxin = reagent
 		// skip metabolizing effects for small units of toxins
 		if(toxin && liver && !dead)
@@ -98,15 +98,7 @@
 
 	if(!owner)
 		owner = reagent.holder.my_atom
-	//NOVA EDIT ADDITION BEGIN - CUSTOMIZATION
 
-	var/can_process = reagent_process_flags_valid(owner, reagent)
-	//If the mob can't process it, remove the reagent at it's normal rate without doing any addictions, overdoses, or on_mob_life() for the reagent
-	if(!can_process)
-		reagent.holder.remove_reagent(reagent.type, reagent.metabolization_rate)
-		return
-
-	//NOVA EDIT ADDITION END
 	if(!owner || !reagent || (dead && !(reagent.chemical_flags & REAGENT_DEAD_PROCESS)))
 		return FALSE
 

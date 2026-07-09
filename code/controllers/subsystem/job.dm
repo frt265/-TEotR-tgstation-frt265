@@ -307,11 +307,6 @@ SUBSYSTEM_DEF(job)
 		if(job.departments_bitflags & DEPARTMENT_BITFLAG_COMMAND) //If you want a command position, select it!
 			job_debug("GRJ: Skipping command role, Player: [player], Job: [job]")
 			continue
-		//NOVA EDIT ADDITION
-		if(job.departments_bitflags & DEPARTMENT_BITFLAG_CENTRAL_COMMAND) //If you want a CC position, select it!
-			job_debug("GRJ skipping Central Command role, Player: [player], Job: [job]")
-			continue
-		//NOVA EDIT ADDITION END
 
 		// This check handles its own output to job_debug.
 		if(check_job_eligibility(player, job, "GRJ", add_job_to_log = TRUE) != JOB_AVAILABLE)
@@ -600,17 +595,13 @@ SUBSYSTEM_DEF(job)
 
 //Gives the player the stuff he should have with his rank
 /datum/controller/subsystem/job/proc/equip_rank(mob/living/equipping, datum/job/job, client/player_client)
-	// NOVA EDIT ADDITION BEGIN - ALTERNATIVE_JOB_TITLES
-	// The alt job title, if user picked one, or the default
-	var/alt_title = player_client?.prefs.alt_job_titles?[job.title] || job.title
-	// NOVA EDIT ADDITION END
 	equipping.job = job.title
 
 	SEND_SIGNAL(equipping, COMSIG_JOB_RECEIVED, job)
 
-	equipping.mind?.set_assigned_role_with_greeting(job, player_client, alt_title) // NOVA EDIT CHANGE - ALTERNATIVE_JOB_TITLES - ORIGINAL: equipping.mind?.set_assigned_role_with_greeting(job, player_client)
+	equipping.mind?.set_assigned_role_with_greeting(job, player_client)
 	equipping.on_job_equipping(job, player_client)
-	job.announce_job(equipping, alt_title) // NOVA EDIT CHANGE - ALTERNATIVE_JOB_TITLES - ORIGINAL: job.announce_job(equipping)
+	job.announce_job(equipping)
 
 	if(player_client?.holder)
 		if(CONFIG_GET(flag/auto_deadmin_always) || (player_client.prefs?.toggles & DEADMIN_ALWAYS))
@@ -618,7 +609,6 @@ SUBSYSTEM_DEF(job)
 		else
 			handle_auto_deadmin_roles(player_client, job.title)
 
-	setup_alt_job_items(equipping, job, player_client) // NOVA EDIT ADDITION - ALTERNATIVE_JOB_TITLES
 	job.after_spawn(equipping, player_client)
 
 /datum/controller/subsystem/job/proc/handle_auto_deadmin_roles(client/C, rank)
@@ -649,7 +639,7 @@ SUBSYSTEM_DEF(job)
 	var/ssc = CONFIG_GET(number/security_scaling_coeff)
 	if(ssc > 0)
 		if(J.spawn_positions > 0)
-			var/officer_positions = min(7, max(J.spawn_positions, round(unassigned.len / ssc))) //Scale between configured minimum and 12 officers // NOVA EDIT CHANGE - Reduced from 12 max sec to 7 max sec due to departmental security being deactivated and replaced. - ORIGINAL: var/officer_positions = min(12, max(J.spawn_positions, round(unassigned.len / ssc)))
+			var/officer_positions = min(12, max(J.spawn_positions, round(unassigned.len / ssc))) //Scale between configured minimum and 12 officers
 			job_debug("SOP: Setting open security officer positions to [officer_positions]")
 			J.total_positions = officer_positions
 			J.spawn_positions = officer_positions
@@ -725,7 +715,6 @@ SUBSYSTEM_DEF(job)
 	if(!run_divide_occupation_pure)
 		to_chat(player, span_infoplain("<b>You have failed to qualify for any job you desired.</b>"))
 		player.ready = PLAYER_NOT_READY
-		player.client << output((player.ready == PLAYER_READY_TO_PLAY) ? 1 : 0, "lobby_browser:imgsrc") // NOVA EDIT ADDITION
 
 
 /datum/controller/subsystem/job/Recover()
@@ -989,32 +978,6 @@ SUBSYSTEM_DEF(job)
 	if(isnum(possible_job.required_character_age) && possible_job.required_character_age > player_client.prefs.read_preference(/datum/preference/numeric/age))
 		job_debug("[debug_prefix] Error: [get_job_unavailable_error_message(JOB_UNAVAILABLE_AGE)], Player: [player][add_job_to_log ? ", Job: [possible_job]" : ""]")
 		return JOB_UNAVAILABLE_AGE
-	//NOVA EDIT ADDITION BEGIN - CUSTOMIZATION
-	if(GLOB.nova_star_restrictions && possible_job.nova_stars_only && !SSplayer_ranks.is_nova_star(player.client))
-		job_debug("[debug_prefix] Error: [get_job_unavailable_error_message(JOB_NOT_NOVA_STAR)], Player: [player][add_job_to_log ? ", Job: [possible_job]" : ""]")
-		return JOB_NOT_NOVA_STAR
-
-	if(possible_job.has_banned_quirk(player.client.prefs))
-		job_debug("[debug_prefix] Error: [get_job_unavailable_error_message(JOB_UNAVAILABLE_QUIRK)], Player: [player][add_job_to_log ? ", Job: [possible_job]" : ""]")
-		return JOB_UNAVAILABLE_QUIRK
-
-	if(!possible_job.has_required_languages(player.client.prefs))
-		job_debug("[debug_prefix] Error: [get_job_unavailable_error_message(JOB_UNAVAILABLE_LANGUAGE)], Player: [player][add_job_to_log ? ", Job: [possible_job]" : ""]")
-		return JOB_UNAVAILABLE_LANGUAGE
-
-	if(possible_job.has_banned_species(player.client.prefs))
-		job_debug("[debug_prefix] Error: [get_job_unavailable_error_message(JOB_UNAVAILABLE_SPECIES)], Player: [player][add_job_to_log ? ", Job: [possible_job]" : ""]")
-		return JOB_UNAVAILABLE_SPECIES
-
-	if(CONFIG_GET(flag/min_flavor_text))
-		if(length_char(player.client.prefs.read_preference(/datum/preference/text/flavor_text)) <= CONFIG_GET(number/flavor_text_character_requirement))
-			job_debug("[debug_prefix] Error: [get_job_unavailable_error_message(JOB_UNAVAILABLE_FLAVOUR)], Player: [player][add_job_to_log ? ", Job: [possible_job]" : ""]")
-			return JOB_UNAVAILABLE_FLAVOUR
-
-	if(possible_job.has_banned_augment(player.client.prefs))
-		job_debug("[debug_prefix] Error: [get_job_unavailable_error_message(JOB_UNAVAILABLE_AUGMENT)], Player: [player][add_job_to_log ? ", Job: [possible_job]" : ""]")
-		return JOB_UNAVAILABLE_AUGMENT
-	//NOVA EDIT ADDITION END
 
 	// Need to recheck the player exists after is_banned_from since it can query the DB which may sleep.
 	if(QDELETED(player))

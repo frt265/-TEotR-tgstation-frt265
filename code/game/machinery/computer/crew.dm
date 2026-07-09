@@ -42,7 +42,6 @@
 	. += create_table_notices(list(
 		"name",
 		"job",
-		"is_robot", //NOVA EDIT ADDITION - Displaying robotic species Icon
 		"life_status",
 		"suffocation",
 		"toxin",
@@ -63,7 +62,6 @@
 		var/list/entry = list()
 		entry["name"] = player_record["name"]
 		entry["job"] = player_record["assignment"]
-		entry["is_robot"] = player_record["is_robot"] //NOVA EDIT ADDITION - Displaying robotic species Icon
 		entry["life_status"] = player_record["life_status"]
 		entry["suffocation"] = player_record["oxydam"]
 		entry["toxin"] = player_record["toxdam"]
@@ -101,41 +99,31 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 		JOB_HEAD_OF_SECURITY = 10,
 		JOB_WARDEN = 11,
 		JOB_SECURITY_OFFICER = 12,
-		/* NOVA EDIT REMOVAL - We need those slots for our own jobs, these jobs aren't on Nova anymore anyway.
 		JOB_SECURITY_OFFICER_MEDICAL = 13,
 		JOB_SECURITY_OFFICER_ENGINEERING = 14,
 		JOB_SECURITY_OFFICER_SCIENCE = 15,
 		JOB_SECURITY_OFFICER_SUPPLY = 16,
-		*/
-		JOB_CORRECTIONS_OFFICER = 13, // NOVA EDIT ADDITION
-		JOB_DETECTIVE = 14,
+		JOB_DETECTIVE = 17,
 		// 20-29: Medbay
 		JOB_CHIEF_MEDICAL_OFFICER = 20,
 		JOB_CHEMIST = 21,
 		JOB_MEDICAL_DOCTOR = 22,
 		JOB_PARAMEDIC = 23,
 		JOB_CORONER = 24,
-		JOB_VIROLOGIST = 25, // NOVA EDIT ADDITION: Returns Virologist
-		JOB_ORDERLY = 26, // NOVA EDIT ADDITION
-		JOB_PSYCHOLOGIST = 27, // NOVA EDIT - ORIGINAL: JOB_PSYCHOLOGIST = 71,
 		// 30-39: Science
 		JOB_RESEARCH_DIRECTOR = 30,
 		JOB_SCIENTIST = 31,
 		JOB_ROBOTICIST = 32,
 		JOB_GENETICIST = 33,
-		JOB_SCIENCE_GUARD = 34, // NOVA EDIT ADDITION
 		// 40-49: Engineering
 		JOB_CHIEF_ENGINEER = 40,
 		JOB_STATION_ENGINEER = 41,
 		JOB_ATMOSPHERIC_TECHNICIAN = 42,
-		JOB_ENGINEERING_GUARD = 43, // NOVA EDIT ADDITION
-		JOB_TELECOMMS_SPECIALIST = 44, // NOVA EDIT ADDITION
 		// 50-59: Cargo
 		JOB_QUARTERMASTER = 50,
 		JOB_SHAFT_MINER = 51,
 		JOB_CARGO_TECHNICIAN = 52,
 		JOB_BITRUNNER = 53,
-		JOB_CUSTOMS_AGENT = 54, // NOVA EDIT ADDITION
 		// 60+: Service
 		JOB_HEAD_OF_PERSONNEL = 60,
 		JOB_BARTENDER = 61,
@@ -147,10 +135,9 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 		JOB_CLOWN = 67,
 		JOB_MIME = 68,
 		JOB_JANITOR = 69,
-		JOB_LAWYER = 70,
-		JOB_BARBER = 71, // NOVA EDIT ADDITION
-		JOB_BOUNCER = 72, // NOVA EDIT ADDITION
-		// 200-239: Centcom
+		JOB_LAWYER = 71,
+		JOB_PSYCHOLOGIST = 72,
+		// 200-229: Centcom
 		JOB_CENTCOM_ADMIRAL = 200,
 		JOB_CENTCOM = 201,
 		JOB_CENTCOM_OFFICIAL = 210,
@@ -167,12 +154,9 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 		JOB_ERT_CHAPLAIN = 225,
 		JOB_ERT_JANITOR = 226,
 		JOB_ERT_DEATHSQUAD = 227,
-		JOB_NT_REP = 230, // NOVA EDIT ADDITION
-		JOB_BLUESHIELD = 231, // NOVA EDIT ADDITION
 
 		// ANYTHING ELSE = UNKNOWN_JOB_ID, Unknowns/custom jobs will appear after civilians, and before assistants
 		JOB_ASSISTANT = 999,
-		JOB_PRISONER = 401, //NOVA EDIT ADDITION
 	)
 
 /datum/crewmonitor/ui_interact(mob/user, datum/tgui/ui)
@@ -256,27 +240,8 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 			entry["name"] = id_card.registered_name
 			entry["assignment"] = id_card.assignment
 			var/trim_assignment = id_card.get_trim_assignment()
-			/* // NOVA EDIT REMOVAL START - Just so we can indent this after an else
 			if (jobs[trim_assignment] != null)
 				entry["ijob"] = jobs[trim_assignment]
-			*/ // NOVA EDIT REMOVAL END
-		// NOVA EDIT ADDITION START
-			if(show_command_only)
-				if (jobs_command[trim_assignment] != null)
-					entry["ijob"] = jobs_command[trim_assignment]
-				else
-					continue
-			else
-				if (jobs[trim_assignment] != null)
-					entry["ijob"] = jobs[trim_assignment]
-		else if(show_command_only) // Skip unknowns on blueshield
-			continue
-		// NOVA EDIT ADDITION END
-
-		// NOVA EDIT ADDITION START - Checking for synthetic races
-		if (issynthetic(tracked_human) || isprotean(tracked_human))
-			entry["is_robot"] = TRUE
-		// NOVA EDIT ADDITION END
 
 		// Broken sensors show garbage data
 		if (uniform.has_sensor == BROKEN_SENSORS)
@@ -310,7 +275,6 @@ GLOBAL_DATUM_INIT(crewmonitor, /datum/crewmonitor, new)
 		// Location
 		if (sensor_mode >= SENSOR_COORDS)
 			entry["area"] = get_area_name(tracked_living_mob, format_text = TRUE)
-		entry["can_track"] = tracked_living_mob.can_track() // NOVA EDIT ADDITION
 
 		results[++results.len] = entry
 

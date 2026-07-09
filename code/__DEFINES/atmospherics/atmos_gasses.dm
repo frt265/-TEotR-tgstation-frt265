@@ -19,4 +19,3 @@
 #define GAS_HELIUM "helium"
 #define GAS_ANTINOBLIUM "antinoblium"
 #define GAS_HALON "halon"
-#define GAS_GOBLIN "goblin" // NOVA EDIT ADDITION

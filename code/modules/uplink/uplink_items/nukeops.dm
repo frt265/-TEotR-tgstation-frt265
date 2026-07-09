@@ -302,8 +302,8 @@
 
 /datum/uplink_item/weapon_kits/high_cost/machinegun
 	name = "L6 Squad Automatic Weapon (Moderate)"
-	desc = "A fully-loaded Scarborough Arms belt-fed machine gun. \
-			This deadly weapon has a 50-round box chambered for 7.12x82mm ammunition." //NOVA EDIT - AUSSEC TO SCARBOROUGH
+	desc = "A fully-loaded Aussec Armoury belt-fed machine gun. \
+		This deadly weapon has a massive 50-round magazine of devastating 7mm ammunition."
 	item = /obj/item/gun/ballistic/automatic/l6_saw
 	relevant_child_items = list(
 		/datum/uplink_item/ammo_nuclear/ap/machinegun,
@@ -654,7 +654,7 @@
 		operative team's body-cams. They can also pilot the shuttle remotely and view the station's camera net. \
 		If you're a meathead who's just here to kill people and don't care about strategising or intel, you'll still have someone to bear witness to your murder-spree!"
 	item = /obj/item/antag_spawner/nuke_ops/overwatch
-	cost = 10
+	cost = 12
 	purchasable_from = UPLINK_FIREBASE_OPS
 
 // ~~ Disposable Sentry Gun ~~

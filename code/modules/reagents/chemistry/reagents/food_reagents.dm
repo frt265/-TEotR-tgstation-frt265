@@ -28,10 +28,6 @@
 	if(!ishuman(affected_mob) || HAS_TRAIT(affected_mob, TRAIT_NOHUNGER))
 		return
 
-	// NOVA EDIT ADDITION BEGIN - Disable consumable digestion for synth stomach
-	if(istype(affected_mob.get_organ_slot(ORGAN_SLOT_STOMACH), /obj/item/organ/stomach/synth))
-		return
-	// NOVA EDIT ADDITION END
 	var/mob/living/carbon/human/affected_human = affected_mob
 	affected_human.adjust_nutrition(0.5 * get_nutriment_factor(affected_mob) * metabolization_ratio * seconds_per_tick)
 
@@ -57,10 +53,6 @@
 			var/obj/item/the_real_food = holder.my_atom
 			if(isitem(the_real_food) && !is_reagent_container(the_real_food))
 				exposed_mob.add_mob_memory(/datum/memory/good_food, food = the_real_food)
-		// NOVA EDIT ADDITION BEGIN - Racial Drinks
-		if (RACE_DRINK)
-			exposed_mob.add_mood_event("quality_drink", /datum/mood_event/race_drink)
-		// NOVA EDIT ADDITION END
 
 /// Gets just how much nutrition this reagent supplies per server tick to the eater
 /datum/reagent/consumable/proc/get_nutriment_factor(mob/living/carbon/eater)
@@ -734,7 +726,7 @@
 
 	var/obj/effect/decal/cleanable/food/flour/flour_decal = exposed_turf.spawn_unique_cleanable(/obj/effect/decal/cleanable/food/flour)
 	if(flour_decal)
-		flour_decal.init_reagents(/datum/reagent/consumable/flour, reac_volume)
+		flour_decal.reagents.add_reagent(/datum/reagent/consumable/flour, reac_volume)
 
 /datum/reagent/consumable/cherryjelly
 	name = "Cherry Jelly"
@@ -1048,10 +1040,6 @@
 	. = ..()
 	if(isethereal(affected_mob))
 		affected_mob.adjust_blood_volume(1 * seconds_per_tick)
-	// NOVA EDIT ADDITION BEGIN - Allow enriched liquid electricity to safely recharge synths
-	else if(can_fuel_synth(affected_mob))
-		return
-	// NOVA EDIT ADDITION END
 	else if(SPT_PROB(10, seconds_per_tick)) //lmao at the newbs who eat energy bars
 		affected_mob.electrocute_act(rand(5,10), "Liquid Electricity in their body", 1, SHOCK_NOGLOVES) //the shock is coming from inside the house
 		playsound(affected_mob, SFX_SPARKS, 50, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
@@ -1118,7 +1106,7 @@
 	color = "#C8C8C8"
 	taste_mult = 6
 	taste_description = "smoke"
-	overdose_threshold = 45 // NOVA EDIT ORIGINAL: overdose_threshold = 15
+	overdose_threshold = 15
 	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
 	randomized_spawns = REAGENT_SPAWN_ALL_RANDOM_SPAWNS
 
@@ -1370,23 +1358,3 @@
 	taste_description = "metallic salt"
 	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
 	randomized_spawns = REAGENT_SPAWN_ALL_RANDOM_SPAWNS
-
-/datum/reagent/consumable/gizmo_goop
-	name = "Gizmo Goop"
-	description = "A thick, grey goup that is supposedly 'nutritious'."
-	color = "#707070"
-	taste_description = "goop"
-	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
-	nutriment_factor = 0.5
-	randomized_spawns = REAGENT_SPAWN_ALL_RANDOM_SPAWNS
-
-/datum/reagent/consumable/beef_flavour
-	name = "Beef Space Ramen Flavouring"
-	description = "Powdered beef flavouring with enough salt to preserve a corpse."
-	nutriment_factor = 5
-	color = "#5f3e00" // rgb: 115, 16, 8
-	taste_description = "beef"
-	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
-	randomized_spawns = REAGENT_SPAWN_ALL_RANDOM_SPAWNS
-	default_container = /obj/item/reagent_containers/condiment/pack/beef_flavour
-

@@ -9,12 +9,10 @@ export type MedicalRecordData = {
   records: MedicalRecord[];
   min_age: number;
   max_age: number;
-  max_chrono_age: number; // NOVA EDIT ADDITION - Chronological age
 };
 
 export type MedicalRecord = {
   age: number;
-  chrono_age: number; // NOVA EDIT ADDITION - Chronological age
   blood_type: string;
   crew_ref: string;
   dna: string;
@@ -30,10 +28,6 @@ export type MedicalRecord = {
   rank: string;
   species: string;
   trim: string;
-  // NOVA EDIT START - RP Records
-  past_general_records: string;
-  past_medical_records: string;
-  // NOVA EDIT END
 };
 
 export type MedicalNote = {

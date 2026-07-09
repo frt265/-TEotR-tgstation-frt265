@@ -197,5 +197,4 @@
 	. = ..()
 	if(trailer && .)
 		var/dir_to_move = get_dir(trailer.loc, old_loc)
-		trailer.glide_size = glide_size //NOVA EDIT: Carts
 		step(trailer, dir_to_move)

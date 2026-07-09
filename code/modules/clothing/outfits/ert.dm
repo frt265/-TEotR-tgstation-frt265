@@ -138,6 +138,7 @@
 	l_pocket = /obj/item/rcd_ammo/large
 	additional_radio = /obj/item/encryptionkey/heads/ce
 
+
 	skillchips = list(/obj/item/skillchip/job/engineer)
 
 /datum/outfit/centcom/ert/engineer/alert
@@ -514,8 +515,6 @@
 	glasses = /obj/item/clothing/glasses/hud/security/sunglasses
 	head = /obj/item/clothing/head/helmet/marine/security
 	additional_radio = /obj/item/encryptionkey/heads/hos
-
-	skillchips = null
 
 /datum/outfit/centcom/ert/marine/medic
 	name = "Marine Medic"

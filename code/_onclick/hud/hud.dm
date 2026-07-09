@@ -70,7 +70,6 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 
 	/// Subtypes can override this to force a specific UI style
 	var/ui_style = null
-	var/erp_ui_style = null //NOVA EDIT - ADDITION - ERP ICONS FIX
 	/// Assoc list of all screen objects we hold by their key
 	var/list/atom/movable/screen/screen_objects = list()
 	/// List of screen objects by their screen group
@@ -95,7 +94,7 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 
 	if (!ui_style)
 		// will fall back to the default if any of these are null
-		ui_style = ui_style2icon(owner.client?.prefs?.read_preference(/datum/preference/choiced/ui_style)) //NOVA EDIT - ADDITION - ERP ICONS FIX
+		ui_style = ui_style2icon(owner.client?.prefs?.read_preference(/datum/preference/choiced/ui_style))
 
 	add_screen_object(/atom/movable/screen/button_palette, HUD_MOB_TOGGLE_PALETTE)
 	add_screen_object(/atom/movable/screen/palette_scroll/down, HUD_MOB_PALETTE_DOWN)
@@ -362,7 +361,7 @@ GLOBAL_LIST_INIT(available_ui_styles, list(
 				screenmob.client.screen += group_hotkeys
 			if (length(group_info))
 				screenmob.client.screen += group_info
-			if (length(group_storage) && viewmob == mymob)
+			if (length(group_storage))
 				screenmob.client.screen += group_storage
 
 			screenmob.client.screen += palette

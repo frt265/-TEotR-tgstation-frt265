@@ -312,8 +312,7 @@ em {
 .emote,
 .infoplain,
 .oocplain,
-.warningplain,
-.mentor {
+.warningplain {
 }
 
 .deadsay {
@@ -568,7 +567,7 @@ em {
 }
 
 .green {
-  color: hsl(132.9, 100%, 50.6%);
+  color: hsl(132.8, 93.4%, 29.6%);
 }
 
 .grey {
@@ -865,104 +864,6 @@ em {
     color: hsl(191.9, 83.4%, 71.6%);
   }
 }
-// NOVA EDIT ADDITION BEGIN
-
-.velvet {
-  color: #660015;
-  font-weight: bold;
-  animation: velvet 5000ms infinite;
-}
-@keyframes velvet {
-  0% {
-    color: #400020;
-  }
-  40% {
-    color: #ff0000;
-  }
-  50% {
-    color: #ff8888;
-  }
-  60% {
-    color: #ff0000;
-  }
-  100% {
-    color: #400020;
-  }
-}
-
-.hexnut {
-  color: #0099ff;
-  font-weight: bold;
-  animation: hexnut 5000ms infinite;
-  animation-direction: alternate;
-}
-
-@keyframes hexnut {
-  0% {
-    color: #0099ff;
-  }
-  35% {
-    color: #a64dff;
-  }
-  50% {
-    color: #00997a;
-  }
-  60% {
-    color: #ffb31a;
-  }
-  100% {
-    color: #ff33cc;
-  }
-}
-
-.doyourjobidiot {
-  color: #c51e1e;
-  text-shadow: 0 0 4px #e22525;
-  font-size: 125%;
-  font-weight: bold;
-  animation: flashingfuckingwarning 250ms infinite;
-}
-
-@keyframes flashingfuckingwarning {
-  0% {
-    color: #c51e1e;
-    text-shadow: 0 0 4px #c51e1e;
-  }
-
-  50% {
-    color: #e22525;
-    text-shadow: 0 0 8px #e22525;
-  }
-
-  100% {
-    color: #c51e1e;
-    text-shadow: 0 0 4px #c51e1e;
-  }
-}
-
-.glossy {
-  color: #9b6000;
-  font-weight: bold;
-  animation: glossy 5000ms infinite;
-}
-@keyframes glossy {
-  0% {
-    color: #9b6000;
-  }
-  30% {
-    color: #c88800;
-  }
-  60% {
-    color: #bdbd00;
-  }
-  70% {
-    color: #c88800;
-  }
-  100% {
-    color: #9b6000;
-  }
-}
-// NOVA EDIT ADDITION END
 
 .phobia {
   color: hsl(0, 100%, 43.3%);
@@ -1200,8 +1101,6 @@ em {
   flex-grow: 1;
 }
 
-// NOVA EDIT CHANGE BEGIN - Remove neon colors, replaced with less saturated
-/*
 $alert-stripe-colors: (
   'default': hsl(198.6, 100%, 11.4%),
   'green': hsl(120, 100%, 12%),
@@ -1249,56 +1148,6 @@ $alert-subheader-header-colors: (
   'purple': hsl(192.4, 100%, 60%),
   'grey': hsl(192.4, 100%, 60%),
 );
-NOVA EDIT CHANGE END */
-
-$alert-stripe-colors: (
-  'default': #0e152c,
-  'green': #0f2e0f,
-  'blue': #121c3a,
-  'pink': #240c19,
-  'yellow': #574a00,
-  'orange': #431b16,
-  'red': #420000,
-  'purple': #220c24,
-  'grey': #252525,
-);
-
-$alert-stripe-alternate-colors: (
-  'default': #111934,
-  'green': #123512,
-  'blue': #151f41,
-  'pink': #301022,
-  'yellow': #4d4100,
-  'orange': #50211b,
-  'red': #520000,
-  'purple': #2b0f2e,
-  'grey': #292929,
-);
-
-$alert-major-header-colors: (
-  'default': #94a5db,
-  'green': #00a854,
-  'blue': #94a5db,
-  'pink': #e990c3,
-  'yellow': #e6af4c,
-  'orange': #e79f79,
-  'red': #ff4542,
-  'purple': #bf9cde,
-  'grey': #ff4542,
-);
-
-$alert-subheader-header-colors: (
-  'default': #c5ba7c,
-  'green': #d5a0a0,
-  'blue': #c5ba7c,
-  'pink': #f7cfcf,
-  'yellow': #ffddbd,
-  'orange': #ffddbd,
-  'red': #e9aa72,
-  'purple': #f7cfcf,
-  'grey': #e9aa72,
-);
-// NOVA EDIT CHANGE END
 
 $border-width: 4;
 
@@ -1430,97 +1279,3 @@ $border-width-px: $border-width * 1px;
     );
   }
 }
-/* NOVA EDIT ADDITION START - DARK MODE CLASSES */
-
-.mentor {
-  color: #8a2be2;
-}
-.looc {
-  color: #d8b555;
-}
-.rlooc {
-  color: #b09448;
-}
-.subtle {
-  color: #abc6ec;
-}
-.subtler {
-  color: #e2c1ff;
-}
-
-.userlove {
-  color: #ff1493;
-  font-style: italic;
-  font-weight: bold;
-  text-shadow: 0 0 6px #ff6dbc;
-}
-
-.crossooc {
-  color: #9f6efc;
-  font-weight: bold;
-}
-
-.crossasay {
-  color: #ff0000;
-  font-weight: bold;
-}
-
-.pink {
-  color: #ff00ff;
-  font-weight: bold;
-}
-
-.brown {
-  color: #3d2009;
-  font-weight: bold;
-}
-
-.orange {
-  color: #b8761a;
-  font-weight: bold;
-}
-
-.yellow {
-  color: #c7b72c;
-  font-weight: bold;
-}
-
-.cyan_nova {
-  color: #0ea1e6;
-  font-weight: bold;
-}
-
-.horizonblue {
-  color: #7ca2b8;
-  font-weight: bold;
-}
-
-.brass {
-  color: #be8700;
-}
-
-.big_brass {
-  color: #be8700;
-  font-size: 24px;
-  font-weight: bold;
-  font-style: italic;
-}
-
-.clockyellow {
-  color: #daaa18;
-  font-weight: bold;
-  font-style: italic;
-}
-
-.clockgray {
-  color: #42474d;
-  font-weight: bold;
-  font-style: italic;
-}
-
-.clockred {
-  color: #6e001a;
-  font-weight: bold;
-  font-style: italic;
-}
-// NOVA EDIT ADDITION END

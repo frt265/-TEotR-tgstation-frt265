@@ -69,7 +69,7 @@
 	/// Reference to the overlay heretics get when they get strong enough
 	var/static/mutable_appearance/eldritch_overlay = mutable_appearance('icons/mob/effects/heretic_aura.dmi', "heretic_aura")
 	/// A sum of how many knowledge points this heretic CURRENTLY has. Used to research.
-	var/knowledge_points = 2 //NOVA EDIT - ORIGINAL 1
+	var/knowledge_points = 1
 	/// The time between gaining influence passively. The heretic gain +1 knowledge points every this duration of time.
 	var/passive_gain_timer = 20 MINUTES
 	/// Tracks how many knowledge points the heretic has aqcuired. Once you get enough points you lose the ability to blade break
@@ -799,7 +799,7 @@
 /datum/antagonist/heretic/roundend_report()
 	var/list/parts = list()
 
-	//var/succeeded = TRUE // NOVA EDIT REMOVAL
+	var/succeeded = TRUE
 
 	parts += printplayer(owner)
 	parts += "<b>Sacrifices Made:</b> [total_sacrifices]"
@@ -807,17 +807,10 @@
 	if(length(objectives))
 		var/count = 1
 		for(var/datum/objective/objective as anything in objectives)
-			// NOVA EDIT START - No greentext
-			/*
 			if(!objective.check_completion())
 				succeeded = FALSE
 			parts += "<b>Objective #[count]</b>: [objective.explanation_text] [objective.get_roundend_success_suffix()]"
-			*/
-			parts += "<b>Objective #[count]</b>: [objective.explanation_text]"
-			// NOVA EDIT END - No greentext
 			count++
-	// NOVA EDIT START - No greentext
-	/*
 	if(feast_of_owls)
 		parts += span_greentext("Ascension Forsaken")
 	if(ascended)
@@ -828,8 +821,6 @@
 			parts += span_greentext("The heretic was successful, but did not ascend!")
 		else
 			parts += span_redtext("The heretic has failed.")
-	*/
-	// NOVA EDIT END - No greentext
 
 	parts += "<b>Knowledge Researched:</b> "
 

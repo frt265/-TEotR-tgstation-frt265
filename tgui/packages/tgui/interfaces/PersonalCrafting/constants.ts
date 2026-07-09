@@ -3,7 +3,6 @@ import { Food } from '../PreferencesMenu/types';
 export const TYPE_ICONS = {
   'Can Make': 'utensils',
   [Food.Alcohol]: 'wine-glass',
-  [Food.Bloody]: 'tint', // NOVA EDIT ADDITION - Hemophage Food
   [Food.Breakfast]: 'sun',
   [Food.Bugs]: 'bug',
   [Food.Cloth]: 'tshirt',
@@ -63,7 +62,6 @@ export const CATEGORY_ICONS_COOKING = {
   Cookie: 'cookie',
   Dessert: 'face-grin-beam-sweat',
   Frozen: 'ice-cream',
-  Hemophage: 'tint', // NOVA EDIT ADDITION - Hemophage Food
   Italian: 'pizza-slice',
   Japanese: 'earth-asia',
   Lizard: 'dragon',
@@ -82,7 +80,6 @@ export const CATEGORY_ICONS_COOKING = {
   Sushi: 'fish',
   Taco: 'circle-o',
   Terran: 'earth-europe',
-  Teshari: 'feather-pointed', // NOVA EDIT ADDITION - Teshari Food
   Uncategorized: 'shapes',
   'Main Course': 'drumstick-bite',
   Breakfast: 'sun',

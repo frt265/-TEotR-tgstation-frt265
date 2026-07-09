@@ -301,11 +301,6 @@ GLOBAL_VAR_INIT(hhMysteryRoomNumber, rand(1, 999999))
 	icon_state = "hoteldoor"
 	explosive_resistance = INFINITY
 	var/obj/item/hilbertshotel/parentSphere
-	// NOVA EDIT ADDITION START - Condos
-	var/leave_message = "Hilbert's Hotel would like to remind you that while we will do everything we can to protect the belongings \
-		you leave behind, we make no guarantees of their safety while you're gone, especially that of the health of any living creatures. \
-		With that in mind, are you ready to leave?"
-	// NOVA EDIT ADDITION END
 
 /turf/closed/indestructible/hoteldoor/Initialize(mapload)
 	. = ..()
@@ -324,12 +319,7 @@ GLOBAL_VAR_INIT(hhMysteryRoomNumber, rand(1, 999999))
 	if(!parentSphere)
 		to_chat(user, span_warning("The door seems to be malfunctioning and refuses to operate!"))
 		return
-	/// NOVA EDIT CHANGE START - Condos
-	/* Original:
 	if(tgui_alert(user, "Hilbert's Hotel would like to remind you that while we will do everything we can to protect the belongings you leave behind, we make no guarantees of their safety while you're gone, especially that of the health of any living creatures. With that in mind, are you ready to leave?", "Exit", list("Leave", "Stay")) == "Leave")
-	*/
-	if(tgui_alert(user, leave_message, "Exit", list("Leave", "Stay")) == "Leave") // NOVA EDIT CHANGE - Moved blurb to leave_message variable
-	/// NOVA EDIT CHANGE END
 		if(HAS_TRAIT(user, TRAIT_IMMOBILIZED) || (get_dist(get_turf(src), get_turf(user)) > 1)) //no teleporting around if they're dead or moved away during the prompt.
 			return
 		user.forceMove(get_turf(parentSphere))
@@ -408,7 +398,7 @@ GLOBAL_VAR_INIT(hhMysteryRoomNumber, rand(1, 999999))
 	area_flags = NOTELEPORT | HIDDEN_AREA
 	area_flags_mapping = NONE
 	static_lighting = TRUE
-	// ambientsounds = list('sound/ambience/ruin/servicebell.ogg') // NOVA EDIT REMOVAL
+	ambientsounds = list('sound/ambience/ruin/servicebell.ogg')
 	var/roomnumber = 0
 	var/obj/item/hilbertshotel/parentSphere
 	var/datum/turf_reservation/reservation

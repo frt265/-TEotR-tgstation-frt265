@@ -4,9 +4,8 @@
 	id = SPECIES_SNAIL
 	inherent_traits = list(
 		TRAIT_MUTANT_COLORS,
-		// TRAIT_NO_UNDERWEAR, //NOVA EDIT REMOVAL - Roundstart Snails - Snails deserve to wear underwear
+		TRAIT_NO_UNDERWEAR,
 		TRAIT_NO_SLIP_ALL,
-		TRAIT_WATER_BREATHING, //NOVA EDIT ADDITION - Roundstart Snails - Sea snails exist, and land snails can weather being underwater for almost a day.
 	)
 
 	coldmod = 0.5 //snails only come out when its cold and wet
@@ -102,7 +101,6 @@
 	pickup_sound = null
 	equip_sound = null
 
-// NOVA EDIT ADDITION - CLARIFICATION - Roundstart Snails - These armor values don't actually do any protection of the wearer, this is for checking direct damage to the backpack. Damage resistance stuff is in their heart file.
 /datum/armor/backpack_snail
 	melee = 40
 	bullet = 30

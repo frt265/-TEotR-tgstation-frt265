@@ -128,10 +128,6 @@
 		return NONE
 	if(interacting_with.anchored)
 		return NONE
-	// NOVA EDIT ADDITION START - Cargo borgs
-	if(!amount)
-		return NONE
-	// NOVA EDIT ADDITION END
 
 	if(isitem(interacting_with))
 		var/obj/item/item = interacting_with

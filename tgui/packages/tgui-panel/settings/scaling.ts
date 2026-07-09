@@ -12,7 +12,6 @@ const ELEMENTS_TO_ADJUST = [
   'inputbuttons.oocbutton',
   'inputbuttons.whisperbutton',
   'mapwindow.status_bar',
-  'infobuttons.nova-connect-to-relay', // NOVA EDIT ADDITION
 ];
 
 const DEFAULT_BUTTON_FONT_SIZE = 4;

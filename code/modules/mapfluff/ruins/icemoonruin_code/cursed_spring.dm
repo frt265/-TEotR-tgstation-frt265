@@ -16,7 +16,6 @@
 	initial_gas_mix = ICEMOON_DEFAULT_ATMOS
 	fishing_datum = /datum/fish_source/cursed_spring
 
-/* NOVA EDIT REMOVAL
 /turf/open/water/hot_spring/cursed/dip_in(atom/movable/movable)
 	if(!isliving(movable))
 		return ..()
@@ -39,4 +38,3 @@
 	var/turf/return_turf = find_safe_turf(extended_safety_checks = TRUE, dense_atoms = FALSE)
 	transformed_mob.forceMove(return_turf)
 	to_chat(transformed_mob, span_notice("You blink and find yourself in [get_area_name(return_turf)]."))
-*/

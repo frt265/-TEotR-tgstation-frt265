@@ -47,10 +47,10 @@
 	circuit = null
 	interaction_flags_atom = INTERACT_ATOM_UI_INTERACT | INTERACT_ATOM_NO_FINGERPRINT_INTERACT | INTERACT_ATOM_NO_FINGERPRINT_ATTACK_HAND | INTERACT_MACHINE_REQUIRES_SIGHT
 	frame_type = /obj/item/wallframe/telescreen/entertainment
-	var/icon_state_off = "entertainment_blank"
-	var/icon_state_on = "entertainment"
 	/// Virtual radio inside of the entertainment monitor to broadcast audio
 	var/obj/item/radio/entertainment/speakers/speakers
+	var/icon_state_off = "entertainment_blank"
+	var/icon_state_on = "entertainment"
 
 /obj/machinery/computer/security/telescreen/entertainment/add_context(atom/source, list/context, obj/item/held_item, mob/user)
 	context[SCREENTIP_CONTEXT_CTRL_LMB] = "Toggle mute button"

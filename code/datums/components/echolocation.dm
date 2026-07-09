@@ -41,7 +41,6 @@
 	fade_in_time = src.fade_in_time,
 	fade_out_time = src.fade_out_time,
 	echo_icon,
-	use_echo = TRUE, // NOVA EDIT ADDITION
 )
 	. = ..()
 	var/mob/living/echolocator = parent
@@ -90,11 +89,7 @@
 	deafness_check()
 	RegisterSignals(echolocator, list(SIGNAL_ADDTRAIT(TRAIT_DEAF), SIGNAL_REMOVETRAIT(TRAIT_DEAF)), PROC_REF(deafness_check))
 	echolocator.become_blind(ECHOLOCATION_TRAIT)
-	// echolocator.overlay_fullscreen(ECHOLOCATION_TRAIT, /atom/movable/screen/fullscreen/echo, echo_icon) // NOVA EDIT REMOVAL
-	// NOVA EDIT ADDITION START - add constructor toggle to not use the eye overlay
-	if (use_echo)
-		echolocator.overlay_fullscreen(ECHOLOCATION_TRAIT, /atom/movable/screen/fullscreen/echo, echo_icon)
-	// NOVA EDIT ADDITION END
+	echolocator.overlay_fullscreen(ECHOLOCATION_TRAIT, /atom/movable/screen/fullscreen/echo, echo_icon)
 	echolocator.apply_status_effect(/datum/status_effect/grouped/see_no_names, ECHOLOCATION_TRAIT)
 	START_PROCESSING(SSfastprocess, src)
 

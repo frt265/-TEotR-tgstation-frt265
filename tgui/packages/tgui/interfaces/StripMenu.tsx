@@ -7,7 +7,7 @@ import { resolveAsset } from '../assets';
 import { useBackend } from '../backend';
 import { Window } from '../layouts';
 
-const ROWS = 6; // NOVA EDIT CHANGE
+const ROWS = 5;
 const COLUMNS = 6;
 
 const BUTTON_DIMENSIONS = '64px';
@@ -107,12 +107,6 @@ const ALTERNATE_ACTIONS: Record<string, AlternateAction> = {
     icon: 'power-off',
     text: 'Deactivate MOD',
   },
-  // NOVA ADDITION BEGIN - entombed quirk suit reactivation
-  entombed_emergency_reactivate: {
-    icon: 'power-off',
-    text: 'Emergency MODsuit reactivation',
-  },
-  // NOVA ADDITION END
 };
 
 const SLOTS: Record<
@@ -249,32 +243,8 @@ const SLOTS: Record<
     gridSpot: getGridSpotKey([4, 5]),
     image: 'inventory-pocket.png',
   },
-  // NOVA EDIT ADDITION
-  vagina: {
-    displayName: 'vagina',
-    gridSpot: getGridSpotKey([5, 1]),
-    image: 'inventory-pocket.png',
-  },
-
-  anus: {
-    displayName: 'anus',
-    gridSpot: getGridSpotKey([5, 2]),
-    image: 'inventory-pocket.png',
-  },
-
-  nipples: {
-    displayName: 'nipples',
-    gridSpot: getGridSpotKey([5, 3]),
-    image: 'inventory-pocket.png',
-  },
-
-  penis: {
-    displayName: 'penis',
-    gridSpot: getGridSpotKey([5, 4]),
-    image: 'inventory-pocket.png',
-  },
 };
-// NOVA EDIT END
+
 enum ObscuringLevel {
   Completely = 1,
   Hidden = 2,
