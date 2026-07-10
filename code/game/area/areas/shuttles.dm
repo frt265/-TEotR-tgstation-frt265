@@ -155,7 +155,7 @@
 	name = "Labor Camp Shuttle"
 
 /area/shuttle/supply
-	name = "Supply Shuttle"
+	name = "NLV Consign" //NOVA EDIT CHANGE
 	area_flags = NOTELEPORT
 
 /area/shuttle/escape

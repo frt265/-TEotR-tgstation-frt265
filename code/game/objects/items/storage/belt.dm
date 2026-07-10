@@ -101,7 +101,7 @@
 /obj/item/storage/belt/utility/full/powertools/PopulateContents()
 	new /obj/item/screwdriver/power(src)
 	new /obj/item/crowbar/power(src)
-	new /obj/item/weldingtool/experimental(src)
+	new /obj/item/weldingtool/electric(src) // NOVA EDIT - original: new /obj/item/weldingtool/experimental(src)
 	new /obj/item/multitool(src)
 	new /obj/item/holosign_creator/atmos(src)
 	new /obj/item/extinguisher/mini(src)
@@ -470,7 +470,7 @@
 /obj/item/storage/belt/wands/full/proc/create_wands()
 	new /obj/item/gun/magic/wand/death(src)
 	new /obj/item/gun/magic/wand/resurrection(src)
-	new /obj/item/gun/magic/wand/polymorph(src)
+	new /obj/item/gun/magic/wand/fireball(src) //NOVA EDIT - Trades polymorph for second fireball
 	new /obj/item/gun/magic/wand/teleport(src)
 	new /obj/item/gun/magic/wand/door(src)
 	new /obj/item/gun/magic/wand/fireball(src)

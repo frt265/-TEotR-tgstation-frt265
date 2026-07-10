@@ -352,6 +352,7 @@
 	. = ..()
 	allowed += list(
 		/obj/item/melee/baton/telescopic,
+		/obj/item/gun/energy/cell_loaded/medigun, // NOVA EDIT ADDITION - MEDIGUNS
 	)
 
 /obj/item/clothing/head/hooded/winterhood/medical/cmo

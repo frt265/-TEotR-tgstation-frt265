@@ -12,7 +12,7 @@
 	var/list/phrases = alter_phrases || hurt_phrases
 
 	/// No OOC leaks
-	if(!entry || payload["channel"] == OOC_CHANNEL || payload["channel"] == ME_CHANNEL || payload["channel"] == PRAY_CHANNEL)
+	if(!entry || payload["channel"] == OOC_CHANNEL || payload["channel"] == ME_CHANNEL || payload["channel"] == PRAY_CHANNEL || payload["channel"] == LOOC_CHANNEL) // NOVA EDIT CHANGE - ORIGINAL: if(!entry || payload["channel"] == OOC_CHANNEL || payload["channel"] == ME_CHANNEL || payload["channel"] == PRAY_CHANNEL)
 		return pick(phrases)
 	/// Random trimming for larger sentences
 	if(length(entry) > 50)
@@ -53,6 +53,16 @@
 		if(PRAY_CHANNEL)
 			client.mob.pray(entry)
 			return TRUE
+		// NOVA EDIT ADDITION START - CUSTOMIZATION
+		if(LOOC_CHANNEL)
+			INVOKE_ASYNC(client, TYPE_PROC_REF(/client, looc_message), entry)
+			return TRUE
+		if(WHIS_CHANNEL)
+			client.mob.whisper_verb(entry)
+			return TRUE
+		if(DO_CHANNEL)
+			client.mob.do_verb(entry)
+		// NOVA EDIT ADDITION END
 	return FALSE
 
 /**
@@ -123,7 +133,7 @@
  *  boolean - success or failure
  */
 /datum/tgui_say/proc/handle_entry(type, payload)
-	if(!payload?["channel"] || !payload["entry"])
+	if(!payload?["channel"] || isnull(payload["entry"]))
 		CRASH("[usr] entered in a null payload to the chat window.")
 	if(length(payload["entry"]) > max_length)
 		CRASH("[usr] has entered more characters than allowed into a TGUI-Say")

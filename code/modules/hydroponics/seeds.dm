@@ -551,6 +551,7 @@
  */
 /obj/item/seeds/proc/create_graft()
 	var/obj/item/graft/snip = new(loc, src)
+	snip.reagents_add = reagents_add.Copy() // NOVA EDIT ADDITION
 	return snip
 
 /**

@@ -18,6 +18,7 @@ GLOBAL_LIST_EMPTY(dynamic_human_appearances)
 	dummy.undershirt = "Nude"
 	dummy.socks = "Nude"
 	dummy.set_combat_mode(combat_mode)
+	dummy.bra = "Nude" // NOVA EDIT ADDITION - Underwear and bra split
 	if(outfit_path)
 		var/datum/outfit/outfit = new outfit_path()
 		if(r_hand != NO_REPLACE) //we can still override to be null, no replace means just use outfit's

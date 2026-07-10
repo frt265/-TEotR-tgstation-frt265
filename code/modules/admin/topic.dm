@@ -440,6 +440,7 @@
 		if(tgui_alert(usr, "Send [key_name(M)] to Prison?", "Message", list("Yes", "No")) != "Yes")
 			return
 
+		do_sparks(10, TRUE, M, spark_type = /datum/effect_system/basic/spark_spread/quantum) // NOVA EDIT ADDITION - Immersion-friendly Admin Prison
 		M.forceMove(pick(GLOB.prisonwarp))
 		to_chat(M, span_adminnotice("You have been sent to Prison!"), confidential = TRUE)
 

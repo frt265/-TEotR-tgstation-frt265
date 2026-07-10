@@ -180,6 +180,8 @@
 
 	dat += build_antag_listing()
 
+	dat += SSopposing_force.get_check_antag_listing() //NOVA EDIT ADDITION
+
 	dat += "</body></html>"
 	var/datum/browser/browser = new(usr, "roundstatus", "Round Status", 500, 500)
 	browser.set_content(dat.Join())

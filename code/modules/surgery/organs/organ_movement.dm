@@ -39,6 +39,10 @@
  */
 /obj/item/organ/proc/Remove(mob/living/carbon/organ_owner, special = FALSE, movement_flags)
 	SHOULD_CALL_PARENT(TRUE)
+	// NOVA EDIT ADDITION START
+	if(organ_owner.dna?.mutant_bodyparts && !(movement_flags & KEEP_IN_MUTANT_BODYPARTS))
+		organ_owner.dna.mutant_bodyparts -= mutantpart_key
+	// NOVA EDIT ADDITION END
 
 	mob_remove(organ_owner, special, movement_flags)
 	bodypart_remove(limb_owner = organ_owner, movement_flags = movement_flags)
@@ -114,6 +118,17 @@
 	sortTim(owner.organs_slot, GLOBAL_PROC_REF(cmp_organ_slot_asc))
 
 	STOP_PROCESSING(SSobj, src)
+	// NOVA EDIT ADDITION START
+	if(isdummy(organ_owner))
+		return
+	if(!organ_owner.has_dna())
+		return
+	if(mutantpart_key && bodypart_overlay && isnull(organ_owner.dna.mutant_bodyparts[mutantpart_key]))
+		var/datum/sprite_accessory/sprite_acc = bodypart_overlay.sprite_datum
+		if(sprite_acc)
+			organ_owner.dna.mutant_bodyparts[mutantpart_key] = build_mutant_part(sprite_acc.name, bodypart_overlay.draw_color || sprite_acc.get_default_color(organ_owner.dna.features, organ_owner.dna.species), bodypart_overlay.emissive_eligibility_by_color_index)
+			bodypart_overlay.set_appearance_from_dna(organ_owner.dna, limb = bodypart_owner)
+	// NOVA EDIT ADDITION END
 
 /// Insert an organ into a limb, assume the limb as always detached and include no owner operations here (except the get_bodypart helper here I guess)
 /// Give EITHER a limb OR a limb owner
@@ -147,7 +162,6 @@
 
 	item_flags |= ABSTRACT
 	ADD_TRAIT(src, TRAIT_NODROP, ORGAN_INSIDE_BODY_TRAIT)
-	interaction_flags_item &= ~INTERACT_ITEM_ATTACK_HAND_PICKUP
 
 	if(external_bodytypes)
 		limb.owner?.synchronize_bodytypes()
@@ -259,7 +273,6 @@
 
 	item_flags &= ~ABSTRACT
 	REMOVE_TRAIT(src, TRAIT_NODROP, ORGAN_INSIDE_BODY_TRAIT)
-	interaction_flags_item |= INTERACT_ITEM_ATTACK_HAND_PICKUP
 
 	limb.owner?.synchronize_bodytypes()
 	limb.owner?.synchronize_bodyshapes()

@@ -1,3 +1,4 @@
+/* // NOVA EDIT REMOVAL START
 /datum/preference/choiced/species_feature/moth_antennae
 	savefile_key = "feature_moth_antennae"
 	savefile_identifier = PREFERENCE_CHARACTER
@@ -78,3 +79,4 @@
 /datum/preference/choiced/species_feature/moth_wings/icon_for(value)
 	var/datum/sprite_accessory/moth_wings = get_accessory_for_value(value)
 	return uni_icon(moth_wings.icon, "m_moth_wings_[moth_wings.icon_state]_BEHIND")
+*/ // NOVA EDIT REMOVAL

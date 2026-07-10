@@ -11,6 +11,7 @@ const commandJobs = [
   'Research Director',
   'Chief Medical Officer',
   'Quartermaster',
+  'Nanotrasen Consultant', // NOVA EDIT ADDITION
 ];
 
 export const CrewManifest = (props) => {

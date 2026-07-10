@@ -63,7 +63,12 @@
 	var/mob/living/spawned_mob = new mob_type(get_turf(src)) //living mobs only
 	special(spawned_mob, mob_possessor, apply_prefs)
 	name_mob(spawned_mob, newname)
-	equip(spawned_mob)
+	//equip(spawned_mob) // NOVA EDIT REMOVAL
+	// NOVA EDIT ADDITION START
+	// Only run equip logic if this is NOT a ghost_role spawner, as we already solve equip with loadout there.
+	if (!apply_prefs)
+		equip(spawned_mob)
+	// NOVA EDIT ADDITION END
 	spawned_mob_ref = WEAKREF(spawned_mob)
 	return spawned_mob
 
@@ -81,12 +86,17 @@
 	if(ishuman(spawned_mob))
 		var/mob/living/carbon/human/spawned_human = spawned_mob
 		if(mob_species)
-			spawned_human.set_species(mob_species)
+			spawned_human.set_species(mob_species, pref_load = apply_prefs) // NOVA EDIT CHANGE - ORIGINAL: spawned_human.set_species(mob_species)
 		spawned_human.dna.species.give_important_for_life(spawned_human) // for preventing plasmamen from combusting immediately upon spawning
 		spawned_human.underwear = "Nude"
 		spawned_human.undershirt = "Nude"
 		spawned_human.socks = "Nude"
-		randomize_human_normie(spawned_human)
+		spawned_human.bra = "Nude" //NOVA EDIT ADDITION
+		//randomize_human_normie(spawned_human) // NOVA EDIT REMOVAL - Puts this behind if(random_appearance) - see below
+		//NOVA EDIT ADDITION START
+		if(!apply_prefs)
+			randomize_human_normie(spawned_human)
+		// NOVA EDIT ADDITION END
 		if(hairstyle)
 			spawned_human.set_hairstyle(hairstyle, update = FALSE)
 		if(facial_hairstyle)
@@ -188,6 +198,13 @@
 	uses -= 1 // Remove a use EARLY to account for sleep / inputs
 	var/user_ckey = user.ckey // Just in case shenanigans happen, we always want to remove it from the list.
 	LAZYADD(ckeys_trying_to_spawn, user_ckey)
+	// NOVA EDIT ADDITION START
+	if(restricted_species && !(user.client?.prefs?.read_preference(/datum/preference/choiced/species) in restricted_species))
+		var/incorrect_species = tgui_alert(user, "Current species preference incompatible, proceed with random appearance?", "Incompatible Species", list("Yes", "No"))
+		if(incorrect_species != "Yes")
+			LAZYREMOVE(ckeys_trying_to_spawn, user_ckey)
+			return
+	// NOVA EDIT ADDITION END
 
 	var/prompt_fail = FALSE
 	var/apply_prefs = FALSE
@@ -197,12 +214,21 @@
 			prompt += " (Warning, You can no longer be revived!)"
 		prompt_fail = tgui_alert(user, prompt, buttons = list("Yes", "No"), timeout = 10 SECONDS) != "Yes"
 
+	/* // NOVA EDIT REMOVAL START: handled below
 	var/species_pref = user.client.prefs.read_preference(/datum/preference/choiced/species) || /datum/species/human
 	if(!prompt_fail && user.started_as_observer && allow_custom_character && (GLOB.species_prototypes[species_pref].inherent_respiration_type & RESPIRATION_OXYGEN))
 		var/static_prompt = "Because you haven't taken a role so far, you may spawn in as \
 			[((allow_custom_character & GHOSTROLE_TAKE_PREFS_SPECIES) || species_pref == /datum/species/human) ? "" : "a human version of"] \
 			your customized character with a random name. Would you like to?"
 		apply_prefs = tgui_alert(user, static_prompt, "Custom Character", list("Yes", "No"), 10 SECONDS) == "Yes"
+	*/ // NOVA EDIT REMOVAL END
+	// NOVA EDIT ADDITION START
+	//if we can load our own appearance and it's not restricted, try
+	if(!prompt_fail && (allow_custom_character & GHOSTROLE_TAKE_PREFS_APPEARANCE) && user.client)
+		//if we have gotten to this point, they have already waived their species pref.-- they were told they need to use the specific species already
+		if(!apply_prefs && (restricted_species && (user.client?.prefs?.read_preference(/datum/preference/choiced/species) in restricted_species)) || !restricted_species)
+			apply_prefs = tgui_alert(user, "Use currently loaded character preferences?", "Appearance Type", list("Yes", "No"), 10 SECONDS) == "Yes"
+	// NOVA EDIT ADDITION END
 
 	if(!prompt_fail && !pre_ghost_take(user))
 		prompt_fail = TRUE
@@ -222,6 +248,11 @@
 	if(is_banned_from(user.ckey, role_ban))
 		to_chat(user, span_warning("You are banned from this role!"))
 		return FALSE
+	// NOVA EDIT ADDITION START
+	if(is_banned_from(user.ckey, BAN_GHOST_ROLE_SPAWNER)) // Ghost role bans
+		to_chat(user, span_warning("Error, you are banned from playing ghost roles!"))
+		return FALSE
+	// NOVA EDIT ADDITION END
 	if(!(GLOB.ghost_role_flags & GHOSTROLE_SPAWNER) && !(flags_1 & ADMIN_SPAWNED_1))
 		to_chat(user, span_warning("An admin has temporarily disabled non-admin ghost roles!"))
 		return FALSE
@@ -251,6 +282,12 @@
 
 	user.log_message("became a [prompt_name].", LOG_GAME)
 	if(!temp_body)
+		//NOVA EDIT ADDITION START - DNR TRAIT
+		//Makes your body ACTUALLY unrevivable (as the prompt suggests with "Warning, You can no longer be revived!")
+		if(istype(user, /mob/dead/observer))
+			var/mob/dead/observer/user_ghost = user
+			user_ghost.stay_dead()
+		//NOVA EDIT ADDITION END
 		user.mind = null // dissassociate mind, don't let it follow us to the next life
 
 	var/mob/created = create(user, apply_prefs = apply_prefs)
@@ -273,6 +310,7 @@
 /obj/effect/mob_spawn/ghost_role/special(mob/living/spawned_mob, mob/mob_possessor, apply_prefs)
 	. = ..()
 	if(mob_possessor)
+		/* NOVA EDIT REMOVAL START: equivalent handled modularly with loadout support
 		if(mob_possessor.client && apply_prefs && allow_custom_character && ishuman(spawned_mob))
 			var/mob/living/carbon/human/spawned_human = spawned_mob
 			if(allow_custom_character & GHOSTROLE_TAKE_PREFS_APPEARANCE)
@@ -280,6 +318,7 @@
 			if(allow_custom_character & GHOSTROLE_TAKE_PREFS_SPECIES)
 				spawned_human.set_species(mob_possessor.client.prefs.read_preference(/datum/preference/choiced/species))
 				spawned_human.fully_replace_character_name(spawned_human.real_name, spawned_human.generate_random_mob_name())
+		*///NOVA EDIT REMOVAL END
 		if(mob_possessor.mind)
 			mob_possessor.mind.transfer_to(spawned_mob, force_key_move = TRUE)
 		else

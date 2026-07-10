@@ -18,6 +18,7 @@
 
 	greyscale_config = /datum/greyscale_config/bandana
 	greyscale_config_worn = /datum/greyscale_config/bandana/worn
+	greyscale_config_worn_muzzled = /datum/greyscale_config/bandana/worn/muzzled //NOVA EDIT ADDITION - Mutant Greyscale
 	greyscale_config_inhand_left = /datum/greyscale_config/bandana/inhands_left
 	greyscale_config_inhand_right = /datum/greyscale_config/bandana/inhands_right
 	greyscale_colors = "#2e2e2e"
@@ -40,6 +41,12 @@
 	if(slot_flags & ITEM_SLOT_NECK)
 		to_chat(user, span_warning("You must undo [src] in order to push it into a hat!"))
 		return FALSE
+	//NOVA EDIT ADDITION START: BANDANA HATS FOR MUTANTS
+	if(slot_flags & ITEM_SLOT_HEAD)
+		supports_variations_flags = NONE
+	if(slot_flags & ITEM_SLOT_MASK)
+		supports_variations_flags = initial(supports_variations_flags)
+	//NOVA EDIT ADDITION END
 	return ..()
 
 /obj/item/clothing/mask/bandana/visor_toggling()
@@ -155,6 +162,7 @@
 	post_init_icon_state = "bandstriped"
 	greyscale_config = /datum/greyscale_config/bandana/striped
 	greyscale_config_worn = /datum/greyscale_config/bandana/striped/worn
+	greyscale_config_worn_muzzled = /datum/greyscale_config/bandana/striped/worn/muzzled //NOVA EDIT ADDITION - Mutant Greyscale
 	greyscale_config_inhand_left = /datum/greyscale_config/bandana/striped/inhands_left
 	greyscale_config_inhand_right = /datum/greyscale_config/bandana/striped/inhands_right
 	greyscale_colors = "#2e2e2e#C6C6C6"
@@ -215,6 +223,7 @@
 	post_init_icon_state = "bandskull"
 	greyscale_config = /datum/greyscale_config/bandana/skull
 	greyscale_config_worn = /datum/greyscale_config/bandana/skull/worn
+	greyscale_config_worn_muzzled = /datum/greyscale_config/bandana/skull/worn/muzzled //NOVA EDIT ADDITION - Mutant Greyscale
 	greyscale_config_inhand_left = /datum/greyscale_config/bandana/skull/inhands_left
 	greyscale_config_inhand_right = /datum/greyscale_config/bandana/skull/inhands_right
 	greyscale_colors = "#2e2e2e#C6C6C6"
@@ -245,6 +254,7 @@
 	post_init_icon_state = "facescarf"
 	greyscale_config = /datum/greyscale_config/facescarf
 	greyscale_config_worn = /datum/greyscale_config/facescarf/worn
+	greyscale_config_worn_muzzled = /datum/greyscale_config/facescarf/worn/muzzled //NOVA EDIT ADDITION - Mutant Greyscale
 	greyscale_config_inhand_left = /datum/greyscale_config/facescarf/inhands_left
 	greyscale_config_inhand_right = /datum/greyscale_config/facescarf/inhands_right
 	flags_1 = IS_PLAYER_COLORABLE_1

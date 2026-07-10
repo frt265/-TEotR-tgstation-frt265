@@ -59,6 +59,10 @@
 	. = ..()
 	robot = loc
 	if(!istype(robot))
+		// NOVA EDIT ADDITION START - Disguise picker needs to be able to temporarily spawn models, to copy their appearance. No modules needed
+		if(isnull(robot))
+			return
+		// NOVA EDIT ADDITION END
 		stack_trace("Robot model ([src]) initialized outside of a robot at [AREACOORD(robot)]! \
 			This should never happen, make sure this item is not map-placed.")
 		return INITIALIZE_HINT_QDEL
@@ -391,9 +395,10 @@
 		/obj/item/extinguisher,
 		/obj/item/weldingtool/largetank/cyborg,
 		/obj/item/borg/cyborg_omnitool/engineering,
-		/obj/item/borg/cyborg_omnitool/engineering,
+		/obj/item/multitool/cyborg, // NOVA EDIT CHANGE - Keep multiool here for quicker access - ORIGINAL: obj/item/borg/cyborg_omnitool/engineering,
 		/obj/item/t_scanner,
 		/obj/item/analyzer,
+		/obj/item/holosign_creator/atmos, // NOVA EDIT ADDITION - Adds Holofans to engineering borgos
 		/obj/item/assembly/signaler/cyborg,
 		/obj/item/blueprints/cyborg,
 		/obj/item/electroadaptive_pseudocircuit,
@@ -401,7 +406,10 @@
 		/obj/item/stack/sheet/glass,
 		/obj/item/borg/apparatus/sheet_manipulator,
 		/obj/item/stack/rods/cyborg,
+		/obj/item/lightreplacer, // NOVA EDIT ADDITION - Surprised Engie borgs don't get these
 		/obj/item/construction/rtd/borg,
+		/obj/item/storage/part_replacer, // NOVA EDIT ADDITION - Borgs start with a basic RPD.
+		/obj/item/borg/apparatus/engineering, // NOVA EDIT ADDITION - Borgs start with one gripper, upgrade adds a second like mediborg beakers
 		/obj/item/stack/cable_coil,
 		/obj/item/airlock_painter/decal/cyborg,
 	)
@@ -413,6 +421,7 @@
 	model_select_icon = "engineer"
 	model_traits = list(TRAIT_NEGATES_GRAVITY)
 	hat_offset = list("north" = list(0, -4), "south" = list(0, -4), "east" = list(4, -4), "west" = list(-4, -4))
+	///Weakref to the night vision action
 	var/datum/weakref/night_vision_ref
 
 /datum/action/cooldown/borg_meson
@@ -429,10 +438,12 @@
 	borg.update_sight()
 
 /obj/item/robot_model/engineering/be_transformed_to(obj/item/robot_model/old_model, forced = FALSE)
-	var/datum/action/cooldown/borg_meson/night_vision = new(loc)
 	. = ..()
 	if(!.)
 		return
+
+	//Grant night vision action
+	var/datum/action/cooldown/borg_meson/night_vision = new(loc)
 	night_vision.Grant(loc)
 	night_vision_ref = WEAKREF(night_vision)
 
@@ -810,8 +821,8 @@
 
 /obj/item/robot_model/peacekeeper/do_transform_animation()
 	..()
-	to_chat(loc, span_userdanger("Under ASIMOV, you are an enforcer of the PEACE and preventer of HUMAN HARM. \
-	You are not a security member and you are expected to follow orders and prevent harm above all else. Space law means nothing to you."))
+	to_chat(loc, span_userdanger("Under Safeguard, you are an enforcer of the PEACE and preventer of HARM. \
+		You are not a security member and you are expected to follow orders and prevent harm above all else. Space law means nothing to you.")) // NOVA EDIT CHANGE - Changes 1st sentence verbiage off ASIMOV/HUMAN Focus - ORIGINAL: "Under ASIMOV, you are an enforcer of the PEACE and preventer of HUMAN HARM."
 
 /obj/item/robot_model/security
 	name = "Security"
@@ -853,13 +864,23 @@
 	name = "Service"
 	basic_modules = list(
 		/obj/item/assembly/flash/cyborg,
-		/obj/item/reagent_containers/borghypo/borgshaker,
+		//obj/item/reagent_containers/borghypo/borgshaker, // NOVA EDIT REMOVAL - SPECIFIC SHAKERS
+		//NOVA EDIT ADDITION START
+		/obj/item/reagent_containers/borghypo/borgshaker/specific/alcohol,
+		/obj/item/reagent_containers/borghypo/borgshaker/specific/soda,
+		/obj/item/reagent_containers/borghypo/borgshaker/specific/juice,
+		/obj/item/reagent_containers/borghypo/borgshaker/specific/misc,
+		//NOVA EDIT ADDITION END
 		/obj/item/borg/apparatus/beaker/service,
+		/obj/item/borg/apparatus/beaker, // NOVA EDIT ADDITION - Allows the pickup of different beakers for easier drink mixing
 		/obj/item/reagent_containers/cup/beaker/large, //I know a shaker is more appropiate but this is for ease of identification
-		/obj/item/reagent_containers/condiment/enzyme,
+		//obj/item/reagent_containers/condiment/enzyme, // NOVA EDIT REMOVAL - Borg shaker has it
 		/obj/item/reagent_containers/dropper,
+		/obj/item/reagent_containers/syringe, //NOVA EDIT ADDITION
 		/obj/item/rsf,
 		/obj/item/storage/bag/tray,
+		/obj/item/storage/bag/tray, // NOVA EDIT ADDITION: Adds second tray
+		/obj/item/cooking/cyborg/power, //NOVA EDIT ADDITION
 		/obj/item/pen,
 		/obj/item/toy/crayon/spraycan/borg,
 		/obj/item/extinguisher/mini,
@@ -904,7 +925,7 @@
 	name = "Syndicate Assault"
 	basic_modules = list(
 		/obj/item/assembly/flash/cyborg,
-		/obj/item/melee/energy/sword/cyborg,
+		/obj/item/melee/energy/sword/saber/cyborg,
 		/obj/item/gun/energy/printer,
 		/obj/item/gun/ballistic/revolver/grenadelauncher/cyborg,
 		/obj/item/card/emag,
@@ -921,6 +942,9 @@
 	..()
 	var/mob/living/silicon/robot/cyborg = loc
 	cyborg.remove_faction(FACTION_SILICON) //ai turrets
+	add_minimap_blip(cyborg, MINIMAP_NUKEOP_BORG_BLIP, "combatborg")
+	var/datum/action/minimap/nuclear/tacmap_action = new
+	tacmap_action.Grant(cyborg)
 
 /obj/item/robot_model/syndicate/remove_module(obj/item/removed_module)
 	..()
@@ -937,7 +961,7 @@
 		/obj/item/borg/cyborg_omnitool/medical,
 		/obj/item/borg/cyborg_omnitool/medical,
 		/obj/item/blood_filter,
-		/obj/item/melee/energy/sword/cyborg/saw,
+		/obj/item/melee/energy/sword/saber/cyborg/saw,
 		/obj/item/emergency_bed/silicon,
 		/obj/item/crowbar/cyborg,
 		/obj/item/extinguisher/mini,
@@ -952,6 +976,13 @@
 	model_select_icon = "malf"
 	model_traits = list(TRAIT_PUSHIMMUNE)
 	hat_offset = list("north" = list(0, 3), "south" = list(0, 3), "east" = list(-1, 3), "west" = list(1, 3))
+
+/obj/item/robot_model/syndicate_medical/rebuild_modules()
+	..()
+	var/mob/living/silicon/robot/cyborg = loc
+	add_minimap_blip(cyborg, MINIMAP_NUKEOP_BORG_BLIP, "mediborg")
+	var/datum/action/minimap/nuclear/tacmap_action = new
+	tacmap_action.Grant(cyborg)
 
 /obj/item/robot_model/saboteur
 	name = "Syndicate Saboteur"
@@ -983,6 +1014,13 @@
 	hat_offset = list("north" = list(0, -4), "south" = list(0, -4), "east" = list(4, -4), "west" = list(-4, -4))
 	canDispose = TRUE
 	var/datum/weakref/thermal_vision_ref
+
+/obj/item/robot_model/saboteur/rebuild_modules()
+	..()
+	var/mob/living/silicon/robot/cyborg = loc
+	add_minimap_blip(cyborg, MINIMAP_NUKEOP_BORG_BLIP, "engiborg")
+	var/datum/action/minimap/nuclear/tacmap_action = new
+	tacmap_action.Grant(cyborg)
 
 /datum/action/cooldown/borg_thermal
 	name = "Toggle Thermal Night Vision"

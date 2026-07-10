@@ -85,11 +85,13 @@
 	hidden_uplink.name = "dusty radio"
 
 // Multitool uplink
-/obj/item/multitool/uplink/Initialize(mapload, owner, tc_amount = 20, datum/uplink_handler/uplink_handler_override = null)
+////obj/item/multitool/uplink/Initialize(mapload, owner, tc_amount = 20, datum/uplink_handler/uplink_handler_override = null) //ORIGINAL
+/obj/item/multitool/uplink/Initialize(mapload, owner, tc_amount = 35, datum/uplink_handler/uplink_handler_override = null) //NOVA EDIT CHANGE
 	. = ..()
 	AddComponent(/datum/component/uplink, owner, FALSE, TRUE, UPLINK_TRAITORS, tc_amount)
 
 // Pen uplink
-/obj/item/pen/uplink/Initialize(mapload, owner, tc_amount = 20, datum/uplink_handler/uplink_handler_override = null)
+///obj/item/pen/uplink/Initialize(mapload, owner, tc_amount = 20, datum/uplink_handler/uplink_handler_override = null) //ORIGINAL
+/obj/item/pen/uplink/Initialize(mapload, owner, tc_amount = 35, datum/uplink_handler/uplink_handler_override = null) //NOVA EDIT CHANGE
 	. = ..()
 	AddComponent(/datum/component/uplink, owner, TRUE, FALSE, UPLINK_TRAITORS, tc_amount)

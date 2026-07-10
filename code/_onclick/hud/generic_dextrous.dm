@@ -25,6 +25,7 @@
 	add_screen_object(/atom/movable/screen/zone_sel, HUD_MOB_ZONE_SELECTOR, HUD_GROUP_STATIC, ui_style)
 	add_screen_object(/atom/movable/screen/area_creator, HUD_MOB_AREA_CREATOR, HUD_GROUP_STATIC, ui_style)
 	add_screen_object(/atom/movable/screen/memories, HUD_MOB_MEMORIES, HUD_GROUP_STATIC, ui_style)
+	add_screen_object(/atom/movable/screen/ammo_counter, HUD_MOB_AMMO, HUD_GROUP_INFO) // NOVA EDIT ADDITION
 
 	if(HAS_TRAIT(mymob, TRAIT_CAN_THROW_ITEMS))
 		add_screen_object(/atom/movable/screen/throw_catch, HUD_MOB_THROW, HUD_GROUP_HOTKEYS, ui_style, ui_drop_throw)

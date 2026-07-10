@@ -315,6 +315,7 @@ This is highly likely to cause massive amounts of lag as every object in the gam
 			CHECK_TICK
 			var/image/layer = image(step["step"])
 			var/image/result = image(step["result"])
+			// NOVA EDIT BEGIN - Bringing back the GAGS coloring menu
 			steps += list(
 				list(
 					"layer"=icon2html(layer, user, dir=sprite_dir, sourceonly=TRUE),
@@ -322,6 +323,7 @@ This is highly likely to cause massive amounts of lag as every object in the gam
 					"config_name"=step["config_name"]
 				)
 			)
+			// NOVA EDIT END
 
 	sprite_data["time_spent"] = TICK_DELTA_TO_MS(time_spent)
 	sprite_data["finished"] = icon2html(finished, user, dir=sprite_dir, sourceonly=TRUE)

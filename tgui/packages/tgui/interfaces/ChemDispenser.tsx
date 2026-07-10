@@ -284,6 +284,11 @@ export const ChemDispenser = (props) => {
                 </Section>
               </Stack.Item>
               <Stack.Item>
+                <Button // NOVA EDIT ADDITION BEGIN - CHEMISTRY QOL
+                  icon="pen"
+                  content="Custom Amount"
+                  onClick={() => act('custom_amount')}
+                />
                 <Section
                   title="Dispense"
                   buttons={beakerTransferAmounts.map((amount) => (

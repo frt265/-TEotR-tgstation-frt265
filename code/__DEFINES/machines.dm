@@ -73,6 +73,24 @@
 #define AWAY_IMPRINTER (1<<9)
 /// For wiremod/integrated circuits. Uses various minerals.
 #define COMPONENT_PRINTER (1<<10)
+//Note: More than one of these can be added to a design but imprinter and lathe designs are incompatable.
+// NOVA EDIT ADDITION
+/// Can be made by the orderable colony fabricator
+#define COLONY_FABRICATOR (1<<11)
+// NOVA EDIT END
+
+GLOBAL_LIST_INIT(build_types_to_string, list(
+	"[IMPRINTER]" = "Circuit Imprinter",
+	"[PROTOLATHE]" = "Protolathe",
+	"[AUTOLATHE]" = "Autolathe",
+	"[MECHFAB]" = "Exosuit Fabricator",
+	"[BIOGENERATOR]" = "Biogenerator",
+	"[LIMBGROWER]" = "Limb Grower",
+	"[SMELTER]" = "Smelter",
+	"[AWAY_LATHE]" = "Off-Grid Protolathe",
+	"[AWAY_IMPRINTER]" = "Off-Grid Circuit Imprinter",
+	"[COMPONENT_PRINTER]" = "Component Printer",
+))
 
 #define HYPERTORUS_INACTIVE 0 // No or minimal energy
 #define HYPERTORUS_NOMINAL 1 // Normal operation
@@ -132,7 +150,7 @@
 #define ORION_GAMER_REPORT_THRESHOLD 2
 
 /// What's the minimum duration of a syndie bomb (in seconds)
-#define SYNDIEBOMB_MIN_TIMER_SECONDS 90
+#define SYNDIEBOMB_MIN_TIMER_SECONDS 600 // NOVA EDIT CHANGE - ORIGINAL: #define SYNDIEBOMB_MIN_TIMER_SECONDS 90
 
 // Camera upgrade bitflags.
 #define CAMERA_UPGRADE_XRAY (1<<0)

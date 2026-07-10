@@ -32,6 +32,7 @@
 	if(GLOB.admin_datums[ckey] || GLOB.deadmins[ckey])
 		admin = TRUE
 
+	/* NOVA EDIT REMOVAL START - We have the panic bunker on 24/7, this just makes our method unusable.
 	if(!real_bans_only && !admin && CONFIG_GET(flag/panic_bunker) && !CONFIG_GET(flag/panic_bunker_interview))
 		var/datum/db_query/query_client_in_db = SSdbcore.NewQuery(
 			"SELECT 1 FROM [format_table_name("player")] WHERE ckey = :ckey",
@@ -51,6 +52,7 @@
 			return list("reason"="panicbunker", "desc" = "Sorry but the server is currently not accepting connections from never before seen players")
 
 		qdel(query_client_in_db)
+	*/ // NOVA EDIT REMOVAL END
 
 	//Whitelist
 	if(!real_bans_only && !C && CONFIG_GET(flag/usewhitelist))
@@ -62,7 +64,7 @@
 					addclientmessage(ckey,span_adminnotice("You have been allowed to bypass the whitelist"))
 			else
 				log_access("Failed Login: [ckey] - Not on whitelist")
-				return list("reason"="whitelist", "desc" = "\nReason: You are not on the white list for this server")
+				return list("reason"="whitelist", "desc" = CONFIG_GET(string/missing_whitelist_message)) // NOVA EDIT CHANGE - SQL-based whitelist. ORIGINAL: return list("reason"="whitelist", "desc" = "\nReason: You are not on the white list for this server")
 
 	//Guest Checking
 	if(!real_bans_only && !C && is_guest_key(key))

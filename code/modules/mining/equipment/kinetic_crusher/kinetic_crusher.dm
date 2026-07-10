@@ -76,6 +76,10 @@
 	update_reskin(null)
 	//technically it's huge and bulky, but this provides an incentive to use it
 	update_wielding()
+	// NOVA EDIT ADDITION START
+	if (flags_1 & HAS_CONTEXTUAL_SCREENTIPS_1)
+		return
+	// NOVA EDIT ADDITION END
 	register_context()
 
 /**
@@ -181,7 +185,7 @@
 	. = ..()
 	if(.)
 		return TRUE
-	if(!HAS_TRAIT(src, TRAIT_WIELDED))
+	if(!HAS_TRAIT(src, TRAIT_WIELDED) && !acts_as_if_wielded) // NOVA EDIT CHANGE - Original: if(!HAS_TRAIT(src, TRAIT_WIELDED))
 		user.balloon_alert(user, "must be wielded!")
 		return TRUE
 	return .
@@ -236,7 +240,7 @@
 	return ITEM_INTERACT_BLOCKING
 
 /obj/item/kinetic_crusher/interact_with_atom_secondary(atom/interacting_with, mob/living/user, list/modifiers)
-	if(!HAS_TRAIT(src, TRAIT_WIELDED))
+	if(!HAS_TRAIT(src, TRAIT_WIELDED) && !acts_as_if_wielded) // NOVA EDIT CHANGE - Original: if(!HAS_TRAIT(src, TRAIT_WIELDED))
 		balloon_alert(user, "wield it first!")
 		return ITEM_INTERACT_BLOCKING
 	if(interacting_with == user)

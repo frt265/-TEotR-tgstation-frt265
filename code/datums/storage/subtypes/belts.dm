@@ -9,6 +9,7 @@
 		/obj/item/radio,
 		/obj/item/melee/sickly_blade/lock,
 		/obj/item/reagent_containers/cup/soda_cans,
+		/obj/item/construction/plumbing, // NOVA EDIT ADDITION
 	))
 
 ///Medical belt
@@ -76,6 +77,13 @@
 		/obj/item/tank/internals/emergency_oxygen,
 		/obj/item/tourniquet,
 		/obj/item/wrench/medical,
+		// NOVA EDIT ADDITION START
+		/obj/item/clothing/suit/toggle/labcoat/nova/surgical_gown,
+		/obj/item/hypospray/mkii,
+		/obj/item/storage/hypospraykit/,
+		/obj/item/reagent_containers/cup/vial,
+		/obj/item/weaponcell/medical,
+		// NOVA EDIT ADDITION END
 	))
 
 ///Security belt
@@ -104,6 +112,8 @@
 		/obj/item/reagent_containers/spray/pepper,
 		/obj/item/restraints/handcuffs,
 		/obj/item/restraints/legcuffs/bola,
+		/obj/item/gun, // NOVA EDIT - ADDITION
+		/obj/item/clothing/mask/whistle, // NOVA EDIT - ADDITION
 	))
 
 ///Webbing security belt
@@ -249,6 +259,11 @@
 		/obj/item/reagent_containers/spray,
 		/obj/item/soap,
 		/obj/item/wirebrush,
+		// NOVA EDIT ADDITION START
+		/obj/item/mop,
+		/obj/item/mop/advanced,
+		/obj/item/reagent_containers/cup/bucket,
+		// NOVA EDIT ADDITION END
 	))
 
 ///Bandolier belt

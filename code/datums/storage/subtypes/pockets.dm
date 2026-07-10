@@ -120,7 +120,15 @@
 			/obj/item/match,
 			/obj/item/holochip,
 			/obj/item/toy/crayon,
+			// NOVA EDIT ADDITION START
+			/obj/item/forging/reagent_weapon/dagger,
+			/obj/item/melee/baton/security/stun_gun/stun_knife,
 			/obj/item/reagent_containers/cup/glass/flask,
+			/obj/item/ammo_box/magazine/c35sol_pistol,
+			/obj/item/ammo_box/magazine/c585trappiste_pistol,
+			/obj/item/ammo_box/magazine/m9mm_aps,
+			/obj/item/ammo_box/magazine/toy/pistol,
+			// NOVA EDIT ADDITION END
 		),
 		cant_hold_list = list(
 			/obj/item/screwdriver/power,
@@ -151,6 +159,7 @@
 			/obj/item/holochip,
 			/obj/item/implanter,
 			/obj/item/knife,
+			/obj/item/forging/reagent_weapon/dagger, // NOVA EDIT ADDITION
 			/obj/item/lighter,
 			/obj/item/lipstick,
 			/obj/item/match,

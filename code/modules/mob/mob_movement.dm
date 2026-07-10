@@ -539,6 +539,11 @@
 	if(move_intent == MOVE_INTENT_RUN)
 		move_intent = MOVE_INTENT_WALK
 	else
+		//NOVA EDIT ADDITION BEGIN - GUNPOINT
+		if (HAS_TRAIT(src,TRAIT_NORUNNING))
+			to_chat(src, "You find yourself unable to run.")
+			return FALSE
+		//NOVA EDIT ADDITION END
 		move_intent = MOVE_INTENT_RUN
 
 	hud_used?.screen_objects[HUD_MOB_MOVE_INTENT]?.update_appearance()
@@ -546,10 +551,7 @@
 	SEND_SIGNAL(src, COMSIG_MOVE_INTENT_TOGGLED)
 
 ///Moves a mob upwards in z level
-/mob/verb/up()
-	set name = "Move Upwards"
-	set category = "IC"
-
+/mob/proc/up()
 	if(remote_control)
 		return remote_control.relaymove(src, UP)
 
@@ -573,10 +575,7 @@
 		to_chat(src, span_notice("You move upwards."))
 
 ///Moves a mob down a z level
-/mob/verb/down()
-	set name = "Move Down"
-	set category = "IC"
-
+/mob/proc/down()
 	if(remote_control)
 		return remote_control.relaymove(src, DOWN)
 
@@ -605,3 +604,8 @@
 	if(new_turf && (istype(new_turf, /turf/cordon/secret) || is_secret_level(new_turf.z)) && !client?.holder)
 		return
 	return ..()
+
+/mob/Moved(atom/old_loc, movement_dir, forced, list/old_locs, momentum_change)
+	. = ..()
+	if(client?.sound_tokens.len)
+		SSsound_tokens.clients_needing_update[client] = TRUE

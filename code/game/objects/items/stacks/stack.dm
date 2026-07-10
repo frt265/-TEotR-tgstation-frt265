@@ -430,11 +430,17 @@
 			adjusted_time = (recipe.time * recipe.trait_modifier)
 		else
 			adjusted_time = recipe.time
-		if(!do_after(builder, adjusted_time, target = builder))
+		var/skill_modifier = builder.mind?.get_skill_modifier(/datum/skill/construction, SKILL_SPEED_MODIFIER) //NOVA EDIT ADDITION: Construction Skill
+		if(!do_after(builder, adjusted_time * skill_modifier, target = builder)) //NOVA EDIT ADDITION: Construction Skill
 			builder.balloon_alert(builder, "interrupted!")
 			return
 		if(!building_checks(builder, recipe, multiplier))
 			return
+		// NOVA EDIT ADDITION START: Construction Skill
+		var/experience = floor(recipe.time * CONSTRUCTION_XP_MULTIPLIER)
+		if(experience)
+			builder.mind?.adjust_experience(/datum/skill/construction, experience)
+		// NOVA EDIT ADDITION END
 
 	var/atom/created
 	if(recipe.max_res_amount > 1) // Is it a stack?
@@ -475,12 +481,13 @@
 
 		if(isstack(created))
 			var/obj/item/stack/crafted_stack = created
-			if(recipe.res_amount > 0 && recipe.req_amount != recipe.res_amount)
-				var/scale = recipe.req_amount / recipe.res_amount
-				for(var/mat in result_mats)
-					result_mats[mat] *= scale
-			crafted_stack.mats_per_unit = SSmaterials.get_material_set_cache(result_mats)
-			crafted_stack.update_custom_materials()
+			if(crafted_stack.amount) // If our stack's been emptied, it means another stack's already eaten it, and that stack'll deal with materials
+				if(recipe.res_amount > 0 && recipe.req_amount != recipe.res_amount)
+					var/scale = recipe.req_amount / recipe.res_amount
+					for(var/mat in result_mats)
+						result_mats[mat] *= scale
+				crafted_stack.mats_per_unit = SSmaterials.get_material_set_cache(result_mats)
+				crafted_stack.update_custom_materials()
 		else
 			created.set_custom_materials(result_mats, recipe.req_amount * multiplier)
 

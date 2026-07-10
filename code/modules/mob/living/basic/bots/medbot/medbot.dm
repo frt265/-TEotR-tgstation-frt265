@@ -336,6 +336,12 @@
 		return
 	if(!iscarbon(target))
 		return
+	// NOVA EDIT ADDITION START - Skip trying to heal synths
+	if(ishuman(target))
+		var/mob/living/carbon/human/human_target = target
+		if(human_target.mob_biotypes & MOB_ROBOTIC)
+			return
+	// NOVA EDIT ADDITION END
 	INVOKE_ASYNC(src, PROC_REF(medicate_patient), target)
 	return COMPONENT_HOSTILE_NO_ATTACK
 
@@ -350,7 +356,7 @@
 
 	update_bot_mode(new_mode = BOT_HEALING, update_hud = FALSE)
 	patient.visible_message("[src] is trying to tend the wounds of [patient]", span_userdanger("[src] is trying to tend your wounds!"))
-	if(!do_after(src, delay = 2 SECONDS, target = patient, interaction_key = TEND_DAMAGE_INTERACTION))
+	if(!do_after(src, delay = 10 SECONDS, target = patient, interaction_key = TEND_DAMAGE_INTERACTION)) //NOVA EDIT CHANGE : Increased time as tradeoff for automated healing. ORIGINAL: if(!do_after(src, delay = 0.5 SECONDS, target = patient, interaction_key = TEND_DAMAGE_INTERACTION))
 		update_bot_mode(new_mode = BOT_IDLE)
 		return
 	var/modified_heal_amount = heal_amount * heal_multiplier
@@ -468,6 +474,9 @@
 
 /mob/living/basic/bot/medbot/nukie/Initialize(mapload, new_skin)
 	. = ..()
+	var/datum/action/minimap/nuclear/tacmap_action = new
+	tacmap_action.Grant(src)
+	add_minimap_blip(src, MINIMAP_NUKEOP_BLIP, "mediborg")
 	RegisterSignal(SSdcs, COMSIG_GLOB_NUKE_DEVICE_DISARMED, PROC_REF(nuke_disarm))
 	RegisterSignal(SSdcs, COMSIG_GLOB_NUKE_DEVICE_ARMED, PROC_REF(nuke_arm))
 	RegisterSignal(SSdcs, COMSIG_GLOB_NUKE_DEVICE_DETONATING, PROC_REF(nuke_detonate))

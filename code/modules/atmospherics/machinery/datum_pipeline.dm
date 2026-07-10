@@ -25,7 +25,7 @@
 	members = list()
 	other_atmos_machines = list()
 	require_custom_reconcilation = list()
-	gas_visuals = list()
+	//gas_visuals = list() // NOVA EDIT REMOVAL - Pipe gas visuals removed
 	SSair.networks += src
 
 /datum/pipeline/Destroy()
@@ -49,13 +49,13 @@
 	reconcile_air()
 	//Only react if the mix has changed, and don't keep updating if it hasn't
 	update = air.react(src)
-	CalculateGasmixColor(air)
+	//CalculateGasmixColor(air) // NOVA EDIT REMOVAL - Pipe gas visuals removed
 
 /datum/pipeline/proc/set_air(datum/gas_mixture/new_air)
 	if(new_air == air)
 		return
 	air = new_air
-	CalculateGasmixColor(air)
+	//CalculateGasmixColor(air) // NOVA EDIT REMOVAL - Pipe gas visuals removed
 
 ///Preps a pipeline for rebuilding, insterts it into the rebuild queue
 /datum/pipeline/proc/build_pipeline(obj/machinery/atmospherics/base)
@@ -96,7 +96,7 @@
 	while(possible_expansions.len)
 		for(var/obj/machinery/atmospherics/borderline in possible_expansions)
 			var/list/result = borderline.pipeline_expansion(src)
-			if(!result?.len)
+			if(!(result && result.len))
 				possible_expansions -= borderline
 				continue
 			for(var/obj/machinery/atmospherics/considered_device in result)
@@ -217,18 +217,33 @@
 	var/turf_temperature = target.GetTemperature()
 	var/turf_heat_capacity = target.GetHeatCapacity()
 
-	if(turf_heat_capacity <= 0 || partial_heat_capacity <= 0)
-		return TRUE
+	//NOVA EDIT ADDITION BEGIN
+	if(target.liquids?.liquid_state >= LIQUID_STATE_FOR_HEAT_EXCHANGERS)
+		turf_temperature = target.liquids.temp
+		turf_heat_capacity = target.liquids.total_reagents * REAGENT_HEAT_CAPACITY
+		var/delta_temperature = (air.temperature - turf_temperature)
 
-	var/delta_temperature = turf_temperature - air.temperature
+		if(turf_heat_capacity <= 0 || partial_heat_capacity <= 0)
+			return TRUE
 
-	var/heat = thermal_conductivity * CALCULATE_CONDUCTION_ENERGY(delta_temperature, partial_heat_capacity, turf_heat_capacity)
-	air.temperature += heat / total_heat_capacity
-	target.TakeTemperature(-1 * heat / turf_heat_capacity)
+		var/heat = CALCULATE_CONDUCTION_ENERGY(thermal_conductivity * delta_temperature, turf_heat_capacity, partial_heat_capacity)
 
-	if(target.blocks_air)
-		target.temperature_expose(air, target.temperature)
-	update = TRUE
+		air.temperature -= heat / total_heat_capacity
+		if(!target.liquids.immutable)
+			target.liquids.temp += heat / turf_heat_capacity
+	else //NOVA EDIT END
+		if(turf_heat_capacity <= 0 || partial_heat_capacity <= 0)
+			return TRUE
+
+		var/delta_temperature = turf_temperature - air.temperature
+
+		var/heat = thermal_conductivity * CALCULATE_CONDUCTION_ENERGY(delta_temperature, partial_heat_capacity, turf_heat_capacity)
+		air.temperature += heat / total_heat_capacity
+		target.TakeTemperature(-1 * heat / turf_heat_capacity)
+
+		if(target.blocks_air)
+			target.temperature_expose(air, target.temperature)
+		update = TRUE
 
 /datum/pipeline/proc/return_air()
 	. = other_airs + air

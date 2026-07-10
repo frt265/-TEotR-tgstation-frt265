@@ -22,6 +22,9 @@ SUBSYSTEM_DEF(map_vote)
 	/// Stores the last amount of potential players to compare next time we're called
 	var/player_cache = -1
 
+	/// Cached list of votable maps
+	var/list/votable_map_cache
+
 	/// Stores a formatted html string of the tally counts
 	var/tally_printout = span_red("Loading...")
 
@@ -113,8 +116,9 @@ SUBSYSTEM_DEF(map_vote)
 	else
 		filter_threshold = length(GLOB.clients)
 
-	if(filter_threshold == player_cache)
-		return null
+	// Cached because it's called off ui_data, I really don't think this is worth it but whatever
+	if(filter_threshold == player_cache && !isnull(votable_map_cache))
+		return votable_map_cache.Copy()
 
 	player_cache = filter_threshold
 	var/list/valid_maps = list()
@@ -122,6 +126,10 @@ SUBSYSTEM_DEF(map_vote)
 	var/list/maps = shuffle(global.config.maplist)
 	for(var/map in maps)
 		var/datum/map_config/possible_config = config.maplist[map]
+		// NOVA EDIT ADDITION START - Can't vote for the current map
+		if(possible_config.map_name == SSmapping.current_map?.map_name)
+			continue
+		// NOVA EDIT ADDITION END
 		if(!possible_config.votable || (possible_config.map_name in SSpersistence.blocked_maps))
 			continue
 		if(possible_config.config_min_users > 0 && filter_threshold < possible_config.config_min_users)
@@ -130,6 +138,7 @@ SUBSYSTEM_DEF(map_vote)
 			continue
 		valid_maps += possible_config.map_name
 
+	votable_map_cache = valid_maps.Copy()
 	return valid_maps
 
 /datum/controller/subsystem/map_vote/proc/filter_cache_to_valid_maps()

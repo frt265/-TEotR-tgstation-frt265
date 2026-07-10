@@ -274,14 +274,14 @@
 	level = 6
 	passive_message = span_notice("You feel tingling on your skin as light passes over it.")
 	threshold_descs = list(
-		"Stage Speed 8" = "Doubles healing speed.",
+		"Stage Speed 7" = "Doubles healing speed.", //NOVA EDIT: Brings Noc regen into line with the rest of the healing symptoms.
 	)
 
 /datum/symptom/heal/darkness/Start(datum/disease/advance/our_disease)
 	. = ..()
 	if(!.)
 		return
-	if(our_disease.totalStageSpeed() >= 8)
+	if(our_disease.totalStageSpeed() >= 7) // NOVA EDIT CHANGE - Brings Noc regen into line with the rest of the healing symptoms - ORIGINAL: if(A.totalStageSpeed() >= 8)
 		power = 2
 
 /datum/symptom/heal/darkness/CanHeal(datum/disease/advance/our_disease)
@@ -610,3 +610,31 @@
 
 /datum/symptom/heal/radiation/can_generate_randomly()
 	return ..() && !HAS_TRAIT(SSstation, STATION_TRAIT_RADIOACTIVE_NEBULA) // Because people can never really suffer enough
+
+/datum/symptom/heal/aggressive_healing
+	name = "Aggressive Healing"
+	desc = "The virus heals damaged tissues in a way that appears threatening to the immune system."
+	severity = 1
+	stealth = -4
+	resistance = 3
+	stage_speed = 3
+	transmittable = 2
+	level = 4
+	base_message_chance = 0
+	symptom_delay_min = 1
+	symptom_delay_max = 1
+	symptom_cure = null
+	power = 2
+
+	threshold_descs = list(
+		"Severity > 1" = "For each point of severity above 1, the healing provided by the virus increases.",
+	)
+	///Increases the healing effect (if active) of the virus by this amount for each severity level above 1
+	var/severity_heal_bonus = 0.25
+
+/datum/symptom/heal/aggressive_healing/CanHeal(datum/disease/advance/our_disease)
+	return power + our_disease.totalSeverity() * severity_heal_bonus
+
+/datum/symptom/heal/aggressive_healing/Heal(mob/living/carbon/carbon_host, datum/disease/advance/our_disease, actual_power)
+	carbon_host.heal_overall_damage(actual_power, actual_power, required_bodytype = healable_bodytypes)
+	return TRUE

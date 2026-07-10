@@ -3,6 +3,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { Window } from '../layouts';
+import { Rules } from './AntagInfoRules'; // NOVA EDIT ADDITION
 import {
   type Objective,
   ObjectivePrintout,
@@ -53,12 +54,13 @@ type Info = {
   can_change_objective: BooleanLike;
 };
 
+// NOVA EDIT CHANGE - height from 630 to 700
 export const AntagInfoWizard = (props) => {
   const { data, act } = useBackend<Info>();
   const { ritual, objectives, can_change_objective } = data;
 
   return (
-    <Window width={620} height={630} theme="wizard">
+    <Window width={620} height={700} theme="wizard">
       <Window.Content>
         <Stack vertical fill>
           <Stack.Item grow>
@@ -83,6 +85,11 @@ export const AntagInfoWizard = (props) => {
                 <Stack.Item>
                   <RitualPrintout ritual={ritual} />
                 </Stack.Item>
+                {/* NOVA EDIT ADDITION START */}
+                <Stack.Item>
+                  <Rules />
+                </Stack.Item>
+                {/* NOVA EDIT ADDITION END */}
               </Stack>
             </Section>
           </Stack.Item>

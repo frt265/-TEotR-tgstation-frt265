@@ -109,6 +109,10 @@ export const IconCutterTarget = new Juke.Target({
       `icons/**/*.png.toml`,
       `icons/**/*.dmi.toml`,
       `cutter_templates/**/*.toml`,
+      // NOVA EDIT ADDITION START - Making it work in our nova master files
+      `modular_nova/**/*.png.toml`,
+      `modular_nova/**/*.dmi.toml`,
+      // NOVA EDIT ADDITION END
       cutter_path,
     ];
     // Alright we're gonna search out any existing toml files and convert
@@ -116,6 +120,10 @@ export const IconCutterTarget = new Juke.Target({
     const existing_configs = [
       ...Juke.glob(`icons/**/*.png.toml`),
       ...Juke.glob(`icons/**/*.dmi.toml`),
+      // NOVA EDIT ADDITION START - Making it work in our nova master files
+      ...Juke.glob(`modular_nova/**/*.png.toml`),
+      ...Juke.glob(`modular_nova/**/*.dmi.toml`),
+      // NOVA EDIT ADDITION END
     ];
     return [
       ...standard_inputs,
@@ -127,6 +135,10 @@ export const IconCutterTarget = new Juke.Target({
     const folders = [
       ...Juke.glob(`icons/**/*.png.toml`),
       ...Juke.glob(`icons/**/*.dmi.toml`),
+      // NOVA EDIT ADDITION START - Making it work in our nova master files
+      ...Juke.glob(`modular_nova/**/*.png.toml`),
+      ...Juke.glob(`modular_nova/**/*.dmi.toml`),
+      // NOVA EDIT ADDITION END
     ];
     return folders
       .map((file) => file.replace(`.png.toml`, '.dmi'))
@@ -138,6 +150,7 @@ export const IconCutterTarget = new Juke.Target({
       '--templates',
       'cutter_templates',
       'icons',
+      'modular_nova', // NOVA EDIT ADDITION - Making the cutter actually work
     ]);
   },
 });
@@ -151,11 +164,37 @@ export const DmMapsIncludeTarget = new Juke.Target({
       ...Juke.glob('_maps/shuttles/**/*.dmm'),
       ...Juke.glob('_maps/templates/**/*.dmm'),
     ];
+    // NOVA EDIT ADDITION START
+    const isNovaTemplate = (file: string) =>
+      file.startsWith('_maps/nova/') ||
+      file.startsWith('_maps/RandomRuins/SpaceRuins/nova/') ||
+      file.startsWith('_maps/RandomRuins/IceRuins/nova/') ||
+      file.startsWith('_maps/RandomRuins/LavaRuins/nova/') ||
+      file.startsWith('_maps/shuttles/nova/');
+
+    const foldersNova = [];
+    for (let i = folders.length - 1; i >= 0; i--) {
+      const file = folders[i];
+      if (isNovaTemplate(file)) {
+        foldersNova.push(file);
+        folders.splice(i, 1); // remove from folders
+      }
+    }
+
+    foldersNova.push(...Juke.glob('_maps/nova/**/*.dmm'));
+    // NOVA EDIT ADDITION END
     const content = `${folders
       .map((file) => file.replace('_maps/', ''))
       .map((file) => `#include "${file}"`)
       .join('\n')}\n`;
     fs.writeFileSync('_maps/templates.dm', content);
+    // NOVA EDIT ADDITION START
+    const contentNova = `${foldersNova
+      .map((file) => file.replace('_maps/', ''))
+      .map((file) => `#include "${file}"`)
+      .join('\n')}\n`;
+    fs.writeFileSync('_maps/templates_nova.dm', contentNova);
+    // NOVA EDIT ADDITION END
   },
 });
 
@@ -169,6 +208,7 @@ export const DmTarget = new Juke.Target({
   ],
   dependsOn: ({ get }) => [
     get(DefineParameter).includes('ALL_TEMPLATES') && DmMapsIncludeTarget,
+    get(DefineParameter).includes('NOVA_TEMPLATES') && DmMapsIncludeTarget, // NOVA EDIT ADDITION
     !get(SkipIconCutter) && IconCutterTarget,
   ],
   inputs: [
@@ -180,6 +220,7 @@ export const DmTarget = new Juke.Target({
     'interface/**',
     'sound/**',
     'tgui/public/tgui.html',
+    "modular_nova/**", ///NOVA EDIT ADDITION - Making the CBT work
     `${DME_NAME}.dme`,
     NamedVersionFile,
   ],
@@ -250,7 +291,7 @@ export const AutowikiTarget = new Juke.Target({
     NoWarningParameter,
   ],
   dependsOn: ({ get }) => [
-    get(DefineParameter).includes('ALL_TEMPLATES') && DmMapsIncludeTarget,
+    get(DefineParameter).includes('NOVA_TEMPLATES') && DmMapsIncludeTarget, // NOVA EDIT ADDITION
     IconCutterTarget,
   ],
   outputs: ['data/autowiki_edits.txt'],
@@ -408,6 +449,7 @@ export const AllTarget = new Juke.Target({
 
 export const TguiCleanTarget = new Juke.Target({
   executes: async () => {
+    Juke.rm('node_modules', { recursive: true });
     Juke.rm('tgui/public/.tmp', { recursive: true });
     Juke.rm('tgui/public/*.map');
     Juke.rm('tgui/public/*.{chunk,bundle,hot-update}.*');

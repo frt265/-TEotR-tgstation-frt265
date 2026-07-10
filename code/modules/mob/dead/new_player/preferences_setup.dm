@@ -31,6 +31,7 @@
 	var/obj/item/bodypart/chest/chest = character.get_bodypart(BODY_ZONE_CHEST)
 	chest.add_bodypart_overlay(new /datum/bodypart_overlay/simple/sixpack() )
 
+
 /**
  * Goes through all quirks that can be used in hardcore mode and select some based on a random budget.
  * Returns the new value to be gained with this setup, plus the previously earned score.
@@ -93,6 +94,7 @@
 
 	return preview_job
 
+/* NOVA EDIT REMOVAL - MOVED TO MASTER FILES
 /datum/preferences/proc/render_new_preview_appearance(mob/living/carbon/human/dummy/mannequin, show_job_clothes = TRUE)
 	var/datum/job/no_job = SSjob.get_job_type(/datum/job/unassigned)
 	var/datum/job/preview_job = get_highest_priority_job() || no_job
@@ -127,3 +129,4 @@
 			mannequin.add_quirk(quirk_type, parent, announce = FALSE)
 
 	return mannequin.appearance
+*/

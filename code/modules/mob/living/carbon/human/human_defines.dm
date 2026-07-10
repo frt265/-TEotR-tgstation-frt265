@@ -5,7 +5,7 @@
 	icon = 'icons/mob/human/human.dmi'
 	icon_state = "human_basic"
 	appearance_flags = KEEP_TOGETHER|TILE_BOUND|PIXEL_SCALE|LONG_GLIDE
-	hud_possible = list(HEALTH_HUD,STATUS_HUD,BLOOD_HUD,ID_HUD,WANTED_HUD,IMPLOYAL_HUD,IMPSEC_FIRST_HUD,IMPSEC_SECOND_HUD,ANTAG_HUD,GLAND_HUD,FAN_HUD)
+	hud_possible = list(HEALTH_HUD,STATUS_HUD,BLOOD_HUD,ID_HUD,WANTED_HUD,IMPLOYAL_HUD,IMPSEC_FIRST_HUD,IMPSEC_SECOND_HUD,ANTAG_HUD,GLAND_HUD,FAN_HUD,PERMIT_HUD,DNR_HUD,SHIELD_HUD) //NOVA EDIT ADDITION - PERMIT_HUD, DNR_HUD, SHIELD_HUD
 	hud_type = /datum/hud/human
 	pressure_resistance = 25
 	buckle_lying = 0
@@ -55,6 +55,9 @@
 	var/socks = "Nude" //Which socks the player wants
 	var/backpack = DBACKPACK //Which backpack type the player has chosen.
 	var/jumpsuit_style = PREF_SUIT //suit/skirt
+
+	var/datum/scream_type/selected_scream // NOVA EDIT ADDITION
+	var/datum/laugh_type/selected_laugh // NOVA EDIT ADDITION
 
 	//Equipment slots
 	var/obj/item/clothing/wear_suit = null

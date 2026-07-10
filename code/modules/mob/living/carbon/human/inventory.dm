@@ -48,7 +48,6 @@
 			return r_store
 		if(ITEM_SLOT_SUITSTORE)
 			return s_store
-
 	return ..()
 
 /mob/living/carbon/human/get_slot_by_item(obj/item/looking_for)
@@ -165,7 +164,14 @@
 		if(ITEM_SLOT_GLOVES)
 			if(gloves)
 				return
+
 			gloves = equipping
+			//NOVA EDIT ADDITION - ERP UPDATE
+			if(gloves.breakouttime)
+				ADD_TRAIT(src, TRAIT_RESTRAINED, TRAIT_GLOVES)
+				stop_pulling()
+				update_mob_action_buttons()
+			//NOVA EDIT ADDITION END
 			update_worn_gloves()
 		if(ITEM_SLOT_FEET)
 			if(shoes)
@@ -235,6 +241,12 @@
 			if(belt && !can_equip(belt, ITEM_SLOT_BELT, TRUE, ignore_equipped = TRUE))
 				dropItemToGround(belt)
 	else if(item_dropping == gloves)
+		// NOVA EDIT ADDITION - ERP UPDATE
+		if(gloves.breakouttime) //when unequipping a straightjacket
+			REMOVE_TRAIT(src, TRAIT_RESTRAINED, TRAIT_GLOVES)
+			drop_all_held_items() //suit is restraining
+			update_mob_action_buttons() //certain action buttons may be usable again.
+		// NOVA EDIT ADDITION END
 		gloves = null
 		if(!QDELETED(src))
 			update_worn_gloves()

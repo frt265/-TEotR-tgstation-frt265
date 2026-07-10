@@ -142,15 +142,7 @@ GLOBAL_LIST_INIT(skin_tone_names, list(
 
 /proc/age2agedescription(age)
 	switch(age)
-		if(0 to 1)
-			return "infant"
-		if(1 to 3)
-			return "toddler"
-		if(3 to 13)
-			return "child"
-		if(13 to 19)
-			return "teenager"
-		if(19 to 30)
+		if(0 to 30) //NOVA EDIT CHANGE - NO
 			return "young adult"
 		if(30 to 45)
 			return "adult"
@@ -619,7 +611,6 @@ GLOBAL_LIST_INIT(skin_tone_names, list(
 		if(isslime(mob_to_sort))
 			continue
 	return moblist
-
 ///returns a mob type controlled by a specified ckey
 /proc/get_mob_by_ckey(key)
 	if(!key)

@@ -3,6 +3,7 @@
 	plural_form = "Mothmen"
 	id = SPECIES_MOTH
 	inherent_biotypes = MOB_ORGANIC|MOB_HUMANOID|MOB_BUG
+	/* NOVA EDIT REMOVAL START - Customization
 	body_markings = list(
 		/datum/bodypart_overlay/simple/body_marking/moth = SPRITE_ACCESSORY_NONE,
 	)
@@ -10,6 +11,7 @@
 		/obj/item/organ/wings/moth = "Plain",
 		/obj/item/organ/antennae = "Plain",
 	)
+	*/ // NOVA EDIT REMOVAL END
 	meat = /obj/item/food/meat/slab/human/mutant/moth
 	mutanttongue = /obj/item/organ/tongue/moth
 	mutanteyes = /obj/item/organ/eyes/moth
@@ -127,7 +129,7 @@
 			SPECIES_PERK_TYPE = SPECIES_POSITIVE_PERK,
 			SPECIES_PERK_ICON = "tshirt",
 			SPECIES_PERK_NAME = "Meal Plan",
-			SPECIES_PERK_DESC = "Moths can eat clothes for temporary nourishment.",
+			SPECIES_PERK_DESC = "Moths can eat clothes for nourishment.",
 		),
 		list(
 			SPECIES_PERK_TYPE = SPECIES_NEGATIVE_PERK,

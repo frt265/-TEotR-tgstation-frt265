@@ -52,7 +52,7 @@
 	return BRUTELOSS
 
 /obj/item/healthanalyzer/attack_self(mob/user)
-	if(!user.can_read(src) || user.is_blind())
+	if(!user.can_read(src)) //NOVA EDIT: Blind People Can Analyze Again
 		return
 
 	scanmode = (scanmode + 1) % SCANMODE_COUNT
@@ -98,7 +98,7 @@
 	balloon_alert(user, "analyzing vitals")
 	playsound(user.loc, 'sound/items/healthanalyzer.ogg', 50)
 
-	var/readability_check = user.can_read(src) && !user.is_blind()
+	var/readability_check = user.can_read(src) // NOVA EDIT CHANGE - Blind people can analyze again - ORIGINAL: var/readability_check = user.can_read(src) && !user.is_blind()
 	switch (scanmode)
 		if (SCANMODE_HEALTH)
 			last_scan_text = healthscan(user, M, mode, advanced, tochat = readability_check)
@@ -115,7 +115,7 @@
 /obj/item/healthanalyzer/interact_with_atom_secondary(atom/interacting_with, mob/living/user, list/modifiers)
 	if(!isliving(interacting_with))
 		return NONE
-	if(user.can_read(src) && !user.is_blind())
+	if(user.can_read(src)) // NOVA EDIT CHANGE - Blind people can analyze again - ORIGINAL: if(user.can_read(src) || !user.is_blind())
 		chemscan(user, interacting_with)
 	return ITEM_INTERACT_SUCCESS
 
@@ -179,7 +179,7 @@
 	if(HAS_TRAIT(target, TRAIT_HUSK))
 		if(advanced)
 			if(HAS_TRAIT_FROM(target, TRAIT_HUSK, CHANGELING_DRAIN))
-				render_list += "<span class='alert ml-1'>Subject has been husked by [conditional_tooltip("desiccation", "Irreparable. Under normal circumstances, revival can only proceed via brain transplant.", tochat)].</span><br>"
+				render_list += "<span class='alert ml-1'>Subject has been husked by [conditional_tooltip("desiccation", "Perform blood transfusion and apply a de-husking agent such as [/datum/reagent/medicine/c2/synthflesh::name]. Full restoration will require more than usual.", tochat)].</span><br>" // NOVA EDIT CHANGE - ORIGINAL: render_list += "<span class='alert ml-1'>Subject has been husked by [conditional_tooltip("desiccation", "Irreparable. Under normal circumstances, revival can only proceed via brain transplant.", tochat)].</span><br>"
 			else if(HAS_TRAIT_FROM(target, TRAIT_HUSK, SKELETON_TRAIT))
 				render_list += "<span class='alert ml-1'>Subject has been husked due to severe flesh loss.</span><br>"
 			else if(!HAS_TRAIT_FROM(target, TRAIT_HUSK, BURN)) // prioritize showing unknown causes over burns
@@ -215,6 +215,16 @@
 			if(advanced)
 				render_list += "<span class='info ml-1'>Subject Minor Disabilities: [carbontarget.get_quirk_string(FALSE, CAT_QUIRK_MINOR_DISABILITY, TRUE)].</span><br>"
 
+	// NOVA EDIT ADDITION START -- Show increased/decreased brute/burn mods, to "leave a paper trail" for the fragility quirk
+	if(ishuman(target))
+		var/mob/living/carbon/human/humantarget = target
+
+		var/datum/physiology/physiology = humantarget.physiology
+		if (physiology.brute_mod != 1)
+			render_list += "<span class='danger ml-1'>Subject takes [(physiology.brute_mod) * 100]% brute damage.</span>\n"
+		if (physiology.burn_mod != 1)
+			render_list += "<span class='danger ml-1'>Subject takes [(physiology.burn_mod) * 100]% burn damage.</span>\n"
+	// NOVA EDIT ADDITION END
 	// Body part damage report
 	if(iscarbon(target))
 		var/mob/living/carbon/carbontarget = target
@@ -446,6 +456,17 @@
 			Stage: [disease.stage]/[disease.max_stages].<br>\
 			Possible Cure: [cure_text]</div>\
 			</span>"
+	// NOVA EDIT ADDITION - Mutant stuff + death consequences quirk
+	if(iscarbon(target))
+		if(target.GetComponent(/datum/component/mutant_infection))
+			render_list += span_userdanger("UNKNOWN PROTO-VIRAL INFECTION DETECTED. ISOLATE IMMEDIATELY.")
+
+		var/mob/living/carbon/carbon_target = target
+		for(var/datum/brain_trauma/trauma in carbon_target.get_traumas())
+			if(istype(trauma, /datum/brain_trauma/severe/death_consequences))
+				var/datum/brain_trauma/severe/death_consequences/consequences_trauma = trauma
+				render_list += consequences_trauma.get_health_analyzer_link_text(user)
+	// NOVA EDIT ADDITION END
 
 	// Time of death
 	if(target.station_timestamp_timeofdeath && !target.appears_alive())
@@ -525,10 +546,17 @@
 		var/list/render_list = list() //The master list of readouts, including reagents in the blood/stomach, addictions, quirks, etc.
 		var/list/render_block = list() //A second block of readout strings. If this ends up empty after checking stomach/blood contents, we give the "empty" header.
 
+		// NOVA EDIT ADDITION BEGIN - Neuroware
+		var/list/neuroware_list = list()
+		// NOVA EDIT ADDITION END
 		// Blood reagents
 		if(target.reagents.reagent_list.len)
 			for(var/r in target.reagents.reagent_list)
 				var/datum/reagent/reagent = r
+				// NOVA EDIT ADDITION BEGIN - Neuroware
+				if(reagent.chemical_flags & REAGENT_NEUROWARE)
+					neuroware_list += "<span class='notice ml-2'>[reagent.name] - [round(reagent.volume, 0.001)]GQ[reagent.overdosed ? "</span> - [span_bolddanger("OVERLOADING")]" : ".</span>"]<br>"
+				// NOVA EDIT ADDITION END
 				if(reagent.chemical_flags & REAGENT_INVISIBLE) //Don't show hidden chems on scanners
 					continue
 				if(reagent_types_to_check)
@@ -536,6 +564,14 @@
 						continue
 				render_block += "<span class='notice ml-2'>[round(reagent.volume, 0.001)] units of [reagent.name][reagent.overdosed ? "</span> - [span_bolddanger("OVERDOSING")]" : ".</span>"]<br>"
 
+		// NOVA EDIT ADDITION BEGIN - Neuroware
+		if(target.is_neuroware_compatible())
+			if(length(neuroware_list))
+				render_list += "<span class='notice ml-1'>Subject contains the following neuroware in their brain:</span><br>"
+				render_list += jointext(neuroware_list + "<br>", "")
+			else
+				render_list += "<span class='notice ml-1'>Subject contains no neuroware in their brain.</span><br>"
+		// NOVA EDIT ADDITION END
 		if(!length(render_block)) //If no VISIBLY DISPLAYED reagents are present, we report as if there is nothing.
 			render_list += "<span class='notice ml-1'>Subject contains no reagents in their [LOWER_TEXT(target.get_bloodtype()?.get_blood_name()) || "blood"]stream.</span><br>"
 		else
@@ -697,7 +733,7 @@
 /obj/item/healthanalyzer/simple/interact_with_atom(atom/interacting_with, mob/living/user, list/modifiers)
 	if(!isliving(interacting_with))
 		return NONE
-	if(!user.can_read(src) || user.is_blind())
+	if(!user.can_read(src)) //NOVA EDIT CHANGE - Blind People Can Analyze Again - ORIGINAL: if(!user.can_read(src) || user.is_blind())
 		return ITEM_INTERACT_BLOCKING
 
 	add_fingerprint(user)

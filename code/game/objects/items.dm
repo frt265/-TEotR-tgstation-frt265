@@ -366,7 +366,7 @@
 	return TRUE
 
 /obj/item/blob_act(obj/structure/blob/B)
-	if(B && B.loc == loc)
+	if(B && B.loc == loc && !(resistance_flags & INDESTRUCTIBLE))
 		atom_destruction(MELEE)
 
 /**Makes cool stuff happen when you suicide with an item
@@ -394,6 +394,26 @@
 		return
 	if(greyscale_config_worn)
 		worn_icon = SSgreyscale.GetColoredIconByType(greyscale_config_worn, greyscale_colors)
+	// NOVA EDIT ADDITION START
+	if(greyscale_config_worn_digi)
+		worn_icon_digi = SSgreyscale.GetColoredIconByType(greyscale_config_worn_digi, greyscale_colors)
+	if(greyscale_config_worn_muzzled)
+		worn_icon_muzzled = SSgreyscale.GetColoredIconByType(greyscale_config_worn_muzzled, greyscale_colors)
+	if(greyscale_config_worn_monkey)
+		worn_icon_monkey = SSgreyscale.GetColoredIconByType(greyscale_config_worn_monkey, greyscale_colors)
+	if(greyscale_config_worn_vox)
+		worn_icon_vox = SSgreyscale.GetColoredIconByType(greyscale_config_worn_vox, greyscale_colors)
+	if(greyscale_config_worn_better_vox)
+		worn_icon_better_vox = SSgreyscale.GetColoredIconByType(greyscale_config_worn_better_vox, greyscale_colors)
+	if(greyscale_config_worn_teshari)
+		worn_icon_teshari = SSgreyscale.GetColoredIconByType(greyscale_config_worn_teshari, greyscale_colors)
+	if(greyscale_config_worn_taur_snake)
+		worn_icon_taur_snake = SSgreyscale.GetColoredIconByType(greyscale_config_worn_taur_snake, greyscale_colors)
+	if(greyscale_config_worn_taur_paw)
+		worn_icon_taur_paw = SSgreyscale.GetColoredIconByType(greyscale_config_worn_taur_paw, greyscale_colors)
+	if(greyscale_config_worn_taur_hoof)
+		worn_icon_taur_hoof = SSgreyscale.GetColoredIconByType(greyscale_config_worn_taur_hoof, greyscale_colors)
+	// NOVA EDIT ADDITION END
 	if(greyscale_config_inhand_left)
 		lefthand_file = SSgreyscale.GetColoredIconByType(greyscale_config_inhand_left, greyscale_colors)
 	if(greyscale_config_inhand_right)
@@ -423,7 +443,8 @@
 
 	if(item_flags & CRUEL_IMPLEMENT)
 		.[span_red("morbid")] = "It seems quite practical for particularly morbid procedures and experiments."
-
+	if(item_flags & BLUESPACE_INTERFERENCE)
+		.["bluespace-active"] = "It is highly active in bluespace and will cause malfunctions in teleporters."
 	if (siemens_coefficient == 0)
 		.["insulated"] = "It is made from a robust electrical insulator and will block any electricity passing through it!"
 	else if (siemens_coefficient <= 0.5)
@@ -1232,8 +1253,13 @@
 			if(user.mind.get_skill_level(/datum/skill/mining) >= SKILL_LEVEL_JOURNEYMAN && prob(user.mind.get_skill_modifier(/datum/skill/mining, SKILL_PROBS_MODIFIER))) // we check if the skill level is greater than Journeyman and then we check for the probality for that specific level.
 				mineral_scan_pulse(get_turf(user), SKILL_LEVEL_JOURNEYMAN - 2, scanner = src) //SKILL_LEVEL_JOURNEYMAN = 3 So to get range of 1+ we have to subtract 2 from it,.
 
+	//NOVA EDIT ADDITION START: Construction Skill
+	var/construction_tools = list(TOOL_CROWBAR, TOOL_MULTITOOL, TOOL_SCREWDRIVER, TOOL_WIRECUTTER, TOOL_WRENCH, TOOL_WELDER)
+	for(var/checking_behavior in construction_tools)
+		if(tool_behaviour == checking_behavior)
+			skill_modifier = user.mind?.get_skill_modifier(/datum/skill/construction, SKILL_SPEED_MODIFIER)
+	//NOVA EDIT ADDITION END
 	delay *= toolspeed * skill_modifier
-
 
 	// Play tool sound at the beginning of tool usage.
 	play_tool_sound(target, volume)
@@ -1260,7 +1286,11 @@
 	// but only if the delay between the beginning and the end is not too small
 	if(delay >= MIN_TOOL_SOUND_DELAY)
 		play_tool_sound(target, volume)
-
+	//NOVA EDIT ADDITION START: Construction Skill
+	for(var/checking_behavior in construction_tools)
+		if(tool_behaviour == checking_behavior)
+			user.mind?.adjust_experience(/datum/skill/construction, 2)
+	//NOVA EDIT STOP: Construction Skill
 	return TRUE
 
 /// Called before [obj/item/proc/use_tool] if there is a delay, or by [obj/item/proc/use_tool] if there isn't. Only ever used by welding tools and stacks, so it's not added on any other [obj/item/proc/use_tool] checks.
@@ -1337,7 +1367,15 @@
 	return !HAS_TRAIT(src, TRAIT_NODROP) && !(item_flags & ABSTRACT)
 
 /obj/item/proc/doStrip(mob/stripper, mob/owner)
-	return owner.dropItemToGround(src)
+	if (!owner.dropItemToGround(src)) // NOVA EDIT CHANGE - THIEVING GLOVES - ORIGINAL: return owner.dropItemToGround(src)
+		return FALSE
+	// NOVA EDIT ADDITION START
+	if (HAS_TRAIT(stripper, TRAIT_STICKY_FINGERS))
+		stripper.put_in_hands(src)
+	return TRUE
+	// NOVA EDIT ADDITION END
+
+
 
 ///Called by the carbon throw_item() proc. Returns null if the item negates the throw, or a reference to the thing to suffer the throw else.
 /obj/item/proc/on_thrown(mob/living/carbon/user, atom/target)
@@ -1520,8 +1558,8 @@
 	pickup_animation.appearance_flags = APPEARANCE_UI_IGNORE_ALPHA
 
 	var/direction = get_dir(source, target)
-	var/to_x = target.base_pixel_x + target.base_pixel_w
-	var/to_y = target.base_pixel_y + target.base_pixel_z
+	var/to_x = target.base_pixel_x
+	var/to_y = target.base_pixel_y
 
 	if(direction & NORTH)
 		to_y += 32

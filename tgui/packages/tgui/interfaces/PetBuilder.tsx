@@ -26,6 +26,7 @@ type Data = {
   pet_carrier: string;
   carrier_options: CarrierOptions[];
   pet_possible_emotes: string[];
+  pet_owner_quirk: boolean; // NOVA EDIT ADDITION
 };
 
 enum PetGender {
@@ -72,6 +73,7 @@ export const PetBuilder = (props) => {
     carrier_options,
     pet_carrier,
     pet_possible_emotes,
+    pet_owner_quirk, // NOVA EDIT ADDITION
   } = data;
 
   const [selectedCarrier, setSelectedCarrier] = useState(

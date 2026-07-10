@@ -10,7 +10,7 @@
 	/// selected size of the product
 	var/current_volume = 10
 	/// maximum printable volume of the product
-	var/max_volume = 50
+	var/max_volume = 100 // NOVA EDIT CHANGE - ORIGINAL var/max_volume = 50
 	/// prefix for the product name
 	var/product_name = "factory"
 	/// Selected duration of produced pills, if they're selected
@@ -21,6 +21,7 @@
 	var/obj/item/reagent_containers/packaging_type
 	///Category of packaging
 	var/packaging_category
+	buffer = 100 // NOVA EDIT ADDITION - Increases the standard plumbing machine buffer to account for the increased max volume
 
 /obj/machinery/plumbing/pill_press/Initialize(mapload, layer)
 	. = ..()
@@ -32,6 +33,8 @@
 			CAT_PILLS = GLOB.reagent_containers[CAT_PILLS],
 			CAT_PATCHES = GLOB.reagent_containers[CAT_PATCHES],
 			"Bottles" = list(/obj/item/reagent_containers/cup/bottle),
+			CAT_HYPOS = GLOB.reagent_containers[CAT_HYPOS], // NOVA EDIT ADDITION - Hypovials
+			CAT_PEN_INJECTORS = GLOB.reagent_containers[CAT_PEN_INJECTORS], // NOVA EDIT ADDITION - pen_medipens
 		)
 
 		packaging_types = list()
@@ -66,6 +69,10 @@
 			suffix = "pill"
 		if(CAT_PATCHES)
 			suffix = "patch"
+		//NOVA EDIT ADDITION BEGIN - HYPOVIALS
+		if (CAT_HYPOS)
+			suffix = "vial"
+		//NOVA EDIT ADDITION END - HYPOVIALS
 		else
 			suffix = "bottle"
 	container.name = "[product_name] [suffix]"
@@ -170,6 +177,12 @@
 				packaging_category = CAT_PATCHES
 			else if(ispath(packaging_type, /obj/item/reagent_containers/applicator/pill))
 				packaging_category = CAT_PILLS
+			// NOVA EDIT ADDITION START
+			else if(ispath(packaging_type, /obj/item/reagent_containers/cup/vial))
+				packaging_category = CAT_HYPOS
+			else if(ispath(packaging_type, /obj/item/reagent_containers/hypospray/medipen/deforest/printable))
+				packaging_category = CAT_PEN_INJECTORS
+			// NOVA EDIT ADDITION END
 			else
 				packaging_category = "Bottles"
 

@@ -38,6 +38,18 @@ GLOBAL_LIST_INIT(reagent_containers, list(
 	CAT_PATCHES = typecacheof(list(
 		/obj/item/reagent_containers/applicator/patch/style
 	)),
+	// NOVA EDIT ADDITION START
+	CAT_HYPOS = typecacheof(list(
+		/obj/item/reagent_containers/cup/vial/small/style,
+		/obj/item/reagent_containers/cup/vial/large/style,
+	)),
+	CAT_DARTS = typecacheof(list(
+		/obj/item/reagent_containers/syringe/smartdart
+	)),
+		CAT_PEN_INJECTORS = typecacheof(list(
+		/obj/item/reagent_containers/hypospray/medipen/deforest/printable
+	)),
+	// NOVA EDIT ADDITION END
 ))
 
 /// list of all /datum/chemical_reaction datums indexed by their typepath. Use this for general lookup stuff
@@ -81,6 +93,13 @@ GLOBAL_LIST_INIT(stacked_metabolization_effect, init_chemical_side_effects())
 
 	return reagent_list
 
+/proc/check_recipe_for_conflicts(datum/chemical_reaction/reaction, list/reaction_lookup)
+	for(var/x in reaction.required_reagents)
+		for(var/datum/chemical_reaction/competitor in reaction_lookup[x])
+			if(chem_recipes_do_conflict(competitor, reaction))
+				return TRUE
+	return FALSE
+
 /**
  * Chemical Reactions - Initialises all /datum/chemical_reaction into a list
  * It is filtered into multiple lists within a list.
@@ -108,20 +127,19 @@ GLOBAL_LIST_INIT(stacked_metabolization_effect, init_chemical_side_effects())
 
 	var/list/datum/chemical_reaction/reactions = list()
 	for(var/datum/chemical_reaction/reaction as anything in paths)
-		if(!ispath(reaction, /datum/chemical_reaction/randomized))
+		if(ispath(reaction, /datum/chemical_reaction/randomized))
+			reaction = new reaction(LAZYACCESS(json, "[reaction]"))
+		else
 			reaction = new reaction
-		reactions += reaction
-
+		if(!QDELETED(reaction)) // in case random recipe generation fail
+			reactions += reaction
 	// Ok so we're gonna do a thingTM here
 	// I want to distribute all our reactions such that each reagent id links to as few as possible
 	// I get the feeling there's a canonical way of doing this, but I don't know it
 	// So instead, we're gonna wing it
 	var/list/reagent_to_react_count = list()
-	var/list/randomized_reaction_retry_attempts = list()
 	for(var/datum/chemical_reaction/reaction as anything in reactions)
-		if(ispath(reaction, /datum/chemical_reaction/randomized))
-			randomized_reaction_retry_attempts[reaction] = 0
-		else
+		if(!istype(reaction, /datum/chemical_reaction/randomized))
 			for(var/reagent_id in reaction.required_reagents)
 				reagent_to_react_count[reagent_id] += 1
 
@@ -131,33 +149,22 @@ GLOBAL_LIST_INIT(stacked_metabolization_effect, init_chemical_side_effects())
 	// Doing this separately because it relies on the loop above, and this is easier to parse
 	for(var/datum/chemical_reaction/reaction as anything in reactions)
 		//check for collisions
-		if(ispath(reaction, /datum/chemical_reaction/randomized))
-			var/target_path = reaction
-			var/index = reactions.Find(reaction)
-			reaction = new target_path(LAZYACCESS(json, "[target_path]"))
+		if(istype(reaction, /datum/chemical_reaction/randomized))
+			var/datum/chemical_reaction/randomized/random_reaction = reaction
+			var/retry_attempts = 0
+			while(check_recipe_for_conflicts(random_reaction, reaction_lookup))
+				if(retry_attempts >= MAX_RANDOMIZED_REACTION_RETRY_ATTEMPTS || !random_reaction.generate_recipe())
+					reactions -= reaction
+					qdel(reaction)
+					break
+				retry_attempts++
 
-			//failed to init
+			// log results
 			if(QDELETED(reaction))
-				reactions -= target_path
+				log_game("Couldn't regenerate [reaction] due to conflicts in [retry_attempts] attempts.")
 				continue
-
-			//failed to resolve so retry
-			outer:
-				for(var/x in reaction.required_reagents)
-					for(var/datum/chemical_reaction/R in reaction_lookup[x])
-						if(chem_recipes_do_conflict(R, reaction))
-							reactions -= target_path
-							QDEL_NULL(reaction)
-							if(randomized_reaction_retry_attempts[target_path] < MAX_RANDOMIZED_REACTION_RETRY_ATTEMPTS)
-								reactions += target_path
-								randomized_reaction_retry_attempts[target_path] += 1
-							break outer
-
-			//add to list
-			if(!reaction)
-				continue
-			else
-				reactions[index] = reaction
+			else if(retry_attempts > 0)
+				log_game("Regenerated [reaction] due to conflicts in [retry_attempts] attempts.")
 
 		var/preferred_id = null
 		for(var/reagent_id in reaction.required_reagents)
@@ -225,6 +232,10 @@ GLOBAL_LIST_INIT(stacked_metabolization_effect, init_chemical_side_effects())
 	var/list/name_to_reagent = list()
 	var/list/only_names = list()
 	for (var/datum/reagent/reagent as anything in GLOB.chemical_reagents_list)
+		// NOVA EDIT ADDITION BEGIN
+		if(initial(reagent.chemical_flags) & REAGENT_NEUROWARE)
+			continue
+		// NOVA EDIT ADDITION END
 		var/name = initial(reagent.name)
 		if (length(name))
 			name_to_reagent[name] = reagent

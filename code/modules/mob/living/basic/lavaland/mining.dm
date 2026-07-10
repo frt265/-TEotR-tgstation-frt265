@@ -6,7 +6,7 @@
 	status_flags = NONE //don't inherit standard basicmob flags
 	mob_size = MOB_SIZE_LARGE
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST|MOB_MINING
-	faction = list(FACTION_MINING, FACTION_ASHWALKER)
+	faction = list(FACTION_MINING, FACTION_MINING_FAUNA) // NOVA EDIT CHANGE - ORIGINAL: faction = list(FACTION_MINING, FACTION_ASHWALKER)
 	unsuitable_atmos_damage = 0
 	minimum_survivable_temperature = 0
 	maximum_survivable_temperature = INFINITY
@@ -40,7 +40,7 @@
 			drop_mod = crusher_drop_chance,\
 			drop_immediately = basic_mob_flags & DEL_ON_DEATH,\
 		)
-	RegisterSignal(src, COMSIG_ATOM_WAS_ATTACKED, PROC_REF(check_ashwalker_peace_violation))
+	RegisterSignal(src, COMSIG_ATOM_WAS_ATTACKED, PROC_REF(on_attacked))
 	// We add this to ensure that mobs will actually receive the above signal, as some will lack AI
 	// handling for retaliation and attack special cases
 	AddElement(/datum/element/relay_attackers)
@@ -55,9 +55,9 @@
 		throw_blocked_message = throw_blocked_message,\
 	)
 
-/mob/living/basic/mining/proc/check_ashwalker_peace_violation(datum/source, mob/living/carbon/human/possible_ashwalker)
+/mob/living/basic/mining/proc/on_attacked(datum/source, atom/attacker, attack_flags)
 	SIGNAL_HANDLER
 
-	if(!isashwalker(possible_ashwalker) || !has_faction(FACTION_ASHWALKER))
+	if(!isashwalker(attacker) || !has_faction(FACTION_ASHWALKER))
 		return
 	remove_faction(FACTION_ASHWALKER)

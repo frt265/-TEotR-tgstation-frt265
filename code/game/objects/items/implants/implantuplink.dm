@@ -44,16 +44,20 @@
 		qdel(src)
 
 /obj/item/implanter/uplink
-	name = "implanter (uplink)"
+	name = "implanter" // NOVA EDIT , original was implanter (uplink)
 	imp_type = /obj/item/implant/uplink
+	special_desc_requirement = EXAMINE_CHECK_SYNDICATE // NOVA EDIT
+	special_desc = "A Syndicate implanter for an uplink" // NOVA EDIT
 
 /obj/item/implanter/uplink/Initialize(mapload, uplink_handler)
 	imp = new imp_type(src, uplink_handler)
 	return ..()
 
 /obj/item/implanter/uplink/precharged
-	name = "implanter (precharged uplink)"
+	name = "implanter" // NOVA EDIT , original was implanter (precharged uplink)
 	imp_type = /obj/item/implant/uplink/precharged
+	special_desc_requirement = EXAMINE_CHECK_SYNDICATE // NOVA EDIT
+	special_desc = "A Syndicate implanter for a precharged uplink" // NOVA EDIT
 
 /obj/item/implant/uplink/precharged
 	starting_tc = TELECRYSTALS_PRELOADED_IMPLANT

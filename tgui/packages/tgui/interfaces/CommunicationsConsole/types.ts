@@ -44,6 +44,7 @@ export type CommsConsoleData = {
   canLogOut: BooleanLike;
   canMakeAnnouncement: BooleanLike;
   canMessageAssociates: BooleanLike;
+  canToggleEngineeringOverride: BooleanLike; // NOVA EDIT ADDITION - Engineering Override
   canRecallShuttles: BooleanLike;
   canRequestNuke: BooleanLike;
   canRequestSafeCode: BooleanLike;
@@ -52,6 +53,7 @@ export type CommsConsoleData = {
   canToggleEmergencyAccess: BooleanLike;
   emagged: BooleanLike;
   emergencyAccess: BooleanLike;
+  engineeringOverride; // NOVA EDIT ADDITION - Engineering Override
   hasConnection: BooleanLike;
   importantActionReady: BooleanLike;
   messages: Message[];

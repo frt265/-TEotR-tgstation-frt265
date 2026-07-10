@@ -4,7 +4,7 @@
 	lip_style = target.lip_style
 	lip_color = target.lip_color
 	hairstyle = target.hairstyle
-	hair_alpha = target_species.hair_alpha
+	hair_alpha = target.hair_alpha ? target.hair_alpha : target_species.hair_alpha // NOVA EDIT CHANGE - Customization - Hair alpha - ORIGINAL: hair_alpha = owner_species.hair_alpha
 	hair_color = target.hair_color
 	facial_hairstyle = target.facial_hairstyle
 	facial_hair_alpha = target_species.facial_hair_alpha
@@ -21,12 +21,13 @@
 
 	if(HAS_TRAIT(target, TRAIT_USES_SKINTONES))
 		skin_tone = target.skin_tone
+		species_color = "" // NOVA EDIT ADDITION
 	else if(HAS_TRAIT(target, TRAIT_MUTANT_COLORS))
 		skin_tone = ""
 		if(target_species.fixed_mut_color)
 			species_color = target_species.fixed_mut_color
 		else
-			species_color = target.dna.features["mcolor"]
+			species_color = target.dna.features[FEATURE_MUTANT_COLOR]
 	else
 		skin_tone = ""
 		species_color = ""
@@ -127,6 +128,11 @@
 		set_overlay_hair_color(hair_overlay, hair_color)
 		hair_overlay.alpha = hair_alpha
 		hair_overlay.pixel_z = hair_sprite_accessory.y_offset
+		// NOVA EDIT ADDITION START - Species hair offset
+		if(LAZYFIND(owner?.dna?.species?.offset_features, OFFSET_HAIR))
+			hair_overlay.pixel_x += owner.dna.species.offset_features[OFFSET_HAIR][INDEX_X]
+			hair_overlay.pixel_z += owner.dna.species.offset_features[OFFSET_HAIR][INDEX_Y]
+		// NOVA EDIT ADDITION END
 		// Emissive blocker
 		if(blocks_emissive != EMISSIVE_BLOCK_NONE)
 			var/mutable_appearance/em_block = emissive_blocker(hair_overlay.icon, hair_overlay.icon_state, location, alpha = hair_alpha)
@@ -136,12 +142,26 @@
 		// Offsets
 		worn_face_offset?.apply_offset(hair_overlay)
 		. += hair_overlay
+		// NOVA EDIT ADDITION START - Emissive hair appearance
+		var/mob/living/carbon/human/human_owner = owner
+		if(human_owner?.emissive_hair)
+			var/mutable_appearance/em_appear = emissive_appearance(hair_overlay.icon, "[hair_overlay.icon_state]_e", location, layer = hair_overlay.layer, alpha = hair_alpha)
+			if(dropped)
+				em_appear = image(em_appear, dir = SOUTH)
+			worn_face_offset?.apply_offset(em_appear)
+			. += em_appear
+		// NOVA EDIT ADDITION END
 		// Gradients
 		var/hair_gradient_style = get_hair_gradient_style(GRADIENT_HAIR_KEY)
 		if(hair_gradient_style != SPRITE_ACCESSORY_NONE)
 			var/hair_gradient_color = get_hair_gradient_color(GRADIENT_HAIR_KEY)
 			var/image/hair_gradient_overlay = get_gradient_overlay(base_icon, hair_overlay.layer, SSaccessories.hair_gradients_list[hair_gradient_style], hair_gradient_color, dropped)
 			hair_gradient_overlay.pixel_z = hair_sprite_accessory.y_offset
+			// NOVA EDIT ADDITION START - Species hair offset
+			if(LAZYFIND(owner?.dna?.species?.offset_features, OFFSET_HAIR))
+				hair_gradient_overlay.pixel_x += owner.dna.species.offset_features[OFFSET_HAIR][INDEX_X]
+				hair_gradient_overlay.pixel_z += owner.dna.species.offset_features[OFFSET_HAIR][INDEX_Y]
+			// NOVA EDIT ADDITION END
 			. += hair_gradient_overlay
 
 	return .
@@ -160,7 +180,7 @@
 /obj/item/bodypart/head/proc/get_eye_overlays(dropped)
 	. = list()
 
-	var/obj/item/organ/eyes/eyes = locate() in src
+	var/obj/item/organ/eyes/eyes = owner?.get_organ_slot(ORGAN_SLOT_EYES) || locate() in src // NOVA EDIT CHANGE - Chest eyes dumb - ORIGINAL: var/obj/item/organ/eyes/eyes = locate() in src
 	if(QDELETED(eyes))
 		if(head_flags & HEAD_EYEHOLES)
 			. += get_eyeless_overlay(dropped)

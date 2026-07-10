@@ -1,6 +1,7 @@
 import { BlockQuote, Stack } from 'tgui-core/components';
 
 import { Window } from '../layouts';
+import { Rules } from './AntagInfoRules'; // NOVA EDIT ADDITION
 
 const goodstyle = {
   color: 'lightgreen',
@@ -49,6 +50,11 @@ export const AntagInfoMorph = (props) => {
               </span>{' '}
             </BlockQuote>
           </Stack.Item>
+          {/* NOVA EDIT ADDITION START */}
+          <Stack.Item>
+            <Rules />
+          </Stack.Item>
+          {/* NOVA EDIT ADDITION END */}
         </Stack>
       </Window.Content>
     </Window>

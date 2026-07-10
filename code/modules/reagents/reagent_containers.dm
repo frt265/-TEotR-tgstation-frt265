@@ -24,8 +24,6 @@
 	var/spawned_disease = null
 	/// How much of a disease specified in spawned_disease should this container spawn with
 	var/disease_amount = 20
-	/// If the reagents inside of this container will splash out when the container tries to splash onto someone or something
-	var/spillable = FALSE
 	/**
 	 * The different thresholds at which the reagent fill overlay will change. See medical/reagent_fillings.dmi.
 	 *
@@ -254,6 +252,7 @@
 		reagents.expose(target, TOUCH, splash_multiplier)
 		if(turf_splash_multiplier > 0)
 			reagents.expose(target_turf, TOUCH, turf_splash_multiplier) // 1 - splash_multiplier because it's what didn't hit the target
+			target_turf.add_liquid_from_reagents(reagents, reagent_multiplier = (1 - turf_splash_multiplier)) // NOVA EDIT ADDITION - liquid spills (molotov buff) (huge)
 
 	else if(bartender_check(target, splasher) && was_thrown)
 		visible_message(span_notice("[src] lands onto \the [target] without spilling a single drop."))
@@ -261,6 +260,9 @@
 
 	else
 		if(isturf(target) && length(reagents.reagent_list) && splasher)
+			//NOVA EDIT CHANGE START - liquid spills on non-mobs
+			if(target.can_liquid_spill_on_hit())
+				target.add_liquid_from_reagents(reagents, thrown_from = src, thrown_to = target)
 			log_combat(splasher, target, "splashed [english_list(reagents.reagent_list)]", src, "in [AREACOORD(target)] [was_thrown ? "(thrown)" : ""]")
 			message_admins("[ADMIN_LOOKUPFLW(splasher)] splashed (thrown) [english_list(reagents.reagent_list)] on [target] in [ADMIN_VERBOSEJMP(target)].")
 		visible_message(span_notice("[src] spills its contents all over [target]."))

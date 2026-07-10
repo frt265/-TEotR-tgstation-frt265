@@ -24,7 +24,7 @@
 	. = ..()
 
 	AddComponent(/datum/component/personal_crafting, ui_human_crafting)
-	AddElement(/datum/element/footstep, FOOTSTEP_MOB_HUMAN, 1, -6)
+	AddElement(/datum/element/footstep, FOOTSTEP_MOB_HUMAN, 0.6, -6) // NOVA EDIT CHANGE - AESTHETICS - ORIGINAL: AddElement(/datum/element/footstep, FOOTSTEP_MOB_HUMAN, 1, -6)
 	AddComponent(/datum/component/bloodysoles/feet)
 	AddElement(/datum/element/ridable, /datum/component/riding/creature/human)
 	AddElement(/datum/element/strippable, GLOB.strippable_human_items, TYPE_PROC_REF(/mob/living/carbon/human/, should_strip))
@@ -123,6 +123,7 @@
 		var/id_gender = record?.gender
 		var/id_species = record?.species
 		var/id_icon = jointext(id.get_id_examine_strings(viewer), "")
+		var/id_permit = (ACCESS_WEAPONS in id.GetAccess()) ? "Authorized" : "Unauthorized" // NOVA EDIT ADDITION - Permit shown on ID
 		// Fill in some blanks for chameleon IDs to maintain the illusion of a real ID
 		if(istype(id, /obj/item/card/id/advanced/chameleon))
 			id_gender ||= gender
@@ -144,6 +145,7 @@
 			"&bull; Gender: [id_gender || "Unknown"]",
 			"&bull; Blood Type: [id_blood_type || "?"]",
 			"&bull; Species: [id_species || "Unknown"]",
+			"&bull; Weapon Permit: [id_permit || "Unknown"]", // NOVA EDIT ADDITION - Permit shown on ID
 		), "<br>")
 		id_examine += "</div>" // container
 		id_examine += "</div>" // text
@@ -253,7 +255,13 @@
 				if(quirkstring)
 					to_chat(human_user,  "<span class='notice ml-1'>Detected physiological traits:</span>\n<span class='notice ml-2'>[quirkstring]</span>")
 				else
-					to_chat(human_user,  "<span class='notice ml-1'>No physiological traits found.</span>")
+					to_chat(usr,  "<span class='notice ml-1'>No physiological traits found.</span>")
+			//NOVA EDIT ADDITION BEGIN - EXAMINE RECORDS
+			if(href_list["medrecords"])
+				to_chat(usr, fieldset_block("Medical Record", span_info(target_record.past_medical_records), "boxed_message"), type = MESSAGE_TYPE_INFO)
+			if(href_list["genrecords"])
+				to_chat(usr, fieldset_block("General Record", span_info(target_record.past_general_records), "boxed_message"), type = MESSAGE_TYPE_INFO)
+			//NOVA EDIT END
 			return //Medical HUD ends here.
 
 		if(href_list["hud"] == "s")
@@ -325,6 +333,28 @@
 						sec_record_message += "\nAdded by [crime.author] at [crime.time]"
 				to_chat(human_or_ghost_user, boxed_message(sec_record_message))
 				return
+			// NOVA EDIT ADDITION START- EXAMINE RECORDS
+			if(href_list["genrecords"])
+				if(ishuman(usr))
+					var/mob/living/carbon/human/human_user = usr
+					if(!human_user.canUseHUD())
+						return
+					if(!HAS_TRAIT(human_user, TRAIT_SECURITY_HUD))
+						return
+				else if(!isobserver(usr))
+					return
+				to_chat(usr, fieldset_block("General Record", span_info(target_record.past_general_records), "boxed_message"), type = MESSAGE_TYPE_INFO)
+			if(href_list["secrecords"])
+				if(ishuman(usr))
+					var/mob/living/carbon/human/human_user = usr
+					if(!human_user.canUseHUD())
+						return
+					if(!HAS_TRAIT(human_user, TRAIT_SECURITY_HUD))
+						return
+				else if(!isobserver(usr))
+					return
+				to_chat(usr, fieldset_block("Security Record", span_info(target_record.past_security_records), "boxed_message"), type = MESSAGE_TYPE_INFO)
+			// NOVA EDIT ADDITION END - EXAMINE RECORDS
 			if(ishuman(human_or_ghost_user))
 				var/mob/living/carbon/human/human_user = human_or_ghost_user
 				if(href_list["add_citation"])
@@ -365,6 +395,22 @@
 					target_record.security_note = new_note
 
 					return
+	//NOVA EDIT ADDITION BEGIN - VIEW RECORDS
+	if(href_list["bgrecords"])
+		if(isobserver(usr) || usr.mind.can_see_exploitables || usr.mind.has_exploitables_override)
+			var/examined_name = get_face_name(get_id_name(""))
+			var/datum/record/crew/target_record = find_record(examined_name)
+			to_chat(usr, fieldset_block("Background Information", span_info(target_record.background_information), "boxed_message"), type = MESSAGE_TYPE_INFO)
+	if(href_list["exprecords"])
+		if(isobserver(usr) || usr.mind.can_see_exploitables || usr.mind.has_exploitables_override)
+			var/examined_name = get_face_name(get_id_name("")) //Named as such because this is the name we see when we examine
+			var/datum/record/crew/target_record = find_record(examined_name)
+			to_chat(usr, fieldset_block("Exploitable Information", span_info(target_record.exploitable_information), "boxed_message"), type = MESSAGE_TYPE_INFO)
+	if(href_list["medrecords"])
+		var/examined_name = get_face_name(get_id_name("")) //Named as such because this is the name we see when we examine
+		var/datum/record/crew/target_record = find_record(examined_name)
+		to_chat(usr, fieldset_block("Medical Record", span_info(target_record.past_medical_records), "boxed_message"), type = MESSAGE_TYPE_INFO)
+	//NOVA EDIT ADDITION END
 
 	..() //end of this massive fucking chain. TODO: make the hud chain not spooky. - Yeah, great job doing that.
 
@@ -469,9 +515,11 @@
 	if(istype(head, /obj/item/clothing/head/wizard))
 		threatcount += 2
 
+	/* NOVA EDIT - REMOVAL
 	//Check for nonhuman scum
-	if(dna && dna.species.id && dna.species.id != SPECIES_HUMAN)
+	if(dna && dna.species.id && dna.species.id != "human")
 		threatcount += 1
+	*/
 
 	//mindshield implants imply trustworthyness
 	if(HAS_TRAIT(src, TRAIT_MINDSHIELD))
@@ -531,12 +579,14 @@
 			return FALSE
 
 		var/obj/item/organ/lungs/human_lungs = get_organ_slot(ORGAN_SLOT_LUNGS)
+		/* NOVA EDIT REMOVAL BEGIN - Allow CPR without lungs
 		if(isnull(human_lungs))
 			balloon_alert(src, "you don't have lungs!")
 			return FALSE
 		if(human_lungs.organ_flags & ORGAN_FAILING)
 			balloon_alert(src, "your lungs are too damaged!")
 			return FALSE
+		*/// NOVA EDIT REMOVAL END
 
 		visible_message(span_notice("[src] is trying to perform CPR on [target.name]!"), \
 						span_notice("You try to perform CPR on [target.name]... Hold still!"))
@@ -555,13 +605,25 @@
 			add_mood_event("saved_life", /datum/mood_event/saved_life)
 		log_combat(src, target, "CPRed")
 
+		/* NOVA EDIT REMOVAL BEGIN - Allow CPR without lungs
 		if (HAS_TRAIT(target, TRAIT_NOBREATH))
 			to_chat(target, span_unconscious("You feel a breath of fresh air... which is a sensation you don't recognise..."))
 		else if (!target.get_organ_slot(ORGAN_SLOT_LUNGS))
 			to_chat(target, span_unconscious("You feel a breath of fresh air... but you don't feel any better..."))
+		*/// NOVA EDIT REMOVAL END
+		// NOVA EDIT ADDTION BEGIN - Allow CPR without lungs
+		var/can_breathe = TRUE // If FALSE, then chest compressions are the only option
+		if(isnull(human_lungs) || istype(human_lungs, /obj/item/organ/lungs/synth) || (human_lungs.organ_flags & ORGAN_FAILING))
+			can_breathe = FALSE
+		if(issynthetic(target)) // Synthetic humanoids don't benefit from CPR
+			to_chat(target, span_unconscious("You feel someone pushing down onto your chest, but you don't feel any better..."))
+		else if(!can_breathe || (HAS_TRAIT(target, TRAIT_NOBREATH) || !target.get_organ_slot(ORGAN_SLOT_LUNGS)))
+			to_chat(target, span_unconscious("You feel someone pushing down onto your chest..."))
+			target.adjust_oxy_loss(-min(target.get_oxy_loss(), 5))
+		// NOVA EDIT ADDITION END
 		else
 			target.adjust_oxy_loss(-min(target.get_oxy_loss(), 7))
-			to_chat(target, span_unconscious("You feel a breath of fresh air enter your lungs... It feels good..."))
+			to_chat(target, span_unconscious("You feel someone pushing on your chest, and fresh air inside your lungs... It feels good...")) // NOVA EDIT CHANGE - Original: to_chat(target, span_unconscious("You feel a breath of fresh air enter your lungs... It feels good..."))
 
 		if (target.health <= target.crit_threshold)
 			if (!panicking)
@@ -673,6 +735,12 @@
 		visible_message(span_danger("[src] manages to [cuff_break ? "break" : "remove"] [I]!"))
 		to_chat(src, span_notice("You successfully [cuff_break ? "break" : "remove"] [I]."))
 		return TRUE
+	// NOVA EDIT ADDITION: NOW GLOVES CAN RESTRAIN PLAYERS
+	if(I == gloves)
+		visible_message(span_danger("[src] manages to [cuff_break ? "break" : "remove"] [I]!"))
+		to_chat(src, span_notice("You successfully [cuff_break ? "break" : "remove"] [I]."))
+		return TRUE
+	// NOVA EDIT ADDITION END
 
 /mob/living/carbon/human/replace_records_name(oldname, newname) // Only humans have records right now, move this up if changed.
 	var/datum/record/crew/crew_record = find_record(oldname)
@@ -696,7 +764,7 @@
 	if(heal_flags & HEAL_NEGATIVE_MUTATIONS)
 		for(var/datum/mutation/existing_mutation in dna.mutations)
 			if(existing_mutation.quality != POSITIVE && existing_mutation.remove_on_aheal)
-				dna.remove_mutation(existing_mutation, list(MUTATION_SOURCE_ACTIVATED, MUTATION_SOURCE_MUTATOR, MUTATION_SOURCE_TIMED_INJECTOR))
+				dna.remove_mutation(existing_mutation, GLOB.standard_mutation_sources)
 
 	if(heal_flags & HEAL_TEMP)
 		set_coretemperature(get_body_temp_normal(apply_change = FALSE))
@@ -923,7 +991,17 @@
 		skills_space = " very quickly"
 	else if(carrydelay <= 4 SECONDS)
 		skills_space = " quickly"
-
+	// NOVA EDIT ADDITION START
+	if((HAS_TRAIT(target, TRAIT_OVERSIZED) && !HAS_TRAIT(src, TRAIT_OVERSIZED)) && !istype(potential_spine))
+		visible_message(span_warning("[src] tries to carry [target], but they are too heavy!"))
+		return
+	else if(HAS_TRAIT(target, TRAIT_HEAVYSET))
+		if((fitness_level < SKILL_LEVEL_MASTER - 1) && !istype(potential_spine)) // fitness_level has 1 subtracted from it
+			visible_message(span_warning("[src] tries to carry [target], but can't make them budge!"))
+			return
+		carrydelay = 5 SECONDS
+		skills_space = " strenuously"
+	// NOVA EDIT ADDITION END
 	visible_message(span_notice("[src] starts[skills_space] lifting [target] onto [p_their()] back..."),
 		span_notice("You[skills_space] start to lift [target] onto your back..."))
 	if(!do_after(src, carrydelay, target))
@@ -952,6 +1030,30 @@
 	if(INCAPACITATED_IGNORING(target, INCAPABLE_GRAB) || INCAPACITATED_IGNORING(src, INCAPABLE_GRAB))
 		target.visible_message(span_warning("[target] can't hang onto [src]!"))
 		return
+	// NOVA EDIT ADDITION START
+	var/obj/item/organ/cyberimp/chest/spine/atlas/potential_spine = get_organ_slot(ORGAN_SLOT_SPINE) // Only those with a gravity core spine implant can do the holy heavy piggyback while being smoll and light
+	if(((HAS_TRAIT(target, TRAIT_OVERSIZED) && !HAS_TRAIT(src, TRAIT_OVERSIZED)) && !istype(potential_spine)) || ((HAS_TRAIT(target, TRAIT_HEAVYSET) && !HAS_TRAIT(src, TRAIT_HEAVYSET)) && !istype(potential_spine)))
+		target.visible_message(span_warning("[target] is too heavy for [src] to carry!"))
+		var/dam_zone = pick(BODY_ZONE_CHEST, BODY_ZONE_L_LEG, BODY_ZONE_R_LEG)
+		var/obj/item/bodypart/affecting = get_bodypart(ran_zone(dam_zone))
+		var/wound_bon = 0
+		if(!affecting) //If one leg is missing, then it might break. Snap their spine instead
+			affecting = get_bodypart(BODY_ZONE_CHEST)
+		if(prob(oversized_piggywound_chance	))
+			wound_bon = 100
+			to_chat(src, span_danger("You are crushed under the weight of [target]!"))
+			to_chat(target, span_danger("You accidentally crush [src]!"))
+		else
+			to_chat(src, span_danger("You hurt your [affecting.name] while trying to endure the weight of [target]!"))
+		apply_damage(oversized_piggydam, BRUTE, affecting, wound_bonus=wound_bon)
+		playsound(src, 'sound/effects/splat.ogg', 50, TRUE)
+		AddElement(/datum/element/squish, 20 SECONDS) // Totally not stolen from a vending machine code
+		Knockdown(oversized_piggyknock) // Knocking down the unlucky guy
+		target.Knockdown(1) // simply make the oversized one fall
+		if(get_turf(target) != get_turf(src))
+			target.throw_at(get_turf(src), 1, 1, spin=FALSE, quickstart=FALSE)
+		return
+	// NOVA EDIT ADDITION END
 
 	return buckle_mob(target, TRUE, TRUE, RIDER_NEEDS_ARMS)
 
@@ -1042,10 +1144,10 @@
 	if (!isnull(race))
 		dna.species = new race
 
-/mob/living/carbon/human/species/set_species(datum/species/mrace, icon_update, pref_load, replace_missing)
+/mob/living/carbon/human/species/set_species(datum/species/mrace, icon_update = TRUE, pref_load = FALSE, replace_missing = TRUE, list/override_features, list/override_mutantparts, list/override_markings) // NOVA EDIT CHANGE - Customization. ORIGINAL: /mob/living/carbon/human/species/set_species(datum/species/mrace, icon_update, pref_load, replace_missing)
 	. = ..()
 	if(use_random_name)
-		fully_replace_character_name(real_name, generate_random_mob_name())
+		fully_replace_character_name(newname = generate_random_mob_name())
 
 ///Proc used to make monkey roles able to function like crew, but not be able to shift into humans easily.
 /mob/living/carbon/human/proc/crewlike_monkify()

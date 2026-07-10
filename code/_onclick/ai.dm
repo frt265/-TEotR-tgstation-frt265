@@ -117,7 +117,7 @@
 	for AI shift, ctrl, and alt clicking.
 */
 
-/mob/living/silicon/ai/CtrlShiftClickOn(atom/target)
+/mob/living/silicon/ai/CtrlShiftClickOn(atom/target) // Procs overriden in modular_nova/modules/Silicon_QoL
 	target.AICtrlShiftClick(src)
 
 /mob/living/silicon/ai/ShiftClickOn(atom/target)
@@ -166,7 +166,6 @@
 
 /atom/proc/AICtrlShiftClick(mob/living/silicon/ai/user)
 	return
-
 /* Airlocks */
 /obj/machinery/door/airlock/AICtrlClick(mob/living/silicon/ai/user) // Bolts doors
 	if(obj_flags & EMAGGED)

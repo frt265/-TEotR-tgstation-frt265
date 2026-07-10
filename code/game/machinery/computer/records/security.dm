@@ -121,6 +121,7 @@
 
 		records += list(list(
 			age = target.age,
+			chrono_age = target.chrono_age, // NOVA EDIT ADDITION - Chronological age
 			citations = citations,
 			crew_ref = REF(target),
 			crimes = crimes,
@@ -132,6 +133,10 @@
 			species = target.species,
 			trim = target.trim,
 			wanted_status = target.wanted_status,
+			// NOVA EDIT ADDITION - RP Records
+			past_general_records = target.past_general_records,
+			past_security_records = target.past_security_records,
+			// NOVA EDIT END
 		))
 
 	data["records"] = records
@@ -142,6 +147,7 @@
 	var/list/data = list()
 	data["min_age"] = AGE_MIN
 	data["max_age"] = AGE_MAX
+	data["max_chrono_age"] = AGE_CHRONO_MAX // NOVA EDIT ADDITION - Chronological age
 	return data
 
 /obj/machinery/computer/records/security/ui_act(action, list/params, datum/tgui/ui)
@@ -374,10 +380,12 @@
 			printable = wanted_poster
 
 		if("rapsheet")
-			var/list/crimes = target.crimes
-			if(!length(crimes))
-				balloon_alert(user, "no crimes")
-				return FALSE
+		/// NOVA EDIT REMOVE - REMOVE CRIMES REQUIREMENT FOR PRINTING RECORDS
+			//var/list/crimes = target.crimes
+			//if(!length(crimes))
+				//balloon_alert(user, "no crimes")
+				//return FALSE
+		/// NOVA EDIT REMOVE END
 
 			var/obj/item/paper/rapsheet = target.get_rapsheet(input_alias, input_header, input_description)
 			printable = rapsheet

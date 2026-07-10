@@ -46,7 +46,9 @@
 			. += span_warning("[p_They()] do[p_es()]n't seem to be responding.")
 		if(DEAD)
 			. += span_deadsay("[p_They()] look[p_s()] like its system is corrupted and requires a reset.")
-
+	//NOVA EDIT ADDITION BEGIN - CUSTOMIZATION
+	. += get_silicon_flavortext(user)
+	//NOVA EDIT ADDITION END
 	. += ..()
 
 /mob/living/silicon/robot/examine_descriptor(mob/user)

@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { useBackend } from 'tgui/backend';
-import { Button, Stack } from 'tgui-core/components';
+import { Dropdown, Flex, Stack } from 'tgui-core/components'; // NOVA EDIT CHANGE - ORIGINAL: import { Button, Stack } from 'tgui-core/components';
 import { exhaustiveCheck } from 'tgui-core/exhaustive';
 
 import { PageButton } from '../components/PageButton';
 import type { PreferencesMenuData } from '../types';
 import { AntagsPage } from './AntagsPage';
 import { JobsPage } from './JobsPage';
+// NOVA EDIT ADDITION START
+import { LanguagesPage } from './LanguagesMenu';
+import { AugmentsTab, LimbsPage } from './LimbsPage';
+// NOVA EDIT ADDITION END
 import { LoadoutPage } from './loadout';
 import { MainPage } from './MainPage';
 import { QuirkPersonalityPage } from './QuirksPage';
@@ -19,6 +23,10 @@ enum Page {
   Species,
   Quirks,
   Loadout,
+  // NOVA EDIT ADDITION START
+  Limbs,
+  Languages,
+  // NOVA EDIT ADDITION END
 }
 
 type ProfileProps = {
@@ -31,28 +39,48 @@ function CharacterProfiles(props: ProfileProps) {
   const { activeSlot, onClick, profiles } = props;
 
   return (
-    <Stack justify="center" wrap>
-      {profiles.map((profile, slot) => (
-        <Stack.Item key={slot} mb={1}>
-          <Button
-            selected={slot === activeSlot}
-            onClick={() => {
-              onClick(slot);
-            }}
-            fluid
-          >
-            {profile ?? 'New Character'}
-          </Button>
-        </Stack.Item>
-      ))}
-    </Stack>
+    <Flex /* NOVA EDIT CHANGE START - Nova uses a dropdown instead of buttons */
+      align="center"
+      justify="center"
+    >
+      <Flex.Item width="25%">
+        <Dropdown
+          width="100%"
+          selected={activeSlot as unknown as string}
+          displayText={profiles[activeSlot]}
+          options={profiles.map((profile, slot) => ({
+            value: slot,
+            displayText: profile ?? 'New Character',
+          }))}
+          onSelected={(slot) => {
+            onClick(slot);
+          }}
+        />
+      </Flex.Item>
+    </Flex> /* NOVA EDIT CHANGE END */
   );
 }
 
+/* // NOVA EDIT REMOVAL START
 export function CharacterPreferenceWindow(props) {
   const { act, data } = useBackend<PreferencesMenuData>();
 
   const [currentPage, setCurrentPage] = useState(Page.Main);
+*/ // NOVA EDIT REMOVAL END
+// NOVA EDIT ADDITION START
+export function CharacterPreferenceWindow(props: {
+  onAugmentsTabChange?: (tab: import('./LimbsPage').AugmentsTab | null) => void;
+}) {
+  const { act, data } = useBackend<PreferencesMenuData>();
+  const [augmentsTab, setAugmentsTab] = useState<AugmentsTab | null>(null);
+  const [currentPage, setCurrentPageRaw] = useState(Page.Main);
+  const setCurrentPage = (page: Page) => {
+    if (page !== Page.Limbs) props.onAugmentsTabChange?.(null);
+    else props.onAugmentsTabChange?.(AugmentsTab.Markings);
+    document.querySelector('[style*="overflow"]')?.scrollTo(0, 0);
+    setCurrentPageRaw(page);
+  };
+  // NOVA EDIT ADDITION END
 
   let pageContents;
 
@@ -82,6 +110,21 @@ export function CharacterPreferenceWindow(props) {
     case Page.Loadout:
       pageContents = <LoadoutPage />;
       break;
+    // NOVA EDIT ADDITION START
+    case Page.Limbs:
+      pageContents = (
+        <LimbsPage
+          onTabChange={(tab) => {
+            props.onAugmentsTabChange?.(tab);
+            setAugmentsTab(tab);
+          }}
+        />
+      );
+      break;
+    case Page.Languages:
+      pageContents = <LanguagesPage />;
+      break;
+    // NOVA EDIT ADDITION END
 
     default:
       exhaustiveCheck(currentPage);
@@ -142,7 +185,27 @@ export function CharacterPreferenceWindow(props) {
               Occupations
             </PageButton>
           </Stack.Item>
+          {/* NOVA EDIT ADDITION START */}
+          <Stack.Item grow>
+            <PageButton
+              currentPage={currentPage}
+              page={Page.Limbs}
+              setPage={setCurrentPage}
+            >
+              Augments+
+            </PageButton>
+          </Stack.Item>
 
+          <Stack.Item grow>
+            <PageButton
+              currentPage={currentPage}
+              page={Page.Languages}
+              setPage={setCurrentPage}
+            >
+              Languages
+            </PageButton>
+          </Stack.Item>
+          {/* NOVA EDIT ADDITION end */}
           <Stack.Item grow>
             <PageButton
               currentPage={currentPage}

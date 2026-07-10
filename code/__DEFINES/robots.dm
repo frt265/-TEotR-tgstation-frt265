@@ -52,6 +52,15 @@
 ///Third Borg module slot.
 #define BORG_CHOOSE_MODULE_THREE 3
 
+// NOVA EDIT START - TODO - Move this upstream later
+/// To store all the different cyborg models, instead of creating that for each cyborg.
+GLOBAL_LIST_EMPTY(cyborg_model_list)
+/// To store all of the different base cyborg model icons, instead of creating them every time the pick_module() proc is called.
+GLOBAL_LIST_EMPTY(cyborg_base_models_icon_list)
+/// To store all of the different cyborg model icons, instead of creating them every time the be_transformed_to() proc is called.
+GLOBAL_LIST_EMPTY(cyborg_all_models_icon_list)
+// NOVA EDIT END
+
 #define SKIN_ICON "skin_icon"
 #define SKIN_ICON_STATE "skin_icon_state"
 #define SKIN_PIXEL_X "skin_pixel_x"
@@ -399,3 +408,10 @@ DEFINE_BITFIELD(janitor_mode_flags, list(
 
 /// Default offsets for riding a cyborg
 #define DEFAULT_ROBOT_RIDING_OFFSETS list(TEXT_NORTH = list(0, 4), TEXT_SOUTH = list(0, 4), TEXT_EAST = list(-6, 3), TEXT_WEST = list(6, 3))
+
+
+//mulebots
+#define MULEBOT_MOOD_ANNOYED "ANNOYED"
+#define MULEBOT_MOOD_CHIME "CHIME"
+#define MULEBOT_MOOD_DELIGHT "DELIGHT"
+#define MULEBOT_MOOD_SIGH "SIGH"

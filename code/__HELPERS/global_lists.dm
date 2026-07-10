@@ -6,7 +6,9 @@
 /proc/make_datum_reference_lists()
 	// I tried to eliminate this proc but I couldn't untangle their init-order interdependencies -Dominion/Cyberboss
 	init_keybindings()
+	make_nova_datum_references() // NOVA EDIT ADDITION - CUSTOMIZATION
 	GLOB.emote_list = init_emote_list() // WHY DOES THIS NEED TO GO HERE? IT JUST INITS DATUMS
+	init_nova_stack_recipes() // NOVA EDIT ADDITION - More sheet recipes
 	init_crafting_recipes()
 	init_crafting_recipes_atoms()
 
@@ -14,7 +16,7 @@
 /proc/init_crafting_recipes()
 	for(var/datum/crafting_recipe_path as anything in valid_subtypesof(/datum/crafting_recipe))
 		var/datum/crafting_recipe/recipe = new crafting_recipe_path()
-		var/is_cooking = (recipe.category in GLOB.crafting_category_food)
+		var/is_cooking = (recipe.category in (GLOB.crafting_category_food))
 		recipe.reqs = sort_list(recipe.reqs, GLOBAL_PROC_REF(cmp_crafting_req_priority))
 		if(recipe.name != "" && recipe.result)
 			if(is_cooking)
@@ -167,6 +169,8 @@ GLOBAL_LIST_INIT(WALLITEMS_INTERIOR, typecacheof(list(
 	/obj/machinery/status_display,
 	/obj/machinery/ticket_machine,
 	/obj/machinery/turretid,
+	/obj/machinery/modular_computer/preset/time_clock, // NOVA EDIT ADDITION - TIME CLOCK
+	/obj/structure/wall_torch, // NOVA EDIT ADDITION - Wall-mounted torches
 	/obj/machinery/barsign,
 	/obj/structure/extinguisher_cabinet,
 	/obj/structure/fish_mount,

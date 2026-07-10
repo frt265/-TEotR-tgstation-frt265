@@ -7,9 +7,11 @@
 		TRAIT_MUTANT_COLORS,
 	)
 	inherent_biotypes = MOB_ORGANIC|MOB_HUMANOID|MOB_REPTILE
+	/* NOVA EDIT REMOVAL START - Customization
 	body_markings = list(
 		/datum/bodypart_overlay/simple/body_marking/lizard = SPRITE_ACCESSORY_NONE,
 	)
+	*/ // NOVA EDIT REMOVAL END
 	mutant_organs = list(
 		/obj/item/organ/horns = SPRITE_ACCESSORY_NONE,
 		/obj/item/organ/frills = SPRITE_ACCESSORY_NONE,
@@ -50,10 +52,14 @@
 /datum/species/lizard/body_temperature_core(mob/living/carbon/human/humi, seconds_per_tick)
 	return
 
+//NOVA EDIT REMOVAL BEGIN
+/*
 /datum/species/lizard/randomize_features()
 	var/list/features = ..()
 	features[FEATURE_LIZARD_MARKINGS] = pick(SSaccessories.feature_list[FEATURE_LIZARD_MARKINGS])
 	return features
+*/
+//NOVA EDIT REMOVAL END
 
 /datum/species/lizard/get_scream_sound(mob/living/carbon/human/lizard)
 	return pick(
@@ -178,7 +184,7 @@ Lizard subspecies: ASHWALKERS
 		TRAIT_MUTANT_COLORS,
 		TRAIT_VIRUSIMMUNE,
 	)
-	inherent_factions = list(FACTION_ASHWALKER)
+	// inherent_factions = list(FACTION_ASHWALKER) // NOVA EDIT REMOVAL: Moving to Ritual
 	species_language_holder = /datum/language_holder/lizard/ash
 	digitigrade_customization = DIGITIGRADE_FORCED
 	examine_limb_id = SPECIES_LIZARD

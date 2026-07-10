@@ -72,6 +72,7 @@ GLOBAL_VAR(antag_prototypes)
 				if (R.emagged)
 					common_commands += "<a href='byond://?src=[REF(src)];silicon=unemagcyborgs'>Unemag slaved cyborgs</a>"
 					break
+	common_commands += "<a href='byond://?src=[REF(src)];common=toggle_exploitables'>Toggle exploitables override</a>" //NOVA EDIT ADDITION -- EXPLOITABLES
 	return common_commands
 
 /**

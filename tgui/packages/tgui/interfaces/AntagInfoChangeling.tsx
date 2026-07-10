@@ -11,6 +11,7 @@ import type { BooleanLike } from 'tgui-core/react';
 
 import { useBackend } from '../backend';
 import { Window } from '../layouts';
+import { Rules } from './AntagInfoRules'; // NOVA EDIT ADDITION
 import {
   type Objective,
   ObjectivePrintout,
@@ -67,9 +68,10 @@ type Info = {
   absorbed_dna: number;
 };
 
+// NOVA EDIT change height from 750 to 900
 export const AntagInfoChangeling = (props) => {
   return (
-    <Window width={720} height={750}>
+    <Window width={720} height={900}>
       <Window.Content
         style={{
           backgroundImage: 'none',
@@ -79,6 +81,11 @@ export const AntagInfoChangeling = (props) => {
           <Stack.Item maxHeight={16}>
             <IntroductionSection />
           </Stack.Item>
+          {/* NOVA EDIT ADDITION START */}
+          <Stack.Item>
+            <Rules />
+          </Stack.Item>
+          {/* NOVA EDIT ADDITION END */}
           <Stack.Item grow={4}>
             <AbilitiesSection />
           </Stack.Item>

@@ -564,7 +564,7 @@
 	if(Adjacent(user))
 		var/minor
 		if(registered_name && registered_age && registered_age < AGE_MINOR)
-			minor = " <b>(MINOR)</b>"
+			minor = " <b>[registered_age]</b>" //NOVA EDIT CHANGE
 		user.visible_message(span_notice("[user] shows you: [icon2html(src, viewers(user))] [src.name][minor]."), span_notice("You show \the [src.name][minor]."))
 	add_fingerprint(user)
 
@@ -724,6 +724,11 @@
 			return ITEM_INTERACT_BLOCKING
 		to_chat(user, span_notice("You stuff the contents into the card! They disappear in a puff of bluespace smoke, adding [money_added] worth of [MONEY_NAME] to the linked account."))
 		return ITEM_INTERACT_SUCCESS
+	/// NOVA EDIT ADDITION START - Trim Tokens - Proc defined in modular_nova/modules/trim_tokens/code/cards_id.dm
+	else if(istype(tool, /obj/item/trim_token))
+		apply_token(tool, user)
+		return ITEM_INTERACT_SUCCESS
+	/// NOVA EDIT ADDITION END
 	return NONE
 
 /**

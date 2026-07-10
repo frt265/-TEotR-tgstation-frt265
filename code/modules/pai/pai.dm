@@ -25,7 +25,7 @@
 	move_resist = 0
 	name = "pAI"
 	pass_flags = PASSTABLE | PASSMOB
-	pull_force = 0
+	pull_force = MOVE_FORCE_NONE
 	radio = /obj/item/radio/headset/silicon/pai
 	worn_slot_flags = ITEM_SLOT_HEAD
 
@@ -115,8 +115,8 @@
 		"mouse" = TRUE,
 		"rabbit" = TRUE,
 		"repairbot" = TRUE,
-		"kitten" = TRUE,
-		"puppy" = TRUE,
+		// "kitten" = TRUE, // NOVA EDIT REMOVAL
+		// "puppy" = TRUE, // NOVA EDIT REMOVAL
 		"spider" = TRUE,
 	)
 
@@ -168,6 +168,9 @@
 /mob/living/silicon/pai/examine(mob/user)
 	. = ..()
 	. += "Its master ID string seems to be [(!master_name || emagged) ? "empty" : master_name]."
+	//NOVA EDIT ADDITION BEGIN - CUSTOMIZATION
+	. += get_silicon_flavortext(user)
+	//NOVA EDIT ADDITION END
 
 /mob/living/silicon/pai/get_status_tab_items()
 	. = ..()

@@ -61,6 +61,9 @@
 	if(!isnull(show_balloon_alert))
 		src.show_balloon_alert = show_balloon_alert
 
+	src.speech_action_icon = speech_action_icon
+	src.speech_action_icon_state = speech_action_icon_state
+	src.speech_action_background_icon_state = speech_action_background_icon_state
 	master_speech = new(src)
 	master_speech.Grant(owner)
 
@@ -87,6 +90,10 @@
  */
 /datum/component/mind_linker/proc/link_mob(mob/living/to_link)
 	if(QDELETED(to_link) || to_link.stat == DEAD)
+		return FALSE
+	if(HAS_TRAIT(to_link, TRAIT_MINDSHIELD)) // Mindshield implant - no dice
+		return FALSE
+	if(to_link.can_block_magic(MAGIC_RESISTANCE_MIND, charge_cost = 0))
 		return FALSE
 	if(linked_mobs[to_link])
 		return FALSE

@@ -64,6 +64,7 @@
 		is_charging = FALSE
 		return
 	charging_cell.give(charge_amount)
+	SEND_SIGNAL(parent, COMSIG_UPDATE_AMMO_HUD) // NOVA EDIT ADDITION - AMMO COUNT HUD
 	source.update_appearance()
 	is_charging = FALSE
 	if(spin_to_win)

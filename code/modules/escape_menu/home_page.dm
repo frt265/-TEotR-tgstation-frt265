@@ -47,7 +47,8 @@
 			/* on_click_callback = */ CALLBACK(src, PROC_REF(open_admin_page)),
 		)
 	)
-
+	//NOVA EDIT REMOVAL BEGIN
+	/*
 	page_holder.give_screen_object(
 		new /atom/movable/screen/escape_menu/text/clickable/leave_body(
 			null,
@@ -59,6 +60,8 @@
 			/* on_click_callback = */ CALLBACK(src, PROC_REF(open_leave_body)),
 		)
 	)
+	*/
+	// NOVA EDIT REMOVAL END
 
 	page_holder.give_screen_object(
 		new /atom/movable/screen/escape_menu/text/clickable(
@@ -66,7 +69,7 @@
 			/* hud_owner = */ null,
 			/* escape_menu = */ src,
 			/* button_text = */ "Quit",
-			/* offset = */ list(-311, 30),
+			/* offset = */ list(-381, 30), // NOVA EDIT - original /* offset = */ list(-311, 30),
 			/* font_size = */ 24,
 			/* on_click_callback = */ CALLBACK(src, PROC_REF(quit_game_prompt)),
 		)

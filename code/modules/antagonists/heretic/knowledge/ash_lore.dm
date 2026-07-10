@@ -51,7 +51,7 @@
 	name = "Nightwatcher's Secret"
 	desc = "Opens up the Path of Ash to you. \
 		Allows you to transmute a match and a knife into an Ashen Blade. \
-		You can only create two at a time."
+		You can only create five at a time." //NOVA EDIT two to five
 	gain_text = "The City Guard know their watch. If you ask them at night, they may tell you about the ashy lantern."
 	required_atoms = list(
 		/obj/item/knife = 1,

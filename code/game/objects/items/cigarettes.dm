@@ -96,7 +96,10 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 /obj/item/match/proc/matchignite()
 	if(lit || burnt || broken)
 		return
-
+	//NOVA EDIT ADDITION
+	var/turf/my_turf = get_turf(src)
+	my_turf.pollute_turf(/datum/pollutant/sulphur, 5)
+	//NOVA EDIT END
 	playsound(src, 'sound/items/match_strike.ogg', 15, TRUE)
 	lit = TRUE
 	damtype = BURN
@@ -249,6 +252,8 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	VAR_FINAL/how_long_have_we_been_smokin = 0 SECONDS
 	/// Which people ate cigarettes and how many
 	var/static/list/cigarette_eaters = list()
+
+	var/pollution_type = /datum/pollutant/smoke //NOVA EDIT ADDITION /// What type of pollution does this produce on smoking, changed to weed pollution sometimes
 
 /obj/item/cigarette/Initialize(mapload)
 	. = ..()
@@ -447,6 +452,11 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 
 	if(reagents?.has_reagent(/datum/reagent/drug/methamphetamine))
 		reagents.flags |= NO_REACT
+	//NOVA EDIT ADDITION START
+	// Setting the puffed pollutant to cannabis if we're smoking the space drugs reagent(obtained from cannabis)
+	if(reagents.has_reagent(/datum/reagent/drug/space_drugs))
+		pollution_type = /datum/pollutant/smoke/cannabis
+	//NOVA EDIT ADDITION END
 
 	// allowing reagents to react after being lit
 	reagents.handle_reactions()
@@ -578,6 +588,11 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 	if(!check_oxygen(user))
 		extinguish()
 		return
+
+	// NOVA EDIT ADDITION START - Pollution
+	var/turf/location = get_turf(src)
+	location.pollute_turf(pollution_type, 5, POLLUTION_PASSIVE_EMITTER_CAP)
+	// NOVA EDIT END
 
 	smoketime -= seconds_per_tick * (1 SECONDS)
 	if(smoketime <= 0)
@@ -1210,6 +1225,13 @@ CIGARETTE PACKETS ARE IN FANCY.DM
 
 	//Time to start puffing those fat vapes, yo.
 	COOLDOWN_START(src, drag_cooldown, dragtime)
+
+	//NOVA EDIT ADDITION
+	//open flame removed because vapes are a closed system, they won't light anything on fire
+	var/turf/my_turf = get_turf(src)
+	my_turf.pollute_turf(/datum/pollutant/smoke/vape, 5, POLLUTION_PASSIVE_EMITTER_CAP)
+	//NOVA EDIT END
+
 	if(obj_flags & EMAGGED)
 		var/smoke_amount = DIAMOND_AREA(4)
 		do_chem_smoke(amount = smoke_amount, holder = src, location = loc, carry = reagents, carry_limit = 20, smoke_type = /datum/effect_system/fluid_spread/smoke/chem/smoke_machine)

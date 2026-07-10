@@ -32,3 +32,4 @@
 	return gender == MALE || gender == FEMALE
 
 #undef USE_GENDER
+

@@ -542,13 +542,7 @@
 /obj/effect/decal/cleanable/blood/gibs/lazy_init_reagents()
 	if (reagents)
 		return reagents
-
-	if (!decal_reagent)
-		return
-
-	create_reagents(reagent_amount)
-	reagents.add_reagent(decal_reagent, reagent_amount)
-	return reagents
+	return init_reagents(decal_reagent, reagent_amount)
 
 /obj/effect/decal/cleanable/blood/gibs/update_overlays()
 	. = ..()
@@ -575,7 +569,7 @@
 	. = ..()
 	if(!.)
 		return
-	AddComponent(/datum/component/rot, 0, 5 MINUTES, 0.7)
+	//AddComponent(/datum/component/rot, 0, 5 MINUTES, 0.7) // NOVA EDIT REMOVAL
 	update_appearance(UPDATE_OVERLAYS)
 
 /obj/effect/decal/cleanable/blood/gibs/ex_act(severity, target)

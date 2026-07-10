@@ -761,6 +761,7 @@ GLOBAL_DATUM_INIT(operations, /datum/operation_holder, new)
 		basemod *= 0.8
 	if(HAS_TRAIT(patient, TRAIT_ANALGESIA))
 		basemod *= 0.8
+		to_chat(surgeon, span_notice("You are able to work faster due to the patient's calm attitude!")) // NOVA EDIT ADDITION - Better feedback for the use of analgesia
 	return basemod
 
 /// Returns a time modifier based on the surgeon's status
@@ -778,6 +779,16 @@ GLOBAL_DATUM_INIT(operations, /datum/operation_holder, new)
 		basemod *= 0.8
 	else
 		basemod *= 1 + round((drunkness ** 1.5) / 90, 0.1)
+	// NOVA EDIT ADDITION START - reward for doing surgery on a calm environment (no other humans around)
+	var/quiet_environment = TRUE
+	for(var/mob/living/carbon/human/loud_person in view(3, patient))
+		if(loud_person != surgeon && loud_person != patient)
+			quiet_environment = FALSE
+			break
+	if(quiet_environment)
+		basemod *= 0.8
+		to_chat(surgeon, span_notice("You are able to work faster due to the quiet environment!"))
+	// NOVA EDIT ADDITION END
 
 	return basemod
 
@@ -837,6 +848,13 @@ GLOBAL_DATUM_INIT(operations, /datum/operation_holder, new)
 	if(!check_availability(patient, operating_on, surgeon, tool, operation_args[OPERATION_TARGET_ZONE]))
 		return ITEM_INTERACT_BLOCKING
 
+	// NOVA EDIT ADDITION START - Makes it so you cannot operate on people in turned on Stasis Beds
+	if(patient.buckled)
+		var/obj/machinery/stasis/stasis_bed = patient.buckled
+		if(istype(stasis_bed) && stasis_bed.stasis_enabled)
+			to_chat(surgeon, span_warning("[patient] cannot be operated in the [patient.buckled] while it is turned on!"))
+			return ITEM_INTERACT_BLOCKING
+	// NOVA EDIT ADDITION END
 	if(isitem(tool))
 		var/obj/item/realtool = tool
 		var/tool_return = SEND_SIGNAL(realtool, COMSIG_ITEM_USED_IN_SURGERY, src, operating_on, surgeon)
@@ -1272,6 +1290,10 @@ GLOBAL_DATUM_INIT(operations, /datum/operation_holder, new)
 		return FALSE
 	if(required_bodytype && !(carbon_part.bodytype & required_bodytype))
 		return FALSE
+	// NOVA EDIT ADDITION START - Synth Flags
+	if(blocked_bodytype && (carbon_part.bodytype & blocked_bodytype))
+		return FALSE
+	// NOVA EDIT ADDITION END - Synth Flags
 	return ..()
 
 /datum/surgery_operation/basic/has_surgery_state(mob/living/patient, state)
@@ -1330,6 +1352,10 @@ GLOBAL_DATUM_INIT(operations, /datum/operation_holder, new)
 
 	if(required_bodytype && !(limb.bodytype & required_bodytype))
 		return FALSE
+	// NOVA EDIT ADDITION START - Synth Flags
+	if(blocked_bodytype && (limb.bodytype & blocked_bodytype))
+		return FALSE
+	// NOVA EDIT ADDITION END - Synth Flags
 
 	return ..()
 
@@ -1392,6 +1418,10 @@ GLOBAL_DATUM_INIT(operations, /datum/operation_holder, new)
 		return FALSE
 	if(!HAS_TRAIT(organ.bodypart_owner, TRAIT_READY_TO_OPERATE))
 		return FALSE
+	// NOVA EDIT ADDITION START - Synth Flags
+	if(blocked_organ_flag && (organ.organ_flags & blocked_organ_flag))
+		return FALSE
+	// NOVA EDIT ADDITION END
 
 	return ..()
 

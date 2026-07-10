@@ -136,13 +136,14 @@
 		to_chat(user, span_notice("You swallow a gulp of [src]."))
 
 	SEND_SIGNAL(src, COMSIG_GLASS_DRANK, target_mob, user)
+	SEND_SIGNAL(target_mob, COMSIG_GLASS_DRANK, src, user) // NOVA EDIT ADDITION - Hemophages can't casually drink what's not going to regenerate their blood
 	var/fraction = min(gulp_size / reagents.total_volume, 1)
 	reagents.trans_to(target_mob, gulp_size, transferred_by = user, methods = reagent_consumption_method)
 	var/atom/movable/screen/hunger/hunger_bar = user.hud_used?.screen_objects[HUD_MOB_HUNGER]
 	if (istype(hunger_bar))
 		hunger_bar.update_hunger_bar()
 	checkLiked(fraction, target_mob)
-	playsound(target_mob, consumption_sound, rand(10, 50), TRUE)
+	playsound(target_mob, consumption_sound, rand(10,50), TRUE)
 	var/list/datum/disease/diseases_to_add
 	for(var/datum/disease/malady as anything in target_mob.get_static_viruses())
 		if(malady.spread_flags & DISEASE_SPREAD_CONTACT_FLUIDS)
@@ -582,6 +583,20 @@
 
 /obj/item/reagent_containers/cup/bucket/item_interaction(mob/living/user, obj/item/tool, list/modifiers)
 	if(istype(tool, /obj/item/mop))
+		// NOVA EDIT ADDITION START - LIQUIDS
+		var/is_right_clicking = LAZYACCESS(modifiers, RIGHT_CLICK)
+		if(is_right_clicking)
+			if(tool.reagents.total_volume == 0)
+				user.balloon_alert(user, "[tool] is dry!")
+				return ITEM_INTERACT_BLOCKING
+			if(reagents.total_volume == reagents.maximum_volume)
+				user.balloon_alert(user, "[tool] is full!")
+				return ITEM_INTERACT_BLOCKING
+			tool.reagents.remove_all(tool.reagents.total_volume * SQUEEZING_DISPERSAL_RATIO)
+			tool.reagents.trans_to(src, tool.reagents.total_volume, transferred_by = user)
+			user.balloon_alert(user, "[tool] squeezed")
+			return ..()
+		// NOVA EDIT ADDITION END
 		if(reagents.total_volume < 1)
 			user.balloon_alert(user, "empty!")
 			return ITEM_INTERACT_BLOCKING

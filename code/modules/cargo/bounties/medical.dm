@@ -4,6 +4,7 @@
 	reward = CARGO_CRATE_VALUE * 5
 	wanted_types = list(
 		/obj/item/organ/heart = TRUE,
+		/obj/item/organ/heart/synth = FALSE, // NOVA EDIT ADDITION
 		/obj/item/organ/heart/cybernetic = FALSE,
 		/obj/item/organ/heart/cybernetic/tier2 = TRUE,
 		/obj/item/organ/heart/cybernetic/tier3 = TRUE,
@@ -16,6 +17,7 @@
 	required_count = 3
 	wanted_types = list(
 		/obj/item/organ/lungs = TRUE,
+		/obj/item/organ/lungs/synth = FALSE, // NOVA EDIT ADDITION
 		/obj/item/organ/lungs/cybernetic = FALSE,
 		/obj/item/organ/lungs/cybernetic/tier2 = TRUE,
 		/obj/item/organ/lungs/cybernetic/tier3 = TRUE,
@@ -34,6 +36,7 @@
 	required_count = 3
 	wanted_types = list(
 		/obj/item/organ/ears = TRUE,
+		/obj/item/organ/ears/synth = FALSE, // NOVA EDIT ADDITION
 		/obj/item/organ/ears/cybernetic = FALSE,
 		/obj/item/organ/ears/cybernetic/upgraded = TRUE,
 		/obj/item/organ/ears/cybernetic/whisper = TRUE,
@@ -48,6 +51,7 @@
 	required_count = 3
 	wanted_types = list(
 		/obj/item/organ/liver = TRUE,
+		/obj/item/organ/liver/synth = FALSE, // NOVA EDIT ADDITION
 		/obj/item/organ/liver/cybernetic = FALSE,
 		/obj/item/organ/liver/cybernetic/tier2 = TRUE,
 		/obj/item/organ/liver/cybernetic/tier3 = TRUE,
@@ -60,6 +64,7 @@
 	required_count = 3
 	wanted_types = list(
 		/obj/item/organ/eyes = TRUE,
+		/obj/item/organ/eyes/synth = FALSE, // NOVA EDIT ADDITION
 		/obj/item/organ/eyes/robotic = FALSE,
 	)
 
@@ -68,7 +73,13 @@
 	description = "A recent attack by Mime extremists has left staff at Station 23 speechless. Ship some spare tongues."
 	reward = CARGO_CRATE_VALUE * 10
 	required_count = 3
-	wanted_types = list(/obj/item/organ/tongue = TRUE)
+	// wanted_types = list(/obj/item/organ/tongue = TRUE) // NOVA EDIT REMOVAL
+	// NOVA EDIT ADDITION START
+	wanted_types = list(
+		/obj/item/organ/tongue = TRUE,
+		/obj/item/organ/tongue/synth = FALSE,
+	)
+	// NOVA EDIT ADDITION END
 
 /datum/bounty/item/medical/lizard_tail
 	name = "Lizard Tail"

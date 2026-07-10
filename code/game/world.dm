@@ -389,6 +389,7 @@ GLOBAL_VAR_INIT(last_maptick_time, 0)
 	QDEL_NULL(Debugger)
 	. = ..()
 
+/* NOVA EDIT REMOVAL - OVERRIDDEN
 /world/proc/update_status()
 
 	var/list/features = list()
@@ -440,6 +441,7 @@ GLOBAL_VAR_INIT(last_maptick_time, 0)
 		new_status += "[SSmapping.current_map ? " | " : "<br>"]Next: <b>[SSmap_vote.next_map_config.map_path == CUSTOM_MAP_PATH ? "Uncharted Territory" : SSmap_vote.next_map_config.map_name]</b>"
 
 	status = new_status
+*/
 
 /world/proc/update_hub_visibility(new_visibility)
 	if(new_visibility == GLOB.hub_visibility)

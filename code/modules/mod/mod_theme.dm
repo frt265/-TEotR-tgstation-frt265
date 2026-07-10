@@ -147,7 +147,7 @@
 		part_datum.sealed_layer = category[SEALED_LAYER]
 		part_datum.unsealed_message = category[UNSEALED_MESSAGE] || "No unseal message set! Tell a coder!"
 		part_datum.sealed_message = category[SEALED_MESSAGE] || "No seal message set! Tell a coder!"
-		part_datum.can_overslot = category[CAN_OVERSLOT] || FALSE
+		part_datum.can_overslot = TRUE //NOVA EDIT CHANGE, overslottable everything - ORIGINAL: part_datum.can_overslot = category[CAN_OVERSLOT] || FALSE
 		part.clothing_flags = category[UNSEALED_CLOTHING] || NONE
 		part.visor_flags = category[SEALED_CLOTHING] || NONE
 		part.flags_inv = category[UNSEALED_INVISIBILITY] || NONE
@@ -167,6 +167,12 @@
 	for(var/obj/item/part as anything in parts + mod)
 		part.icon = used_skin[MOD_ICON_OVERRIDE] || 'icons/obj/clothing/modsuit/mod_clothing.dmi'
 		part.worn_icon = used_skin[MOD_WORN_ICON_OVERRIDE] || 'icons/mob/clothing/modsuit/mod_clothing.dmi'
+		// NOVA EDIT ADDITION START
+		if(part.supports_variations_flags & CLOTHING_DIGITIGRADE_VARIATION)
+			part.worn_icon_digi = used_skin[MOD_DIGITIGRADE_ICON_OVERRIDE] || DIGITIGRADE_MODPARTS_FILE
+		if(part.supports_variations_flags & CLOTHING_SNOUTED_VARIATION)
+			part.worn_icon_muzzled = used_skin[MOD_SNOUT_ICON_OVERRIDE] || SNOUTED_MODPARTS_FILE
+		// NOVA EDIT ADDITION END
 		part.icon_state = "[skin]-[part.base_icon_state][mod.get_part_datum(part).sealed ? "-sealed" : ""]"
 		mod.wearer?.update_clothing(part.slot_flags)
 	mod.wearer?.refresh_obscured()

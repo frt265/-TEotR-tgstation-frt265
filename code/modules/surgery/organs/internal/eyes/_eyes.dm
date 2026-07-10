@@ -54,7 +54,7 @@
 	/// Glasses cannot be worn over these eyes. Currently unused
 	var/no_glasses = FALSE
 	/// Native FOV that will be applied if a config is enabled
-	var/native_fov = FOV_90_DEGREES
+	var/native_fov = NONE //NOVA EDIT CHANGE - ORIGINAL: var/native_fov = FOV_90_DEGREES
 	/// Scarring on this organ
 	var/scarring = NONE
 
@@ -128,10 +128,21 @@
 		affected_human.add_eye_color_right(eye_color_right, EYE_COLOR_ORGAN_PRIORITY, update_body = FALSE)
 	refresh_atom_color_overrides()
 
-	if(HAS_TRAIT(affected_human, TRAIT_NIGHT_VISION) && !lighting_cutoff)
-		lighting_cutoff = LIGHTING_CUTOFF_REAL_LOW
+	if(HAS_TRAIT(affected_human, TRAIT_NIGHT_VISION)) // NOVA EDIT CHANGE - ORIGINAL: if(HAS_TRAIT(affected_human, TRAIT_NIGHT_VISION) && !lighting_cutoff)
+		//lighting_cutoff = LIGHTING_CUTOFF_REAL_LOW // NOVA EDIT REMOVAL
+		// NOVA EDIT ADDITION START - NIGHT VISION ADJUSTMENT - adjusts color cutoffs based on chosen quirk color, or left eye colour if not available
+		var/datum/quirk/night_vision/nv_quirk = affected_human.get_quirk(/datum/quirk/night_vision)
+		if(nv_quirk)
+			nv_quirk.nv_color_cutoffs = nv_quirk.calculate_color_cutoffs(nv_quirk.nv_color)
+			color_cutoffs = nv_quirk.nv_color_cutoffs
+		// NOVA EDIT ADDITION END
 	if(CONFIG_GET(flag/native_fov) && native_fov)
 		affected_human.add_fov_trait(type, native_fov)
+
+	// NOVA EDIT ADDITION - EMISSIVES
+	if (affected_human.emissive_eyes)
+		is_emissive = TRUE
+	// NOVA EDIT END
 
 	if(call_update)
 		affected_human.update_eyes()
@@ -339,6 +350,26 @@
 		for (var/mutable_appearance/overlay as anything in overlays)
 			my_head.worn_face_offset.apply_offset(overlay)
 
+	// NOVA EDIT START - Customization (Synths + Emissives)
+	if(eye_icon_state == "None")
+		eye_left.alpha = 0
+		eye_right.alpha = 0
+
+	if (is_emissive) // Because it was done all weird up there.
+		var/mutable_appearance/emissive_left = emissive_appearance_copy(eye_left, owner)
+		var/mutable_appearance/emissive_right = emissive_appearance_copy(eye_right, owner)
+		emissive_left.appearance_flags &= ~RESET_TRANSFORM
+		emissive_right.appearance_flags &= ~RESET_TRANSFORM
+
+		if(my_head?.worn_face_offset)
+			my_head.worn_face_offset.apply_offset(emissive_right)
+			my_head.worn_face_offset.apply_offset(emissive_left)
+
+		overlays += emissive_left
+		overlays += emissive_right
+
+	// NOVA EDIT ADDITION END
+
 	return overlays
 
 ///Returns the two emissive overlays built for the left and right eyes, in order.
@@ -426,6 +457,8 @@
 	. = ..()
 	eye_color_left = initial(eye_color_left)
 	eye_color_right = initial(eye_color_right)
+	fix_scar(LEFT_EYE_SCAR)
+	fix_scar(RIGHT_EYE_SCAR)
 
 /obj/item/organ/eyes/on_low_damage_received()
 	if(damage >= high_threshold)
@@ -550,6 +583,7 @@
 		addtimer(CALLBACK(src, PROC_REF(animate_eyelids), owner), blink_delay + duration)
 
 /obj/item/organ/eyes/proc/animate_eyelids(mob/living/carbon/human/parent)
+	if(CONFIG_GET(flag/disable_blinking)) return // NOVA EDIT ADDITION - CONFIG BLINKING
 	var/sync_blinking = synchronized_blinking && (parent.get_organ_loss(ORGAN_SLOT_BRAIN) < BRAIN_DAMAGE_ASYNC_BLINKING)
 	// Randomize order for unsynched animations
 	if (sync_blinking || prob(50))

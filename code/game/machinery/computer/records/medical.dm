@@ -52,6 +52,7 @@
 
 		records += list(list(
 			age = target.age,
+			chrono_age = target.chrono_age, // NOVA EDIT ADDITION - Chronological age
 			blood_type = target.blood_type,
 			crew_ref = REF(target),
 			dna = target.dna_string,
@@ -67,6 +68,10 @@
 			rank = target.rank,
 			species = target.species,
 			trim = target.trim,
+			// NOVA EDIT ADDITION START - Expanded records!
+			past_medical_records = target.past_medical_records,
+			past_general_records = target.past_general_records,
+			// NOVA EDIT END
 		))
 
 	data["records"] = records
@@ -77,6 +82,7 @@
 	var/list/data = list()
 	data["min_age"] = AGE_MIN
 	data["max_age"] = AGE_MAX
+	data["max_chrono_age"] = AGE_CHRONO_MAX // NOVA EDIT ADDITION - Chronological age
 	data["physical_statuses"] = PHYSICAL_STATUSES
 	data["mental_statuses"] = MENTAL_STATUSES
 	return data
@@ -153,6 +159,7 @@
 		return FALSE
 
 	target.age = 18
+	target.chrono_age = 18 // NOVA EDIT ADDITION - Chronological age
 	target.blood_type = pick(list(BLOOD_TYPE_A_PLUS, BLOOD_TYPE_A_MINUS, BLOOD_TYPE_B_PLUS, BLOOD_TYPE_B_MINUS, BLOOD_TYPE_O_PLUS, BLOOD_TYPE_O_MINUS, BLOOD_TYPE_AB_PLUS, BLOOD_TYPE_AB_MINUS))
 	target.dna_string = "Unknown"
 	target.gender = "Unknown"

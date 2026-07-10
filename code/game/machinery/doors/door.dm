@@ -1,5 +1,5 @@
 ///Default wait until doors autoclose
-#define DOOR_CLOSE_WAIT 60
+// #define DOOR_CLOSE_WAIT 60 // NOVA EDIT REMOVAL - Default wait until doors autoclose - moved to code/__DEFINES/~nova_defines/airlock.dm
 /// Trait for checking if a mob is currently activating an unrestricted airlock open and thus has pressure pushes blocked
 #define TRAIT_UNRESTRICTED_AIRLOCK_OPENING "trait_unrestricted_airlock_opening"
 
@@ -27,6 +27,8 @@
 
 	idle_power_usage = BASE_MACHINE_IDLE_CONSUMPTION * 0.1
 	active_power_usage = BASE_MACHINE_ACTIVE_CONSUMPTION * 0.2
+
+	tacmap_color = TACMAP_DOOR
 
 	/// The animation we're currently playing, if any
 	var/animation
@@ -322,6 +324,10 @@
 		return
 	return ..()
 
+/obj/machinery/door/allowed(mob/accessor)
+	return ..() || emergency
+
+/// A mob is trying to open or close the door
 /obj/machinery/door/proc/try_to_activate_door(mob/user, access_bypass = FALSE, bumped = FALSE)
 	add_fingerprint(user)
 	if(operating || (obj_flags & EMAGGED))
@@ -333,24 +339,8 @@
 	if(elevator_mode && elevator_status != LIFT_PLATFORM_UNLOCKED)
 		return
 
-	var/access_check = access_bypass
-	if(emergency)
-		access_check = TRUE
-	else if(unrestricted_side(user) && !delayed_unres_open)
-		access_check = TRUE
-	else if(!requiresID())
-		access_check = TRUE
-	else if(allowed(user)) // You
-		access_check = TRUE
-	else for(var/mob/living/human_backpack in user.buckled_mobs)
-		if(allowed(human_backpack)) // Your partner in crime
-			access_check = TRUE
-			break
-
-	if(!access_check && unrestricted_side(user) && attempt_delayed_unres_open(user))
-		access_check = TRUE
-
-	if(access_check)
+	// note: if the ID wire is cut no ID cards are checked at all! (This is intentional!)
+	if(access_bypass || (requiresID() && user_can_activate_door(user)))
 		if(density)
 			open()
 		else
@@ -359,6 +349,18 @@
 
 	else if(!operating && density)
 		run_animation(DOOR_DENY_ANIMATION)
+
+/// Used in try_to_activate_door
+/obj/machinery/door/proc/user_can_activate_door(mob/user)
+	PRIVATE_PROC(TRUE)
+	if(allowed(user))
+		return TRUE
+	for(var/mob/living/human_backpack in user.buckled_mobs)
+		if(allowed(human_backpack))
+			return TRUE
+	if(unrestricted_side(user))
+		return !delayed_unres_open || attempt_delayed_unres_open(user)
+	return FALSE
 
 /// Allows for specific side of airlocks to be unrestricted (IE, can exit maint freely, but need access to enter)
 /obj/machinery/door/proc/unrestricted_side(mob/opener)
@@ -491,7 +493,13 @@
 			if(glass)
 				playsound(loc, 'sound/effects/glass/glasshit.ogg', 90, TRUE)
 			else if(damage_amount)
-				playsound(loc, 'sound/items/weapons/smash.ogg', 50, TRUE)
+				//playsound(loc, 'sound/items/weapons/smash.ogg', 50, TRUE) // NOVA EDIT REMOVAL
+				//NOVA EDIT ADDITION - CREDITS TO WHITEDREAM(valtos)
+				playsound(src, pick('modular_nova/master_files/sound/effects/metalblock1.wav', 'modular_nova/master_files/sound/effects/metalblock2.wav', \
+									'modular_nova/master_files/sound/effects/metalblock3.wav', 'modular_nova/master_files/sound/effects/metalblock4.wav', \
+									'modular_nova/master_files/sound/effects/metalblock5.wav', 'modular_nova/master_files/sound/effects/metalblock6.wav', \
+									'modular_nova/master_files/sound/effects/metalblock7.wav', 'modular_nova/master_files/sound/effects/metalblock8.wav'), 50, TRUE)
+				//NOVA EDIT END
 			else
 				playsound(src, 'sound/items/weapons/tap.ogg', 50, TRUE)
 		if(BURN)
@@ -662,11 +670,11 @@
 			else if(ismonkey(future_pancake)) //For monkeys
 				future_pancake.emote("screech")
 				future_pancake.apply_damage(DOOR_CRUSH_DAMAGE, BRUTE, BODY_ZONE_CHEST, wound_bonus = door_wounding, attacking_item = src)
-				future_pancake.Paralyze(10 SECONDS)
+				future_pancake.StaminaKnockdown(2 SECONDS, TRUE, TRUE) // NOVA EDIT CHANGE - AIRLOCKS - ORIGINAL: future_pancake.Paralyze(10 SECONDS)
 			else if(ishuman(future_pancake)) //For humans
 				future_pancake.emote("scream")
 				future_pancake.apply_damage(DOOR_CRUSH_DAMAGE, BRUTE, BODY_ZONE_CHEST, wound_bonus = door_wounding, attacking_item = src)
-				future_pancake.Paralyze(10 SECONDS)
+				future_pancake.StaminaKnockdown(2 SECONDS, TRUE, TRUE) // NOVA EDIT CHANGE - AIRLOCKS - ORIGINAL: future_pancake.Paralyze(10 SECONDS)
 			else //for simple_animals & borgs
 				future_pancake.apply_damage(DOOR_CRUSH_DAMAGE, BRUTE, BODY_ZONE_CHEST, wound_bonus = door_wounding, attacking_item = src)
 		for(var/obj/vehicle/sealed/mecha/mech in get_turf(src)) // Your fancy metal won't save you here!
@@ -775,5 +783,5 @@
 		return ..()
 	return ..(0)
 
-#undef DOOR_CLOSE_WAIT
+//#undef DOOR_CLOSE_WAIT // NOVA EDIT REMOVAL - moved to code/__DEFINES/~nova_defines/airlock.dm
 #undef TRAIT_UNRESTRICTED_AIRLOCK_OPENING

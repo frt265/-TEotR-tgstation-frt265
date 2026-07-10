@@ -1,3 +1,8 @@
+// NOVA EDIT ADDITION START
+// Local defines for now, TODO: put these in their own file with the rest of the offset defines
+#define NOVA_UNDERWEAR_UNDERSHIRT_LAYER (UNIFORM_LAYER + 0.01)
+#define NOVA_BRA_SOCKS_LAYER (UNIFORM_LAYER + 0.02)
+// NOVA EDIT ADDITION END
 /// List of roundstart races' their species_id's
 GLOBAL_LIST_EMPTY(roundstart_races)
 ///List of all roundstart languages by path except common
@@ -93,7 +98,7 @@ GLOBAL_LIST_EMPTY(features_by_species)
 	var/obj/item/organ/appendix/mutantappendix = /obj/item/organ/appendix
 
 	/// Store body marking defines. See mobs.dm for bitflags
-	var/list/body_markings = list()
+	//var/list/body_markings = list() // NOVA EDIT REMOVAL - We already have this defined as an assoc list in dna
 
 	/// Flat modifier on all damage taken via [apply_damage][/mob/living/proc/apply_damage] (so being punched, shot, etc.)
 	/// IE: 10 = 10% less damage taken.
@@ -215,14 +220,14 @@ GLOBAL_LIST_EMPTY(features_by_species)
 	for(var/species_type in subtypesof(/datum/species))
 		var/datum/species/species = GLOB.species_prototypes[species_type]
 		if(species.check_roundstart_eligible())
-			selectable_species += species.id
+			selectable_species[species.id] = TRUE // NOVA EDIT CHANGE - Make assoc for fast lookup - ORIGINAL: selectable_species += species.id
 			var/datum/language_holder/temp_holder = GLOB.prototype_language_holders[species.species_language_holder]
 			for(var/datum/language/spoken_language as anything in temp_holder.understood_languages)
 				GLOB.uncommon_roundstart_languages |= spoken_language
 
 	GLOB.uncommon_roundstart_languages -= /datum/language/common
 	if(!selectable_species.len)
-		selectable_species += SPECIES_HUMAN
+		selectable_species[SPECIES_HUMAN] = TRUE // NOVA EDIT CHANGE - ORIGINAL: selectable_species += SPECIES_HUMAN
 
 	return selectable_species
 
@@ -298,12 +303,26 @@ GLOBAL_LIST_EMPTY(features_by_species)
 
 		// if we have an extra organ that before changing that the species didnt have, remove it
 		if(!new_organ)
+			/* // NOVA EDIT REMOVAL START = Original
 			if(existing_organ && (old_organ_type == existing_organ.type || replace_current))
 				existing_organ.Remove(organ_holder)
 				qdel(existing_organ)
 			continue
+			*/ // NOVA EDIT REMOVAL END
+			// NOVA EDIT ADDITION START
+			if(existing_organ)
+				var/existing_organ_feature_key = existing_organ.bodypart_overlay?.feature_key
+				var/keep_in_mutant_bodyparts = existing_organ_feature_key && organ_holder.dna.mutant_bodyparts[existing_organ_feature_key]
+				if(old_organ_type == existing_organ.type || replace_current || existing_organ_feature_key)
+					if(keep_in_mutant_bodyparts)
+						existing_organ.Remove(organ_holder, special = TRUE, movement_flags = KEEP_IN_MUTANT_BODYPARTS)
+					else
+						existing_organ.Remove(organ_holder, special = TRUE)
+					qdel(existing_organ)
+			continue
+			// NOVA EDIT ADDITION END
 
-		if(existing_organ)
+		if(existing_organ && allow_customizable_dna_features) // NOVA EDIT CHANGE - Though sometimes we might want to do that. - ORIGINAL: if(existing_organ)
 			// we dont want to remove organs that were not from the old species (such as from freak surgery or prosthetics)
 			if(existing_organ.type != old_organ_type && !replace_current)
 				continue
@@ -405,7 +424,7 @@ GLOBAL_LIST_EMPTY(features_by_species)
 	//Resets blood if it is excessively high so they don't gib
 	normalize_blood(human_who_gained_species)
 
-	add_body_markings(human_who_gained_species)
+	//add_body_markings(human_who_gained_species) // NOVA EDIT REMOVAL - We do this differently
 
 	if(length(inherent_traits))
 		human_who_gained_species.add_traits(inherent_traits, SPECIES_TRAIT)
@@ -471,7 +490,7 @@ GLOBAL_LIST_EMPTY(features_by_species)
 
 	clear_tail_moodlets(human)
 
-	remove_body_markings(human)
+	//remove_body_markings(human) // NOVA EDIT REMOVAL - We do this differently
 
 	// Removes all languages previously associated with [LANGUAGE_SPECIES], gaining our new species will add new ones back
 	var/datum/language_holder/losing_holder = GLOB.prototype_language_holders[species_language_holder]
@@ -498,6 +517,12 @@ GLOBAL_LIST_EMPTY(features_by_species)
 			return "ADJ"
 		if(BODY_FRONT_LAYER)
 			return "FRONT"
+		//NOVA EDIT ADDITION BEGIN
+		if(BODY_FRONT_UNDER_CLOTHES)
+			return "FRONT_UNDER"
+		if(ABOVE_BODY_FRONT_HEAD_LAYER)
+			return "FRONT_OVER"
+		//NOVA EDIT ADDITION END
 
 ///Proc that will randomise the hair, or primary appearance element (i.e. for moths wings) of a species' associated mob
 /datum/species/proc/randomize_main_appearance_element(mob/living/carbon/human/human_mob)
@@ -509,6 +534,7 @@ GLOBAL_LIST_EMPTY(features_by_species)
 	human_mob.undershirt = random_undershirt(human_mob.gender)
 	human_mob.underwear = random_underwear(human_mob.gender)
 	human_mob.socks = random_socks(human_mob.gender)
+	human_mob.bra = random_bra(human_mob.gender) //NOVA EDIT ADDITION - Underwear and Bra split
 
 ///Proc that will randomise the underwear (i.e. top, pants and socks) of a species' associated mob
 /datum/species/proc/randomize_active_underwear(mob/living/carbon/human/human_mob)
@@ -541,11 +567,6 @@ GLOBAL_LIST_EMPTY(features_by_species)
 		new_features["[sample_overlay.feature_key]"] = sample_overlay.get_random_appearance().name
 
 	return new_features
-
-/datum/species/proc/spec_life(mob/living/carbon/human/H, seconds_per_tick)
-	SHOULD_CALL_PARENT(TRUE)
-	if(HAS_TRAIT(H, TRAIT_NOBREATH) && (H.health < H.crit_threshold) && !HAS_TRAIT(H, TRAIT_NOCRITDAMAGE))
-		H.adjust_brute_loss(0.5 * seconds_per_tick)
 
 /datum/species/proc/can_equip(obj/item/I, slot, disable_warning, mob/living/carbon/human/H, bypass_equip_delay_self = FALSE, ignore_equipped = FALSE, indirect_action = FALSE)
 	if(no_equip_flags & slot)
@@ -593,11 +614,13 @@ GLOBAL_LIST_EMPTY(features_by_species)
 		if(ITEM_SLOT_FEET)
 			if(H.num_legs < 2)
 				return FALSE
+			/* NOVA EDIT REMOVAL
 			if((H.bodyshape & BODYSHAPE_DIGITIGRADE) && !(I.item_flags & IGNORE_DIGITIGRADE))
 				if(!(I.supports_variations_flags & DIGITIGRADE_VARIATIONS))
 					if(!disable_warning)
 						to_chat(H, span_warning("The footwear around here isn't compatible with your feet!"))
 					return FALSE
+			*/
 			return equip_delay_self_check(I, H, bypass_equip_delay_self)
 		if(ITEM_SLOT_BELT)
 			var/obj/item/bodypart/O = H.get_bodypart(BODY_ZONE_CHEST)
@@ -920,11 +943,17 @@ GLOBAL_LIST_EMPTY(features_by_species)
 		log_combat(user, target, grappled ? "grapple punched" : "kicked")
 		final_armor_block -= limb_accuracy
 		target.apply_damage(damage, attack_type, affecting, final_armor_block, attack_direction = attack_direction, sharpness = limb_sharpness)
+		target.apply_damage(damage*1.2, STAMINA, affecting, armor_block - limb_accuracy) // NOVA EDIT ADDITION - Adds back some of the stamina damage
 	else // Normal attacks do not gain the benefit of armor penetration.
 		target.apply_damage(damage, attack_type, affecting, armor_block, attack_direction = attack_direction, sharpness = limb_sharpness)
+		target.apply_damage(damage*1.2, STAMINA, affecting, armor_block) // NOVA EDIT ADDITION - Adds back some of the stamina damage
 		if(damage >= 9)
 			target.force_say()
 		log_combat(user, target, "punched")
+	// NOVA EDIT ADDITION START
+	if(target.try_nut_shot(user, limb_accuracy, staggered))
+		return
+	// NOVA EDIT ADDITION END
 
 	if(user != target && biting && (target.mob_biotypes & MOB_ORGANIC)) //Good for you. You probably just ate someone alive.
 		var/datum/reagents/tasty_meal = new()
@@ -1108,6 +1137,14 @@ GLOBAL_LIST_EMPTY(features_by_species)
 	// Get the temperature of the environment for area
 	var/area_temp = humi.get_temperature(environment)
 
+	//NOVA EDIT ADDITION
+	//Special handling for getting liquids temperature
+	if(isturf(humi.loc))
+		var/turf/T = humi.loc
+		if(T.liquids && T.liquids.liquid_state > LIQUID_STATE_PUDDLE)
+			var/submergment_percent = SUBMERGEMENT_PERCENT(humi, T.liquids)
+			area_temp = (area_temp*(1-submergment_percent)) + (T.liquids.temp * submergment_percent)
+	//NOVA EDIT END
 	// Get the insulation value based on the area's temp
 	var/thermal_protection = humi.get_insulation_protection(area_temp)
 
@@ -1400,6 +1437,8 @@ GLOBAL_LIST_EMPTY(features_by_species)
 	former_tail_owner.clear_mood_event("tail_balance_lost")
 	former_tail_owner.clear_mood_event("tail_regained")
 
+/* NOVA EDIT REMOVAL - MOVED TO MODULAR
+
 /// Returns a list of strings representing features this species has.
 /// Used by the preferences UI to know what buttons to show.
 /datum/species/proc/get_features()
@@ -1423,6 +1462,7 @@ GLOBAL_LIST_EMPTY(features_by_species)
 	GLOB.features_by_species[type] = features
 
 	return features
+*/
 
 /// Given a human, will adjust it before taking a picture for the preferences UI.
 /// This should create a CONSISTENT result, so the icons don't randomly change.
@@ -1957,7 +1997,11 @@ GLOBAL_LIST_EMPTY(features_by_species)
 			SPECIES_PERK_TYPE = SPECIES_POSITIVE_PERK,
 			SPECIES_PERK_ICON = "comment",
 			SPECIES_PERK_NAME = "Native Speaker",
+			/* NOVA EDIT - Digitigrade customization - ORIGINAL:
 			SPECIES_PERK_DESC = "Alongside [initial(common_language.name)], [plural_form] gain the ability to speak [english_list(bonus_languages)].",
+			*/ // ORIGINAL END - NOVA EDIT START:
+			SPECIES_PERK_DESC = "Alongside [initial(common_language.name)], [plural_form] commonly speak [english_list(bonus_languages)].",
+			// NOVA EDIT END
 		))
 
 	else
@@ -1974,11 +2018,32 @@ GLOBAL_LIST_EMPTY(features_by_species)
 /datum/species/proc/replace_body(mob/living/carbon/target, datum/species/new_species)
 	new_species ||= target.dna.species //If no new species is provided, assume its src.
 	//Note for future: Potentionally add a new C.dna.species() to build a template species for more accurate limb replacement
+	// NOVA EDIT ADDITION START - Synth digitigrade sanitization
+	var/ignore_digi = FALSE // You can jack into this var with other checks, if you want.
+	if(issynthetic(target))
+		var/datum/mutant_bodypart/chassis = target.dna.mutant_bodyparts[FEATURE_SYNTH_CHASSIS]
+		if(chassis)
+			var/list/chassis_accessory = SSaccessories.sprite_accessories[FEATURE_SYNTH_CHASSIS]
+			var/datum/sprite_accessory/synth_chassis/body_choice
+			if(chassis_accessory)
+				body_choice = chassis_accessory[chassis.name]
+			if(body_choice && !body_choice.is_digi_compatible)
+				ignore_digi = TRUE
+	// NOVA EDIT ADDITION END
 
 	var/list/final_bodypart_overrides = new_species.bodypart_overrides.Copy()
-	if((new_species.digitigrade_customization == DIGITIGRADE_OPTIONAL && target.dna.features[FEATURE_LEGS] == DIGITIGRADE_LEGS) || new_species.digitigrade_customization == DIGITIGRADE_FORCED)
+	if(!ignore_digi && ((new_species.digitigrade_customization == DIGITIGRADE_OPTIONAL && target.dna.features[FEATURE_LEGS] == DIGITIGRADE_LEGS) || new_species.digitigrade_customization == DIGITIGRADE_FORCED)) //if((new_species.digitigrade_customization == DIGITIGRADE_OPTIONAL && target.dna.features[FEATURE_LEGS] == DIGITIGRADE_LEGS) || new_species.digitigrade_customization == DIGITIGRADE_FORCED) // NOVA EDIT - Digitigrade customization - ORIGINAL
+		/* NOVA EDIT - Digitigrade customization - ORIGINAL:
 		final_bodypart_overrides[BODY_ZONE_R_LEG] = /obj/item/bodypart/leg/right/digitigrade
 		final_bodypart_overrides[BODY_ZONE_L_LEG] = /obj/item/bodypart/leg/left/digitigrade
+		*/ // ORIGINAL END - NOVA EDIT START:
+		var/obj/item/bodypart/leg/right/r_leg = new_species.bodypart_overrides[BODY_ZONE_R_LEG]
+		if(r_leg)
+			final_bodypart_overrides[BODY_ZONE_R_LEG] = initial(r_leg.digitigrade_type)
+		var/obj/item/bodypart/leg/left/l_leg = new_species.bodypart_overrides[BODY_ZONE_L_LEG]
+		if(l_leg)
+			final_bodypart_overrides[BODY_ZONE_L_LEG] = initial(l_leg.digitigrade_type)
+		// NOVA EDIT ADDITION END
 
 	for(var/obj/item/bodypart/old_part as anything in target.get_bodyparts())
 		if((old_part.change_exempt_flags & BP_BLOCK_CHANGE_SPECIES) || (old_part.bodypart_flags & BODYPART_IMPLANTED))

@@ -116,7 +116,7 @@ GLOBAL_LIST_INIT(turfs_pass_meteor, typecacheof(list(
 #define isdummy(A) (istype(A, /mob/living/carbon/human/dummy))
 
 //Human sub-species
-#define isabductor(A) (is_species(A, /datum/species/abductor))
+#define isabductor(A) (is_species(A, /datum/species/abductor) && !is_species(A, /datum/species/abductor/abductorweak)) // NOVA EDIT CHANGE - ORIGINAL: #define isabductor(A) (is_species(A, /datum/species/abductor))
 #define isspirit(A) (is_species(A, /datum/species/spirit))
 #define isgolem(A) (is_species(A, /datum/species/golem))
 #define islizard(A) (is_species(A, /datum/species/lizard))
@@ -192,9 +192,7 @@ GLOBAL_LIST_INIT(turfs_pass_meteor, typecacheof(list(
 
 #define isrevenant(A) (istype(A, /mob/living/basic/revenant))
 
-#define isbot(A) (istype(A, /mob/living/simple_animal/bot) || istype(A, /mob/living/basic/bot))
-
-#define isbasicbot(A) (istype(A, /mob/living/basic/bot))
+#define isbot(A) istype(A, /mob/living/basic/bot)
 
 #define ismouse(A) (istype(A, /mob/living/basic/mouse))
 

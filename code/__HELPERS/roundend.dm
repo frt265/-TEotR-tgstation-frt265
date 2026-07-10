@@ -237,12 +237,15 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 
 	CHECK_TICK
 
+	/* ///NOVA EDIT START
 	// Add AntagHUD to everyone, see who was really evil the whole time!
 	for(var/datum/atom_hud/alternate_appearance/basic/antagonist_hud/antagonist_hud in GLOB.active_alternate_appearances)
 		for(var/mob/player as anything in GLOB.player_list)
 			antagonist_hud.show_to(player)
 
 	CHECK_TICK
+	///NOVA EDIT END
+	*/
 
 	//Set news report and mode result
 	SSdynamic.set_round_result()
@@ -251,10 +254,16 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 	log_game("The round has ended.")
 	for(var/channel_tag in CONFIG_GET(str_list/channel_announce_end_game))
 		send2chat(new /datum/tgs_message_content("[GLOB.round_id ? "Round [GLOB.round_id]" : "The round has"] just ended."), channel_tag)
+		send2chat("The current round has ended. Please standby for your shift interlude Nanotrasen News Network's report!", channel_tag) // NOVA EDIT ADDITION
+		send2chat(send_news_report(), channel_tag) // NOVA EDIT ADDITION
 	send2adminchat("Server", "Round just ended.")
 
+	/* //NOVA EDIT REMOVAL START
+	MOVED CHECK INTO TICKER.DM
 	if(length(CONFIG_GET(keyed_list/cross_server)))
 		send_news_report()
+	*/
+	//NOVA EDIT REMOVAL END
 
 	CHECK_TICK
 
@@ -321,6 +330,8 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 
 	//Antagonists
 	parts += antag_report()
+
+	parts += opfor_report() //NOVA EDIT ADDITION
 
 	parts += hardcore_random_report()
 
@@ -398,7 +409,7 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 	fdel(roundend_file)
 	WRITE_FILE(roundend_file, content)
 
-/datum/controller/subsystem/ticker/proc/show_roundend_report(client/C, report_type = null)
+/datum/controller/subsystem/ticker/proc/show_roundend_report(client/C, report_type = null, save_to_disk_only = FALSE) // NOVA EDIT CHANGE - Allows only saving the report and not showing it - ORIGINAL: /datum/controller/subsystem/ticker/proc/show_roundend_report(client/C, report_type = null)
 	var/datum/browser/roundend_report = new(C, "roundend")
 	roundend_report.width = 800
 	roundend_report.height = 600
@@ -414,6 +425,7 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 		fdel(filename)
 		text2file(content, filename)
 
+	if (save_to_disk_only) { return } // NOVA EDIT ADDITION - This is ugly, but allows only saving the report and not showing it
 	roundend_report.set_content(content)
 	roundend_report.stylesheets = list()
 	roundend_report.add_stylesheet("roundend", 'html/browser/roundend.css')
@@ -452,7 +464,7 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 	GLOB.survivor_report = survivor_report(popcount)
 	log_roundend_report()
 	for(var/client/C in GLOB.clients)
-		show_roundend_report(C)
+		show_roundend_report(C, save_to_disk_only = TRUE) // NOVA EDIT CHANGE - Only saves the roundend report to the filesystem, doesn't show it to the player - ORIGINAL: show_roundend_report(C)
 		give_show_report_button(C)
 		CHECK_TICK
 
@@ -464,7 +476,7 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 		var/mob/living/silicon/ai/aiPlayer = i
 		var/datum/mind/aiMind = aiPlayer.deployed_shell?.mind || aiPlayer.mind
 		if(aiMind)
-			parts += "<b>[aiPlayer.name]</b> (Played by: <b>[aiMind.key]</b>)'s laws [aiPlayer.stat != DEAD ? "at the end of the round" : "when it was [span_redtext("deactivated")]"] were:"
+			parts += "<b>[aiPlayer.name]</b>'s laws [aiPlayer.stat != DEAD ? "at the end of the round" : "when it was [span_redtext("deactivated")]"] were:" //NOVA EDIT CHANGE
 			parts += aiPlayer.laws.get_law_list(include_zeroth=TRUE)
 
 		parts += "<b>Total law changes: [aiPlayer.law_change_counter]</b>"
@@ -475,13 +487,19 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 			for(var/mob/living/silicon/robot/robo in aiPlayer.connected_robots)
 				borg_num--
 				if(robo.mind)
-					parts += "<b>[robo.name]</b> (Played by: <b>[robo.mind.key]</b>)[robo.stat == DEAD ? " [span_redtext("(Deactivated)")]" : ""][borg_num ?", ":""]"
+					//NOVA EDIT CHANGE BEGIN - ROUNDEND
+					//parts += "<b>[robo.name]</b> (Played by: <b>[robo.mind.key]</b>)[robo.stat == DEAD ? " [span_redtext("(Deactivated)")]" : ""][borg_num ?", ":""]" - NOVA EDIT - ORIGINAL
+					parts += "<b>[robo.name]</b> [robo.stat == DEAD ? " [span_redtext("(Deactivated)")]" : ""][borg_num ?", ":""]"
+					//NOVA EDIT CHANGE END
 		if(!borg_spacer)
 			borg_spacer = TRUE
 
 	for (var/mob/living/silicon/robot/robo in GLOB.silicon_mobs)
 		if (!robo.connected_ai && robo.mind)
-			parts += "[borg_spacer?"<br>":""]<b>[robo.name]</b> (Played by: <b>[robo.mind.key]</b>) [(robo.stat != DEAD)? "[span_greentext("survived")] as an AI-less borg!" : "was [span_redtext("unable to survive")] the rigors of being a cyborg without an AI."] Its laws were:"
+			//NOVA EDIT CHANGE BEGIN - ROUNDEND
+			//parts += "[borg_spacer?"<br>":""]<b>[robo.name]</b> (Played by: <b>[robo.mind.key]</b>) [(robo.stat != DEAD)? "[span_greentext("survived")] as an AI-less borg!" : "was [span_redtext("unable to survive")] the rigors of being a cyborg without an AI."] Its laws were:"
+			parts += "[borg_spacer?"<br>":""]<b>[robo.name]</b> [(robo.stat != DEAD)? "[span_greentext("survived")] as an AI-less borg!" : "was [span_redtext("unable to survive")] the rigors of being a cyborg without an AI."] Its laws were:"
+			//NOVA EDIT CHANGE END
 
 			if(robo) //How the hell do we lose robo between here and the world messages directly above this?
 				parts += robo.laws.get_law_list(include_zeroth=TRUE)
@@ -700,7 +718,10 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 	var/jobtext = ""
 	if(!is_unassigned_job(ply.assigned_role))
 		jobtext = " the <b>[ply.assigned_role.title]</b>"
-	var/text = "<b>[ply.key]</b> was <b>[ply.name]</b>[jobtext] and"
+		//NOVA EDIT CHANGE BEGIN - ROUNDEND
+	//var/text = "<b>[ply.key]</b> was <b>[ply.name]</b>[jobtext] and" - NOVA EDIT - ORIGINAL
+	var/text = "<b>[ply.name]</b>[jobtext]"
+	//NOVA EDIT CHANGE END
 	if(ply.current)
 		if(ply.current.stat == DEAD)
 			text += " [span_redtext("died")]"
@@ -744,7 +765,7 @@ GLOBAL_LIST_INIT(achievements_unlocked, list())
 		parts += "<span class='infoplain'>Total Achievements Earned: <B>[length(GLOB.achievements_unlocked)]!</B></span><BR>"
 		parts += "<ul class='playerlist'>"
 		for(var/datum/achievement_report/cheevo_report in GLOB.achievements_unlocked)
-			parts += "<BR>[cheevo_report.winner_key] was <b>[cheevo_report.winner]</b>, who earned the [span_greentext("'[cheevo_report.cheevo]'")] achievement at [cheevo_report.award_location]!<BR>"
+			parts += "<b>[cheevo_report.winner]</b> earned the [span_greentext("'[cheevo_report.cheevo]'")] achievement at [cheevo_report.award_location]!<BR>" // NOVA EDIT - No ckeys in the round end report - ORIGINAL: parts += "<BR>[cheevo_report.winner_key] was <b>[cheevo_report.winner]</b>, who earned the [span_greentext("'[cheevo_report.cheevo]'")] achievement at [cheevo_report.award_location]!<BR>"
 		parts += "</ul>"
 		return "<div class='panel greenborder'><ul>[parts.Join()]</ul></div>"
 

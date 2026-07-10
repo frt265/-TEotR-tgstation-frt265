@@ -158,7 +158,7 @@
  * * cap_after_symbols - words like Bob's will be capitalized to Bob'S by default. False is good for titles.
  * * cap_at_start - capitalize the start of words. False is good for modular computer file names.
  */
-/proc/reject_bad_name(t_in, allow_numbers = FALSE, max_length = MAX_NAME_LEN, ascii_only = TRUE, strict = FALSE, cap_after_symbols = TRUE, cap_at_start = TRUE)
+/proc/reject_bad_name(t_in, allow_numbers = TRUE, max_length = MAX_NAME_LEN, ascii_only = TRUE, strict = FALSE, cap_after_symbols = TRUE, cap_at_start = TRUE) // NOVA EDIT CHANGE - allow_numbers to TRUE - ORIGINAL: /proc/reject_bad_name(t_in, allow_numbers = FALSE, max_length = MAX_NAME_LEN, ascii_only = TRUE, strict = FALSE, cap_after_symbols = TRUE, cap_at_start = TRUE)
 	if(!t_in)
 		return //Rejects the input if it is null
 
@@ -286,6 +286,16 @@
 
 	return TRUE
 
+/proc/filter_illegal_filename_chars(name)
+	var/regex/illegal_chars = new("\[\\/:*?\"<>|]", "g")
+	return !findtext(name, illegal_chars)
+
+/proc/filter_filename_pda(name)
+	if(is_ic_filtered_for_pdas(name) || is_soft_ic_filtered_for_pdas(name))
+		return FALSE
+	if(!filter_illegal_filename_chars(name))
+		return FALSE
+	return TRUE
 
 //html_encode helper proc that returns the smallest non null of two numbers
 //or 0 if they're both null (needed because of findtext returning 0 when a value is not present)

@@ -58,6 +58,10 @@ export function setClientTheme(name): void | Promise<void> {
     'reconnect.text-color': themeColor.TEXT_IMPORTANT,
     'chat.background-color': themeColor.BUTTON,
     'chat.text-color': themeColor.TEXT,
+    // NOVA ADDITION START
+    'nova-connect-to-relay.background-color': themeColor.BG_IMPORTANT,
+    'nova-connect-to-relay.text-color': themeColor.TEXT_IMPORTANT,
+    // NOVA ADDITION END
     // Status and verb tabs
     'output.background-color': themeColor.BG_BASE,
     'output.text-color': themeColor.TEXT,

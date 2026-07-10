@@ -1,7 +1,11 @@
-#define MAX_TIMER (15 MINUTES)
-#define PRESET_SHORT (2 MINUTES)
-#define PRESET_MEDIUM (3 MINUTES)
-#define PRESET_LONG (5 MINUTES)
+//#define MAX_TIMER (15 MINUTES) //ORIGINAL
+#define MAX_TIMER (60 MINUTES) //NOVA EDIT CHANGE
+//#define PRESET_SHORT (2 MINUTES) //ORIGINAL
+#define PRESET_SHORT (5 MINUTES) //NOVA EDIT CHANGE
+//#define PRESET_MEDIUM (3 MINUTES) //ORIGINAL
+#define PRESET_MEDIUM (10 MINUTES) //NOVA EDIT CHANGE
+//#define PRESET_LONG (5 MINUTES) //ORIGINAL
+#define PRESET_LONG (15 MINUTES) //NOVA EDIT CHANGE
 
 /**
  * Brig Door control displays.
@@ -71,7 +75,7 @@
 	if(!timing)
 		return PROCESS_KILL
 
-	if(world.time - activation_time >= timer_duration)
+	if(REALTIMEOFDAY - activation_time >= timer_duration) // NOVA EDIT CHANGE: original was world.time
 		timer_end() // open doors, reset timer, clear status screen
 	update_content()
 
@@ -97,7 +101,7 @@
 	if(machine_stat & (NOPOWER|BROKEN))
 		return 0
 
-	activation_time = world.time
+	activation_time = REALTIMEOFDAY // NOVA EDIT CHANGE: original was world.time
 	timing = TRUE
 	begin_processing()
 
@@ -169,7 +173,7 @@
  * * seconds - Return the time in seconds if TRUE, else deciseconds.
  */
 /obj/machinery/status_display/door_timer/proc/time_left(seconds = FALSE)
-	. = max(0, timer_duration + (activation_time ? activation_time - world.time : 0))
+	. = max(0, timer_duration + (activation_time ? activation_time - REALTIMEOFDAY : 0)) // NOVA EDIT CHANGE, Original:	. = max(0, timer_duration + (activation_time ? activation_time - world.time : 0))
 	if(seconds)
 		. /= (1 SECONDS)
 
@@ -261,7 +265,7 @@
 			user.investigate_log("set cell [id]'s timer to [preset_time/10] seconds", INVESTIGATE_RECORDS)
 			user.log_message("set cell [id]'s timer to [preset_time/10] seconds", LOG_ATTACK)
 			if(timing)
-				activation_time = world.time
+				activation_time = REALTIMEOFDAY // NOVA EDIT CHANGE: original was world.time
 		else
 			. = FALSE
 

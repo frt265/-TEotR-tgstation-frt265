@@ -14,6 +14,7 @@ import type { BooleanLike } from 'tgui-core/react';
 import { useBackend } from '../backend';
 import { Window } from '../layouts';
 import { logger } from '../logging';
+import { Rules } from './AntagInfoRules'; // NOVA EDIT ADDITION
 import {
   type Objective,
   ObjectivePrintout,
@@ -121,18 +122,25 @@ const IntroductionSection = (props) => {
           <Stack vertical>
             <FlavorSection />
             <Stack.Divider />
+            {/* NOVA EDIT ADDITION START */}
+            <Stack.Item>
+              <Rules />
+            </Stack.Item>
+            {/* NOVA EDIT ADDITION END */}
+            <Stack.Divider />
             <GuideSection />
             <Stack.Divider />
             <InformationSection />
             <Stack.Divider />
+
             {!ascended && (
               <Stack.Item>
                 <ObjectivePrintout
                   fill
                   titleMessage={
                     can_change_objective
-                      ? 'In order to ascend, you have these tasks to fulfill'
-                      : 'Use your dark knowledge to fulfil your personal goal'
+                      ? 'Your OPFOR objectives are your primary ones, but in order to ascend, you have these tasks to fulfill' /* NOVA EDIT CHANGE - opfor objectives */
+                      : 'Your OPFOR objectives are your primary ones. Use your dark knowledge to fulfill your personal goal' /* NOVA EDIT CHANGE - opfor objectives  */
                   }
                   objectives={objectives}
                   objectiveFollowup={

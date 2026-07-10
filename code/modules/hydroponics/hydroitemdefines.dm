@@ -145,6 +145,7 @@
 	icon_state = "sili_hatchet"
 	icon_angle = 0
 
+/* NOVA EDIT Start - Modularization and New Scythes
 /obj/item/scythe
 	name = "scythe"
 	desc = "A sharp and curved blade on a long fibremetal handle, this tool makes it easy to reap what you sow."
@@ -174,6 +175,7 @@
 	. = ..()
 	AddComponent(/datum/component/butchering, speed = 9 SECONDS, effectiveness = 105)
 	AddComponent(/datum/component/bane, affected_biotypes = MOB_PLANT, damage_multiplier = 1.5)
+	AddComponent(/datum/component/walking_aid)
 
 /obj/item/scythe/suicide_act(mob/living/user)
 	user.visible_message(span_suicide("[user] is beheading [user.p_them()]self with [src]! It looks like [user.p_theyre()] trying to commit suicide!"))
@@ -204,6 +206,7 @@
 				melee_attack_chain(user, flower)
 	swiping = FALSE
 	return TRUE
+*/
 
 /obj/item/secateurs
 	name = "secateurs"

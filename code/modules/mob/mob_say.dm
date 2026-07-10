@@ -117,6 +117,11 @@
 		to_chat(usr, span_danger("Speech is currently admin-disabled."))
 		return
 
+	//NOVA EDIT ADDITION START
+	if(!GLOB.dchat_allowed && !check_rights(R_ADMIN, FALSE))
+		to_chat(src, "<span class='danger'>Dead chat is currently muted.</span>")
+		return
+	//NOVA EDIT ADDITION END
 	var/jb = is_banned_from(mannequin_controller?.ckey || ckey, "Deadchat")
 	if(QDELETED(src))
 		return
@@ -172,7 +177,7 @@
 	return FALSE
 
 ///The amount of items we are looking for in the message
-#define MESSAGE_MODS_LENGTH 6
+#define MESSAGE_MODS_LENGTH 7
 
 /mob/proc/check_for_custom_say_emote(message, list/mods)
 	var/customsaypos = findtext(message, "*")
@@ -180,8 +185,8 @@
 		return message
 	if (!isnull(ckey) && is_banned_from(ckey, "Emote"))
 		return copytext(message, customsaypos + 1)
-	mods[MODE_CUSTOM_SAY_EMOTE] = copytext(message, 1, customsaypos)
-	message = copytext(message, customsaypos + 1)
+	mods[MODE_CUSTOM_SAY_EMOTE] = lowercase_title(copytext(message, 1, customsaypos)) // NOVA EDIT: ORIGINAL: mods[MODE_CUSTOM_SAY_EMOTE] = copytext(message, 1, customsaypos)
+	message = trim(copytext(message, customsaypos + 1)) //NOVA EDIT: ORIGINAL: message = copytext(message, customsaypos + 1)
 	if (!message)
 		mods[MODE_CUSTOM_SAY_ERASE_INPUT] = TRUE
 		message = "an interesting thing to say"

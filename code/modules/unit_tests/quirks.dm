@@ -83,6 +83,10 @@
 	GLOB.uncommon_roundstart_languages = list(/datum/language/uncommon)
 
 	for (var/datum/quirk/quirk_type as anything in valid_subtypesof(/datum/quirk))
+		// NOVA EDIT ADDITION START
+		if(quirk_type::hidden_quirk)
+			continue
+		// NOVA EDIT ADDITION END
 		var/mob/dead/new_player/abstract_player = allocate(/mob/dead/new_player)
 		var/datum/client_interface/roundstart_mock_client = new()
 		abstract_player.mock_client = roundstart_mock_client

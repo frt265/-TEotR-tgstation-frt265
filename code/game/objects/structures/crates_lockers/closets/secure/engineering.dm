@@ -25,7 +25,7 @@
 
 	// Traitor steal objective
 	new /obj/item/blueprints(src)
-	new /obj/item/pipe_dispenser(src)
+	new /obj/item/pipe_dispenser/bluespace(src) // NOVA EDIT -- BLUESPACE RPD -- ORIGINAL: new /obj/item/pipe_dispenser(src)
 
 /obj/structure/closet/secure_closet/engineering_electrical
 	name = "electrical supplies locker"

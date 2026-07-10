@@ -364,7 +364,7 @@ GLOBAL_LIST_INIT(human_invader_antagonists, list(
 #define HIJACK_MIN_PLAYERS 30
 
 /// Chance the traitor gets a martyr objective instead of having to escape alive, as long as all the objectives are martyr compatible.
-#define MARTYR_PROB 20
+#define MARTYR_PROB 0 //NOVA EDIT CHANGE - ORIGINAL: #define MARTYR_PROB 20
 
 /// Chance the traitor gets a kill objective. If this prob fails, they will get a steal objective instead.
 #define KILL_PROB 50
@@ -376,9 +376,9 @@ GLOBAL_LIST_INIT(human_invader_antagonists, list(
 #define JOB_PROB 40
 
 /// How many telecrystals a normal traitor starts with
-#define TELECRYSTALS_DEFAULT 20
+#define TELECRYSTALS_DEFAULT 35 // NOVA EDIT CHANGE - ORIGINAL: #define TELECRYSTALS_DEFAULT 20
 /// How many telecrystals mapper/admin only "precharged" uplink implant
-#define TELECRYSTALS_PRELOADED_IMPLANT 10
+#define TELECRYSTALS_PRELOADED_IMPLANT 20 // NOVA EDIT CHANGE - ORIGINAL: #define TELECRYSTALS_PRELOADED_IMPLANT 10
 /// The normal cost of an uplink implant; used for calcuating how many
 /// TC to charge someone if they get a free implant through choice or
 /// because they have nothing else that supports an implant.
@@ -461,7 +461,6 @@ GLOBAL_LIST_INIT(human_invader_antagonists, list(
 
 /// For changelings, this is how many recent say lines are retained when absorbing a mob
 #define LING_ABSORB_RECENT_SPEECH 8
-
 // Various abductor equipment modes.
 
 #define VEST_STEALTH 1

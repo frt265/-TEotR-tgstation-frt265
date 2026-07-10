@@ -6,9 +6,10 @@
 	"shuttles": {
 		"emergency": "emergency_delta",
 		"ferry": "ferry_fancy",
-		"cargo": "cargo_delta",
+		"cargo": "cargo_nova_delta",
 		"whiteship": "whiteship_delta"
 	},
+	"exclude_from_ci": true,
 	"job_changes": {
 		"Cook": {
 			"additional_cqc_areas": ["/area/station/service/cafeteria"]

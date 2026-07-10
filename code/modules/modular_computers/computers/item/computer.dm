@@ -13,6 +13,7 @@
 	armor_type = /datum/armor/item_modular_computer
 	light_system = OVERLAY_LIGHT_DIRECTIONAL
 	interaction_flags_mouse_drop = NEED_HANDS | ALLOW_RESTING
+	voice_filter = "alimiter=0.9,acompressor=threshold=0.2:ratio=20:attack=10:release=50:makeup=2,highpass=f=1000"
 
 	///The ID currently stored in the computer.
 	var/obj/item/card/id/stored_id
@@ -77,9 +78,9 @@
 	var/comp_light_color = COLOR_WHITE
 
 	///Power usage when the computer is open (screen is active) and can be interacted with.
-	var/base_active_power_usage = 2 WATTS
+	var/base_active_power_usage = 0.4 WATTS //NOVA EDIT CHANGE - ORIGINAL: 2 WATTS
 	///Power usage when the computer is idle and screen is off.
-	var/base_idle_power_usage = 1 WATTS
+	var/base_idle_power_usage = 0.2 WATTS //NOVA EDIT CHANGE - ORIGINAL: 1 WATTS
 
 	// Modular computers can run on various devices. Each DEVICE (Laptop, Console & Tablet)
 	// must have its own DMI file. Icon states must be called exactly the same in all files, but may look differently
@@ -153,6 +154,15 @@
 	install_default_programs()
 	register_context()
 	update_appearance()
+	if(mapload)
+		return INITIALIZE_HINT_LATELOAD
+	else
+		if(SStts.tts_enabled)
+			voice = SStts.computer_voice
+
+/obj/item/modular_computer/LateInitialize()
+	if(SStts.tts_enabled)
+		voice = SStts.computer_voice
 
 ///Initialize the shell for this item, or the physical machinery it belongs to.
 /obj/item/modular_computer/proc/add_shell_component(capacity = SHELL_CAPACITY_MEDIUM, shell_flags = NONE)
@@ -383,6 +393,7 @@
 	else
 		stored_id.forceMove(drop_location())
 	stored_id = null
+	SEND_SIGNAL(src, COMSIG_MODULAR_COMPUTER_REMOVED_ID, stored_id, user) // NOVA EDIT ADDITION - Signal on ID removal
 
 	if(!silent && !isnull(user))
 		to_chat(user, span_notice("You remove \the [lost_id] from the card slot."))
@@ -1087,6 +1098,25 @@
 				return ALERT_RELEVANCY_WARN
 		if(SEC_LEVEL_GREEN) // no threats, no concerns
 			return ALERT_RELEVANCY_SAFE
+		// NOVA EDIT ADDITION START - ALERTS
+		if(SEC_LEVEL_EPSILON, SEC_LEVEL_GAMMA)
+			return ALERT_RELEVANCY_PERTINENT
+		if(SEC_LEVEL_AMBER, SEC_LEVEL_FEDERAL)
+			if(ACCESS_SECURITY in stored_id?.access)
+				return ALERT_RELEVANCY_PERTINENT
+			else
+				return ALERT_RELEVANCY_WARN
+		if(SEC_LEVEL_VIOLET)
+			if(ACCESS_MEDICAL in stored_id?.access)
+				return ALERT_RELEVANCY_PERTINENT
+			else
+				return ALERT_RELEVANCY_WARN
+		if(SEC_LEVEL_ORANGE)
+			if(ACCESS_ENGINEERING in stored_id?.access)
+				return ALERT_RELEVANCY_PERTINENT
+			else
+				return ALERT_RELEVANCY_WARN
+		// NOVA EDIT ADDITION END
 
 	return 0
 

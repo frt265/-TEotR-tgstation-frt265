@@ -20,9 +20,11 @@ export function PageMain(props) {
     canSendToSectors,
     canSetAlertLevel,
     canToggleEmergencyAccess,
+    canToggleEngineeringOverride, // NOVA EDIT ADDITION - Engineering Override
     emagged,
     syndicate,
     emergencyAccess,
+    engineeringOverride, // NOVA EDIT ADDITION - Engineering Override
     importantActionReady,
     sectors,
     shuttleCalled,
@@ -106,6 +108,22 @@ export function PageMain(props) {
                 alertLevel="blue"
                 onClick={() => setNewAlertLevel('blue')}
               />
+              {/* NOVA EDIT ADDITION START - Alerts */}
+              <AlertButton
+                alertLevel="violet"
+                onClick={() => setNewAlertLevel('violet')}
+              />
+
+              <AlertButton
+                alertLevel="orange"
+                onClick={() => setNewAlertLevel('orange')}
+              />
+
+              <AlertButton
+                alertLevel="amber"
+                onClick={() => setNewAlertLevel('amber')}
+              />
+              {/* NOVA EDIT ADDITION END - Alerts */}
             </Flex.Item>
           </Flex>
         </Section>
@@ -133,7 +151,19 @@ export function PageMain(props) {
               Access
             </Button.Confirm>
           )}
-
+          {/* NOVA EDIT ADDITION START - Engineering Override */}
+          {!!canToggleEngineeringOverride && (
+            <Button.Confirm
+              icon="wrench"
+              confirmIcon="wrench"
+              color={engineeringOverride ? 'bad' : undefined}
+              onClick={() => act('toggleEngOverride')}
+            >
+              {engineeringOverride ? 'Disable' : 'Enable'} Engineering Override
+              Access
+            </Button.Confirm>
+          )}
+          {/* NOVA EDIT ADDITION END */}
           {!syndicate && (
             <Button
               icon="desktop"
@@ -193,6 +223,38 @@ export function PageMain(props) {
               Restore Backup Routing Data
             </Button>
           )}
+          {/* NOVA EDIT ADDITION START */}
+          {!!canMessageAssociates && (
+            <Button
+              icon="bullhorn"
+              color="gold"
+              disabled={!importantActionReady}
+              onClick={() => act('messagethefeds')}
+            >
+              Send message to the Sol Federation Regional Command
+            </Button>
+          )}
+          {!!canMakeAnnouncement && (
+            <Button icon="bullhorn" onClick={() => act('callThePolice')}>
+              Call Sol Federation 911: Marshals Response
+            </Button>
+          )}
+          {!!canMakeAnnouncement && (
+            <Button icon="bullhorn" onClick={() => act('callTheCatmos')}>
+              Call Sol Federation 811: Advanced Atmospherics Response
+            </Button>
+          )}
+          {!!canMakeAnnouncement && (
+            <Button icon="bullhorn" onClick={() => act('callTheParameds')}>
+              Call Sol Federation 911: Medical Response
+            </Button>
+          )}
+          {!!emagged && (
+            <Button icon="bullhorn" onClick={() => act('callThePizza')}>
+              Place an Order with Dogginos Pizza
+            </Button>
+          )}
+          {/* NOVA EDIT ADDITION END */}
         </Flex>
       </Section>
 

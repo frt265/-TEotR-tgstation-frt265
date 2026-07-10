@@ -79,7 +79,7 @@ ADMIN_VERB(disable_shuttle, R_ADMIN, "Disable Shuttle", "Those fuckers aren't ge
 	priority_announce(
 		text = "Emergency Shuttle uplink failure, shuttle disabled until further notice.",
 		title = "Uplink Failure",
-		sound = 'sound/announcer/announcement/announce_dig.ogg',
+		sound = ANNOUNCER_SHUTTLE, // NOVA EDIT CHANGE - Announcer Sounds - ORIGINAL: sound = 'sound/announcer/announcement/announce_dig.ogg',
 		sender_override = "Emergency Shuttle Uplink Alert",
 		color_override = "grey",
 	)
@@ -105,7 +105,7 @@ ADMIN_VERB(enable_shuttle, R_ADMIN, "Enable Shuttle", "Those fuckers ARE getting
 	priority_announce(
 		text = "Emergency Shuttle uplink reestablished, shuttle enabled.",
 		title = "Uplink Restored",
-		sound = 'sound/announcer/announcement/announce_dig.ogg',
+		sound = ANNOUNCER_SHUTTLE, // NOVA EDIT CHANGE - Announcer Sounds - ORIGINAL: sound = 'sound/announcer/announcement/announce_dig.ogg',
 		sender_override = "Emergency Shuttle Uplink Alert",
 		color_override = "green",
 	)
@@ -135,12 +135,22 @@ ADMIN_VERB(shuttle_panel, R_ADMIN, "Shuttle Manipulator", "Opens the shuttle man
 /obj/docking_port/mobile/proc/admin_fly_shuttle(mob/user)
 	var/list/options = list()
 
+	options += "-----COMPATABLE DOCKS:" //NOVA EDIT ADDITION
 	for(var/port in SSshuttle.stationary_docking_ports)
 		if (istype(port, /obj/docking_port/stationary/transit))
 			continue  // please don't do this
 		var/obj/docking_port/stationary/S = port
 		if (canDock(S) == SHUTTLE_CAN_DOCK)
 			options[S.name || S.shuttle_id] = S
+	//NOVA EDIT ADDITION START
+	options += "-----INCOMPATABLE DOCKS:" //I WILL CRASH THIS SHIP WITH NO SURVIVORS!
+	for(var/port in SSshuttle.stationary_docking_ports)
+		if (istype(port, /obj/docking_port/stationary/transit))
+			continue  // please don't do this
+		var/obj/docking_port/stationary/S = port
+		if(!(canDock(S) == SHUTTLE_CAN_DOCK))
+			options[S.name || S.shuttle_id] = S
+	//NOVA EDIT END
 
 	options += "--------"
 	options += "Infinite Transit"
@@ -169,7 +179,8 @@ ADMIN_VERB(shuttle_panel, R_ADMIN, "Shuttle Manipulator", "Opens the shuttle man
 
 		else
 			if(options[selection])
-				request(options[selection])
+				request(options[selection], TRUE) //NOVA EDIT CHANGE - ORIGINAL: request(options[selection])
+				message_admins("[user.ckey] has admin FORCED [name || shuttle_id] to dock at [options[selection]], this is ignoring all safety measures.") //NOVA EDIT ADDITION
 
 /obj/docking_port/mobile/emergency/admin_fly_shuttle(mob/user)
 	return  // use the existing verbs for this
