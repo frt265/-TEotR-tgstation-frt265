@@ -4,7 +4,7 @@
 | -----------------------   | -------------------------------------------------------------------------------------------------------------------------------------- |
 | How to Write a Design Doc |  [https://hackmd.io/@tgstation/BkzmU9EyK](https://hackmd.io/@tgstation/BkzmU9EyK)                                                      |
 | Git / GitHub cheatsheet   | [https://www.notion.so/Git-GitHub-61bc81766b2e4c7d9a346db3078ce833](https://www.notion.so/Git-GitHub-61bc81766b2e4c7d9a346db3078ce833) |
-| Codedocs                  | [https://NovaSector.github.io/NovaSector/](https://NovaSector.github.io/NovaSector/)                                                   |
+| Codedocs                  | still in progress                                                   |
 | TEotR-tgstation's Discord | [https://discord.gg/cqcJDTwcEz](https://discord.gg/cqcJDTwcEz)                                                                         |
 | Coderbus Discord          | [https://discord.gg/Vh8TJp9](https://discord.gg/Vh8TJp9)                                                                               |
 
