@@ -1,12 +1,5 @@
 ## TEotR-tgstation  (NovaSector & /tg/station Downstream)
-
-[![CI Suite](https://github.com/NovaSector/NovaSector/workflows/CI%20Suite/badge.svg)](https://github.com/NovaSector/NovaSector/actions?query=workflow%3A%22CI+Suite%22)
-[![Percentage of issues still open](https://isitmaintained.com/badge/open/NovaSector/NovaSector.svg)](https://isitmaintained.com/project/NovaSector/NovaSector "Percentage of issues still open")
-[![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/NovaSector/NovaSector.svg)](https://isitmaintained.com/project/NovaSector/NovaSector "Average time to resolve an issue")
-![Coverage](https://img.shields.io/codecov/c/github/NovaSector/NovaSector)
-
-[![resentment](.github/images/badges/built-with-resentment.svg)](.github/images/comics/131-bug-free.png) [![technical debt](.github/images/badges/contains-technical-debt.svg)](.github/images/comics/106-tech-debt-modified.png) [![forinfinityandbyond](.github/images/badges/made-in-byond.gif)](https://www.reddit.com/r/SS13/comments/5oplxp/what_is_the_main_problem_with_byond_as_an_engine/dclbu1a)
-
+### README.md still in progress
 | Website                   | Link                                                                                                                                   |
 | -----------------------   | -------------------------------------------------------------------------------------------------------------------------------------- |
 | How to Write a Design Doc |  [https://hackmd.io/@tgstation/BkzmU9EyK](https://hackmd.io/@tgstation/BkzmU9EyK)                                                      |
@@ -26,7 +19,7 @@ You are responsible for the testing of your content and providing proof of such 
 
 ## DEVELOPMENT
 
-[Modularisation Guide](./modular_nova/readme.md)
+README.md still in progress
 
 ## DOWNLOADING
 
