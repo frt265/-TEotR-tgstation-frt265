@@ -5,11 +5,11 @@
 	desc = "A shield fit for those that want to sprint headfirst into the unknown. Its heavy, unwieldy nature makes its defensive performance suffer when in the off-hand; \
 	wielding will provide best results at the cost of reduced mobility."
 	icon_state = "riot"
-	icon = 'modular_nova/modules/exp_corps/icons/riot.dmi'
-	worn_icon = 'modular_nova/master_files/icons/mob/clothing/back.dmi'
+	icon = 'modular_teotr/Icons/obj/riot.dmi'
+//	worn_icon = 'modular_nova/master_files/icons/mob/clothing/back.dmi'
 	worn_icon_state = "erisriot"
-	lefthand_file = 'modular_nova/modules/exp_corps/icons/riot_left.dmi'
-	righthand_file = 'modular_nova/modules/exp_corps/icons/riot_right.dmi'
+	lefthand_file = 'modular_teotr/Icons/mob/inhands/items/riot_left.dmi'
+	righthand_file = 'modular_teotr/Icons/mob/inhands/items/riot_right.dmi'
 	force = 10
 	throwforce = 5
 	throw_speed = 1
@@ -48,7 +48,7 @@
 	name = "broken pointman shield"
 	desc = "Enough of it is still intact that you could probably just weld more bits on."
 	icon_state = "riot_broken"
-	icon = 'modular_nova/modules/exp_corps/icons/riot.dmi'
+//	icon = 'modular_nova/modules/exp_corps/icons/riot.dmi'
 	w_class = WEIGHT_CLASS_BULKY
 
 /obj/item/pointman_broken/Initialize(mapload)

@@ -143,8 +143,8 @@
 	desc = "A large bag for holding extra tactical supplies."
 	icon_state = "exp_corps"
 	inhand_icon_state = "backpack"
-	icon = 'modular_nova/modules/exp_corps/icons/backpack.dmi'
-	worn_icon = 'modular_nova/modules/exp_corps/icons/mob_backpack.dmi'
+	icon = 'modular_teotr/Icons/obj/storage/backpack.dmi'
+	worn_icon = 'modular_teotr/Icons/mob/clothing/mob_backpack.dmi'
 
 /obj/item/storage/backpack/duffelbag/expeditionary_corps/setup_reskins()
 	AddComponent(/datum/component/reskinable_item, /datum/atom_skin/expeditionary_corps_bag)

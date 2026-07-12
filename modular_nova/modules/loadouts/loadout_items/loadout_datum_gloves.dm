@@ -25,11 +25,11 @@
 /*
 *	ITEMS BELOW HERE
 */
-
+/*
 /datum/loadout_item/gloves/armwraps
 	name = "Arm Wraps (Colorable)"
 	item_path = /obj/item/clothing/gloves/bracer/wraps
-
+*/
 /datum/loadout_item/gloves/black
 	name = "Gloves (Black)"
 	item_path = /obj/item/clothing/gloves/color/black

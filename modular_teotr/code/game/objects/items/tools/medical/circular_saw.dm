@@ -5,9 +5,9 @@
 	desc = "An ancient medical instrument used for surgery and amputations, still being used in the 26th century. Well, what are you waiting for? Let's go practice medicine."
 	force = 20
 	icon_state = "bonesaw"
-	icon = 'modular_nova/modules/exp_corps/icons/bonesaw.dmi'
-	lefthand_file = 'modular_nova/modules/exp_corps/icons/bonesaw_l.dmi'
-	righthand_file = 'modular_nova/modules/exp_corps/icons/bonesaw_r.dmi'
+	icon = 'modular_teotr/Icons/obj/medical/bonesaw.dmi'
+	lefthand_file = 'modular_teotr/Icons/mob/inhands/weapons/bonesaw_l.dmi'
+	righthand_file = 'modular_teotr/Icons/mob/inhands/weapons/bonesaw_r.dmi'
 	inhand_icon_state = "bonesaw"
 	hitsound = 'sound/items/weapons/bladeslice.ogg'
 	toolspeed = 2

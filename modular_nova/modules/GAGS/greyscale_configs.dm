@@ -945,7 +945,7 @@
 	json_config = 'modular_nova/modules/GAGS/json_configs/urban_coat/urban_coat_worn.json'
 
 // WINTER COAT
-
+/*
 /datum/greyscale_config/winter_coat
 	name = "Winter Coat"
 	icon_file = 'modular_nova/master_files/icons/donator/obj/clothing/suits.dmi'
@@ -969,7 +969,7 @@
 	name = "Warm Coat"
 	icon_file = 'modular_nova/modules/GAGS/icons/warm_coat.dmi'
 	json_config = 'modular_nova/modules/GAGS/json_configs/winter_coat/warm_coat.json'
-
+*/
 /datum/greyscale_config/warm_coat/worn
 	name = "Warm Coat (Worn)"
 	icon_file = 'modular_nova/modules/GAGS/icons/warm_coat_worn.dmi'
@@ -1647,16 +1647,6 @@
 	name = "christmas_male (Worn, Digi)"
 	icon_file = 'modular_nova/master_files/icons/mob/clothing/under/costume_digi.dmi'
 
-//HALF-LEOTARD (DONATOR)
-/datum/greyscale_config/half_leotard
-	name = "One-Sleeved Leotard"
-	icon_file = 'modular_nova/master_files/icons/donator/obj/clothing/uniform.dmi'
-	json_config = 'modular_nova/modules/GAGS/json_configs/fancy_under/half_leotard.json'
-
-/datum/greyscale_config/half_leotard/worn
-	name = "One-Sleeved Leotard (Worn)"
-	icon_file = 'modular_nova/master_files/icons/donator/mob/clothing/uniform.dmi'
-
 //RELIGIOUS COSTUMES (MONK HABIT, ETC)
 /datum/greyscale_config/monk_habit
 	name = "Monk Habit"
@@ -2003,7 +1993,7 @@ TREK
 /datum/greyscale_config/legwraps/worn/digi
 	name = "Leg Wraps (Worn, Digi)"
 	json_config = 'modular_nova/modules/GAGS/json_configs/wraps/legwraps_worn_digi.json'
-
+/*
 /datum/greyscale_config/armwraps
 	name = "Cloth Arm Wraps"
 	icon_file = 'modular_nova/master_files/icons/donator/obj/clothing/gloves.dmi'
@@ -2013,7 +2003,7 @@ TREK
 	name = "Cloth Arm Wraps (Worn)"
 	icon_file = 'modular_nova/master_files/icons/donator/mob/clothing/hands.dmi'
 	json_config = 'modular_nova/modules/GAGS/json_configs/arm_wraps/arm_wraps_worn.json'
-
+*/
 // MISC SHOES
 
 /datum/greyscale_config/heels

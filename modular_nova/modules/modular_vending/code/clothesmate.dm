@@ -41,7 +41,7 @@
 				/obj/item/clothing/glasses/hud/ar/projector = 5,
 				/obj/item/clothing/neck/face_scarf = 5,
 				/obj/item/clothing/mask/neck_gaiter = 5,
-				/obj/item/clothing/gloves/bracer/wraps = 5,
+//				/obj/item/clothing/gloves/bracer/wraps = 5,
 				/obj/item/clothing/gloves/recolorable = 5,
 				/obj/item/clothing/gloves/recolorable/fingerless = 5,
 				/obj/item/clothing/gloves/recolorable/long = 5,

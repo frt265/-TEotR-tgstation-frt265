@@ -100,8 +100,6 @@
 	name = "Vey-Medical CWM-479 upgrade kit"
 	desc = "Upgrades the internal battery inside of the medigun, allowing for faster charging, an extra medicell slot, and a higher battery capacity. Requires the medigun's cells to be removed first!"
 	// don't tinker with a loaded (medi)gun. fool
-	from_obj = /obj/item/gun/energy/cell_loaded/medigun/standard
-	to_obj = /obj/item/gun/energy/cell_loaded/medigun/upgraded
 
 /obj/item/device/custom_kit/medigun_fastcharge/pre_convert_check(obj/target_obj, mob/user)
 	var/obj/item/gun/energy/cell_loaded/medigun/standard/our_medigun = target_obj

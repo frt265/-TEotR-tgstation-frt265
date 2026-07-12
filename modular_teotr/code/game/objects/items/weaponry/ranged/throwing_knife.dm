@@ -3,7 +3,7 @@
 /obj/item/knife/combat/throwing
 	name = "throwing knife"
 	desc = "While very well weighted for throwing, the distribution of mass makes it unwieldy for use in melee."
-	icon = 'modular_nova/modules/exp_corps/icons/throwing.dmi'
+	icon = 'modular_teotr/Icons/obj/weapons/throwing.dmi'
 	icon_state = "throwing"
 	force = 12 // don't stab with this
 	throwforce = 30 // 38 force on embed? compare contrast with throwing stars.
