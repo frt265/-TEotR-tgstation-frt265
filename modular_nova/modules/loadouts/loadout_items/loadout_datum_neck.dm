@@ -366,11 +366,6 @@
 	item_path = /obj/item/clothing/neck/wide_cape
 	group = "Cloaks and Shrouds"
 
-/datum/loadout_item/neck/gags_cloak
-	name = "Cloak (Colorable)"
-	item_path = /obj/item/clothing/neck/cloak/colourable
-	group = "Cloaks and Shrouds"
-
 /datum/loadout_item/neck/mantle
 	name = "Mantle"
 	item_path = /obj/item/clothing/neck/mantle
@@ -379,11 +374,6 @@
 /datum/loadout_item/neck/gags_mantle
 	name = "Mantle (Colorable)"
 	item_path = /obj/item/clothing/neck/mantle/recolorable
-	group = "Cloaks and Shrouds"
-
-/datum/loadout_item/neck/gags_boat //This isn't actually a boatcloak (its way too short)
-	name = "Mantle - Long (Colorable)"
-	item_path = /obj/item/clothing/neck/cloak/colourable/boat
 	group = "Cloaks and Shrouds"
 
 /datum/loadout_item/neck/tesharian_mantle
@@ -404,16 +394,6 @@
 /datum/loadout_item/neck/security_cape
 	name = "Security Cape"
 	item_path = /obj/item/clothing/neck/security_cape
-	group = "Cloaks and Shrouds"
-
-/datum/loadout_item/neck/gags_shroud
-	name = "Shroud (Colorable)"
-	item_path = /obj/item/clothing/neck/cloak/colourable/shroud
-	group = "Cloaks and Shrouds"
-
-/datum/loadout_item/neck/gags_veil
-	name = "Veil (Colorable)"
-	item_path = /obj/item/clothing/neck/cloak/colourable/veil
 	group = "Cloaks and Shrouds"
 
 /datum/loadout_item/neck/shortcloak

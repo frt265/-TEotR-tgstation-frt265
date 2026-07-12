@@ -32,10 +32,6 @@
 			"icon" = "glasses",
 			"products" = list(
 				/obj/item/clothing/neck/ranger_poncho = 5,
-				/obj/item/clothing/neck/cloak/colourable = 5,
-				/obj/item/clothing/neck/cloak/colourable/veil = 5,
-				/obj/item/clothing/neck/cloak/colourable/shroud = 5,
-				/obj/item/clothing/neck/cloak/colourable/boat = 5,
 				/obj/item/clothing/neck/mantle/recolorable = 5,
 				/obj/item/clothing/neck/tesharian_mantle = 5,
 				/obj/item/clothing/neck/long_cape = 5,
@@ -147,7 +143,6 @@
 				/obj/item/clothing/suit/jacket/long_robe = 5,
 				/obj/item/clothing/suit/jacket/haori = 5,
 				/obj/item/clothing/suit/modernwintercoatthing = 5,
-				/obj/item/clothing/suit/hooded/wintercoat/colourable = 5,
 				/obj/item/clothing/suit/hooded/wintercoat/nova = 5,
 				/obj/item/clothing/suit/apron/chef/colorable_apron = 5,
 				/obj/item/clothing/suit/warm_coat = 5,

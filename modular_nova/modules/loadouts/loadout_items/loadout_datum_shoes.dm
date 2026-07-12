@@ -109,10 +109,6 @@
 	name = "Toeless Jackboots"
 	item_path = /obj/item/clothing/shoes/jackboots/toeless
 
-/datum/loadout_item/shoes/jackboots/heel //Donator reward for Thedragmeme, unrestricted at their request
-	name = "Boots - Jackboots, High-Heel"
-	item_path = /obj/item/clothing/shoes/jackboots/heel
-
 /datum/loadout_item/shoes/kneeboot
 	name = "Boots - Jackboots, Knee"
 	item_path = /obj/item/clothing/shoes/jackboots/knee

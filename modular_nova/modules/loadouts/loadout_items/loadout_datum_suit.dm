@@ -106,10 +106,6 @@
 	name = "Winter Coat"
 	item_path = /obj/item/clothing/suit/hooded/wintercoat
 
-/datum/loadout_item/suit/gags_wintercoat
-	name = "Winter Coat (Colorable)"
-	item_path = /obj/item/clothing/suit/hooded/wintercoat/colourable
-
 /datum/loadout_item/suit/aformal
 	name = "Winter Coat - Assistant's Formal"
 	item_path = /obj/item/clothing/suit/hooded/wintercoat/nova
@@ -1199,20 +1195,8 @@
 	name = "Cowboy Vest"
 	item_path = /obj/item/clothing/suit/cowboyvest
 
-/datum/loadout_item/suit/digicoat_glitched //Public donator reward for Razurath.
-	name = "Digicoat - Glitched"
-	item_path = /obj/item/clothing/suit/toggle/digicoat/glitched
-
 /datum/loadout_item/suit/donator/digicoat
 	abstract_type = /datum/loadout_item/suit/donator/digicoat
-
-/datum/loadout_item/suit/donator/digicoat/interdyne
-	name = "Digicoat - Interdyne"
-	item_path = /obj/item/clothing/suit/toggle/digicoat/interdyne
-
-/datum/loadout_item/suit/donator/digicoat/nanotrasen
-	name = "Digicoat - Nanotrasen"
-	item_path = /obj/item/clothing/suit/toggle/digicoat/nanotrasen
 
 /datum/loadout_item/suit/donator/furredjacket
 	name = "Furred Jacket"
@@ -1226,14 +1210,6 @@
 	name = "Furred Jacket (Cream)"
 	item_path = /obj/item/clothing/suit/brownfurrich/cream
 
-/datum/loadout_item/suit/donator/chokha //All-donators donator item for BlindPoet
-	name = "Iseurian Chokha"
-	item_path = /obj/item/clothing/suit/chokha
-
 /datum/loadout_item/suit/donator/modern_winter
 	name = "Modern Winter Coat"
 	item_path = /obj/item/clothing/suit/modern_winter
-
-/datum/loadout_item/suit/donator/replica_parade_jacket
-	name = "Replica Parade Jacket"
-	item_path = /obj/item/clothing/suit/replica_parade_jacket

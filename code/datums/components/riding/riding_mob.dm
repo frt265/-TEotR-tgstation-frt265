@@ -220,13 +220,9 @@
 /datum/component/riding/creature/human/Initialize(mob/living/riding_mob, force = FALSE, ride_check_flags = NONE)
 	. = ..()
 	var/mob/living/carbon/human/human_parent = parent
-	//human_parent.add_movespeed_modifier(/datum/movespeed_modifier/human_carry) // NOVA EDIT REMOVAL
-	// NOVA EDIT ADDITION START - Taur saddles
-	if (!(ride_check_flags & RIDING_TAUR))
-		human_parent.add_movespeed_modifier(/datum/movespeed_modifier/human_carry)
-	// NOVA EDIT ADDITION END
+	human_parent.add_movespeed_modifier(/datum/movespeed_modifier/human_carry)
 
-	if(ride_check_flags & RIDER_NEEDS_ARMS || (ride_check_flags & RIDING_TAUR)) // NOVA CHANGE - ORIGINAL: if(ride_check_flags & RIDER_NEEDS_ARMS) // piggyback
+	if(ride_check_flags & RIDER_NEEDS_ARMS)
 		human_parent.buckle_lying = 0
 		// the riding mob is made nondense so they don't bump into any dense atoms the carrier is pulling,
 		// since pulled movables are moved before buckled movables
@@ -326,7 +322,7 @@
 				TEXT_EAST = list(0, REGULAR_OFFSET, MOB_BELOW_PIGGYBACK_LAYER),
 				TEXT_WEST = list(0, REGULAR_OFFSET, MOB_BELOW_PIGGYBACK_LAYER),
 			)
-	else if (!(ride_check_flags & RIDING_TAUR))
+	else if (!(ride_check_flags))
 		return HAS_TRAIT(seat, TRAIT_OVERSIZED) ? list(
 				TEXT_NORTH = list(0, OVERSIZED_OFFSET, MOB_ABOVE_PIGGYBACK_LAYER),
 				TEXT_SOUTH = list(0, OVERSIZED_OFFSET, MOB_BELOW_PIGGYBACK_LAYER),

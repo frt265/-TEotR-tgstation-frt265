@@ -56,7 +56,6 @@
 #define ORGAN_SLOT_EXTERNAL_SKRELL_HAIR FEATURE_SKRELL_HAIR
 #define ORGAN_SLOT_EXTERNAL_SYNTH_ANTENNA "synth_antenna"
 #define ORGAN_SLOT_EXTERNAL_SYNTH_SCREEN "synth_screen"
-#define ORGAN_SLOT_EXTERNAL_TAUR FEATURE_TAUR
 #define ORGAN_SLOT_EXTERNAL_XENODORSAL FEATURE_XENODORSAL
 #define ORGAN_SLOT_EXTERNAL_XENOHEAD FEATURE_XENOHEAD
 
@@ -69,24 +68,6 @@
 #define BODY_SIZE_MAX 1.5
 #define BODY_SIZE_MIN 0.8
 
-//In inches
-#define PENIS_MIN_GIRTH PENIS_MIN_LENGTH
-#define PENIS_MAX_GIRTH 35
-/// for non oversized mobs with a 'normal' body size
-#define PENIS_MAX_GIRTH_NORMAL_SIZED 15
-#define PENIS_DEFAULT_GIRTH 5 // a lil big but not by much
-#define PENIS_MIN_LENGTH 1
-#define PENIS_MAX_LENGTH 86
-#define PENIS_DEFAULT_LENGTH 6 //still a lil long but not insane
-
-#define TESTICLES_MIN_SIZE 0
-#define TESTICLES_MAX_SIZE 8
-
-#define SHEATH_NONE	SPRITE_ACCESSORY_NONE
-#define SHEATH_NORMAL "Sheath"
-#define SHEATH_SLIT	"Slit"
-#define SHEATH_MODES list(SHEATH_NONE, SHEATH_NORMAL, SHEATH_SLIT)
-
 /// Used for making species blueprint singletons for GLOB.default_mutant_bodyparts
 #define MUTPART_BLUEPRINT new /datum/mutant_bodypart/species_blueprint
 
@@ -94,7 +75,6 @@
 #define FEATURE_MUTANT_COLOR_THREE "mcolor3"
 #define FEATURE_MARKING_GENERIC "body_markings"
 #define FEATURE_TAIL "tail"
-#define FEATURE_TAUR "taur"
 #define FEATURE_SKIN_COLOR "skin_color"
 #define FEATURE_XENODORSAL "xenodorsal"
 #define FEATURE_XENOHEAD "xenohead"
@@ -112,14 +92,6 @@
 #define FEATURE_SYNTH_HEAD "synth_head"
 #define FEATURE_SYNTH_HAIR "synth_hair"
 
-// Genitals
-#define FEATURE_PENIS "penis"
-#define FEATURE_WOMB "womb"
-#define FEATURE_VAGINA "vagina"
-#define FEATURE_TESTICLES "testicles"
-#define FEATURE_BREASTS "breasts"
-#define FEATURE_ANUS "anus"
-
 
 #define MANDATORY_FEATURE_LIST list(\
 	FEATURE_MUTANT_COLOR = "#FFFFBB",\
@@ -128,29 +100,9 @@
 	FEATURE_ETHEREAL_COLOR = "#FFCCCC",\
 	FEATURE_SKIN_COLOR = "#FFEEDD",\
 	EXAMINE_DNA_FLAVOR_TEXT = "",\
-	"breasts_size" = 1,\
-	"breasts_lactation" = FALSE,\
-	"penis_size" = 13,\
-	"penis_girth" = 9,\
-	"penis_taur_mode" = TRUE,\
-	"penis_sheath" = SHEATH_NONE,\
-	"balls_size" = 1,\
 	"body_size" = BODY_SIZE_NORMAL,\
 	"custom_species" = null,\
-	"penis_uses_skintones" = TRUE,\
-	"penis_uses_skincolor" = TRUE,\
-	"testicles_uses_skintones" = TRUE,\
-	"testicles_uses_skincolor" = TRUE,\
-	"vagina_uses_skintones" = TRUE,\
-	"vagina_uses_skincolor" = TRUE,\
-	"breasts_uses_skintones" = TRUE,\
-	"breasts_uses_skincolor" = TRUE,\
 )
-
-#define AROUSAL_CANT 0
-#define AROUSAL_NONE 1
-#define AROUSAL_PARTIAL 2
-#define AROUSAL_FULL 3
 
 //Species IDs. If you wanna look at tg's species ID defines, go look in the *other* DNA.dm file
 #define SPECIES_AKULA "akula"
@@ -186,7 +138,3 @@
 #define SPECIES_MUTANT_INFECTIOUS "infectious_mutant"
 #define SPECIES_MUTANT_SLOW "slow_mutant"
 #define SPECIES_MUTANT_FAST "fast_mutant"
-
-// Leaving this here because it's used for bodyparts, like SPECIES_X are, but since taurs aren't a species... Named it LIMBS instead.
-#define LIMBS_TAUR "taur"
-#define LIMBS_HARPY "harpy"

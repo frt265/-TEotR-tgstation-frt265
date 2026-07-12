@@ -457,9 +457,6 @@ GLOBAL_LIST_EMPTY(preferences_datums)
 	// if oversized trait (fixes size at 2.0) or over 1.1, scales up
 	if ((/datum/quirk/oversized::name in preferences.all_quirks) || (body.dna.features["body_size"] > 1.1))
 		canvas_size += 1
-	if (body.dna.mutant_bodyparts["taur"])
-		// taurs can be extra wide, so scale up in attempt to see their tails
-		canvas_size += 1
 	body.pixel_x = canvas_size * 16
 
 	if (isnull(canvas) || last_canvas_size != canvas_size || last_canvas_state != canvas_state)

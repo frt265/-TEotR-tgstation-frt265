@@ -193,10 +193,6 @@
 // NOVA EDIT ADDITION START
 ///The limb fits a modular custom shape
 #define BODYSHAPE_CUSTOM (1<<5)
-///The limb fits a taur body
-#define BODYSHAPE_TAUR (1<<6)
-///The limb causes shoes to no longer be displayed, useful for taurs.
-#define BODYSHAPE_HIDE_SHOES (1<<7)
 ///The limb causes glasses and hats to be drawn on layers 5 and 4 respectively. Currently used for snouts with the (Top) suffix, which are drawn on layer 6 and would normally cover facewear
 #define BODYSHAPE_ALT_FACEWEAR_LAYER (1<<8)
 // NOVA EDIT ADDITION END
@@ -816,11 +812,7 @@ GLOBAL_LIST_INIT(human_heights_to_offsets, list(
 /// Jumpsuit clothing layer
 #define UNIFORM_LAYER 34 // NOVA EDIT CHANGE - ORIGINAL: #define UNIFORM_LAYER 29
 // NOVA EDIT ADDITION BEGIN - cursed layers under clothing
-#define ANUS_LAYER 33
-#define VAGINA_LAYER 32
-#define PENIS_LAYER 31
-#define NIPPLES_LAYER 30
-#define BANDAGE_LAYER 29
+#define BANDAGE_LAYER 26
 //NOVA EDIT ADDITION END
 /// ID card layer
 #define ID_LAYER 28

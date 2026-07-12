@@ -46,7 +46,6 @@
 	new /obj/item/clothing/under/syndicate/nova/overalls(src)
 	new /obj/item/clothing/under/syndicate/nova/overalls/skirt(src)
 	new /obj/item/clothing/under/rank/engineering/engineer/nova/utility/syndicate(src)
-	new /obj/item/clothing/suit/jacket/gorlex_harness(src)
 	new /obj/item/clothing/suit/hazardvest(src)
 	new /obj/item/clothing/accessory/armband/engine/syndicate(src)
 	new /obj/item/clothing/accessory/armband/engine/syndicate(src)

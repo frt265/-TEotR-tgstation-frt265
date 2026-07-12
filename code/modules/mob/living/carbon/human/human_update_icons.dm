@@ -396,7 +396,7 @@ There are several things that need to be remembered:
 			if(species_icon_file)
 				icon_file = species_icon_file
 				mutant_override = TRUE
-		if(bodyshape & BODYSHAPE_HIDE_SHOES)
+		if(bodyshape)
 			return // We just don't want shoes that float if we're not displaying legs (useful for taurs, for now)
 		// NOVA EDIT END
 
@@ -1151,12 +1151,10 @@ mutant_styles: The mutant style - taur bodytype, STYLE_TESHARI, etc. // NOVA EDI
 	*/ // NOVA EDIT REMOVAL END
 	// NOVA EDIT ADDITION START - Nova socks - digi supported
 	if(socks && num_legs >= 2 && !(underwear_visibility & UNDERWEAR_HIDE_SOCKS))
-		var/datum/mutant_bodypart/taur_body = dna.mutant_bodyparts[FEATURE_TAUR]
-		if(isnull(taur_body))
-			var/datum/sprite_accessory/clothing/socks/sock_accessory = SSaccessories.socks_list[socks]
-			var/mutable_appearance/socks_overlay = sock_accessory?.make_appearance(socks_color, physique, active_bodyshapes)
-			if(socks_overlay)
-				. += socks_overlay
+		var/datum/sprite_accessory/clothing/socks/sock_accessory = SSaccessories.socks_list[socks]
+		var/mutable_appearance/socks_overlay = sock_accessory?.make_appearance(socks_color, physique, active_bodyshapes)
+		if(socks_overlay)
+			. += socks_overlay
 	// NOVA EDIT ADDITION END
 
 	return .
